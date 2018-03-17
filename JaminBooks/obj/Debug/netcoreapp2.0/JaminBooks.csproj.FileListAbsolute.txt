@@ -1,0 +1,11 @@
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.deps.json
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.json
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.dev.json
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.dll
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.pdb
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csprojResolveAssemblyReference.cache
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csproj.CoreCompileInputs.cache
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfoInputs.cache
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
+c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
