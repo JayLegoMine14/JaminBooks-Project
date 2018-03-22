@@ -12542,11 +12542,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\users\\james allison\\source\\repos\\JaminBooks\\JaminBooks\\JaminBooks.csproj",
+      "projectUniqueName": "C:\\Users\\James Allison\\source\\repos\\JaminBooks\\JaminBooks\\JaminBooks.csproj",
       "projectName": "JaminBooks",
-      "projectPath": "c:\\users\\james allison\\source\\repos\\JaminBooks\\JaminBooks\\JaminBooks.csproj",
+      "projectPath": "C:\\Users\\James Allison\\source\\repos\\JaminBooks\\JaminBooks\\JaminBooks.csproj",
       "packagesPath": "C:\\Users\\James Allison\\.nuget\\packages\\",
-      "outputPath": "c:\\users\\james allison\\source\\repos\\JaminBooks\\JaminBooks\\obj\\",
+      "outputPath": "C:\\Users\\James Allison\\source\\repos\\JaminBooks\\JaminBooks\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
