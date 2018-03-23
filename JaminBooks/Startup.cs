@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JaminBooks.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,7 @@ namespace JaminBooks
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            SQL.ConnectionString = Configuration["ConnectionString"];
         }
 
         public IConfiguration Configuration { get; }
