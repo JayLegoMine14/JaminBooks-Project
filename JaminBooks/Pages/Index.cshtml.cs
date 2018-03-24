@@ -14,7 +14,7 @@ namespace JaminBooks.Pages
     {
         public void OnGet()
         {
-            DataTable dt = SQL.Execute("uspGetUserByID", new Param("UserID", 1));
+            User u = new User(1);
         }
     }
 }
