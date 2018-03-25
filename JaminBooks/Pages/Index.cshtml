@@ -2,6 +2,8 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName;
 }
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
@@ -106,3 +108,5 @@
         </ul>
     </div>
 </div>
+
+@await Html.PartialAsync("_Authentication")

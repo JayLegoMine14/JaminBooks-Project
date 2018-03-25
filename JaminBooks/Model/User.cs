@@ -60,5 +60,22 @@ namespace JaminBooks.Model
             DataTable dt = SQL.Execute("uspDeleteUser", new Param("UserID", UserID));
             UserID = -1;
         }
+
+        public static bool Exists(string Email, string Password, out int? id)
+        {
+            DataTable results = SQL.Execute("uspGetUserByEmailAndPassword",
+                new Param("Email", Email),
+                new Param("Password", Password));
+            id = results.Rows.Count != 1 ? null : results.Rows[0]["UserID"] as int?;
+            return results.Rows.Count == 1;
+        }
+
+        public static bool Exists(string Email, string Password)
+        {
+            DataTable results = SQL.Execute("uspGetUserByEmailAndPassword",
+                new Param("Email", Email),
+                new Param("Password", Password));
+            return results.Rows.Count == 1;
+        }
     }
 }

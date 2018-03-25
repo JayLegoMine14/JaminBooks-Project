@@ -1,0 +1,13 @@
+﻿@page
+@model BooksModel
+@{
+    ViewData["Title"] = "Books";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName;
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@Model.Message</h3>
+
+<p>Use this area to provide additional information.</p>
+
+@await Html.PartialAsync("_Authentication")

@@ -1,0 +1,79 @@
+﻿@Html.AntiForgeryToken()
+<div id="authenticationModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Login to JaminBooks</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="well">
+                            <div class="form-group">
+                                <label for="Email" class="control-label">Email</label>
+                                <input type="text" class="form-control" id="Email" name="email" title="Please enter your email" placeholder="email@example.com">
+                                <span class="help-block"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="Password" class="control-label">Password</label>
+                                <input type="password" class="form-control" id="Password" name="password" title="Please enter your password">
+                                <span class="help-block"></span>
+                            </div>
+                            <div id="loginErrorMsg" class="alert text-danger" style="display:none">Wrong username or password</div>
+              
+                            <button id="Login" class="btn btn-success btn-block">Login</button>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <p class="lead">Register now for <span class="text-success">FREE</span></p>
+                        <ul class="list-unstyled" style="line-height: 2">
+                            <li><span class="fa fa-check text-success"></span> Rate books</li>
+                            <li><span class="fa fa-check text-success"></span> Place orders</li>
+                            <li><span class="fa fa-check text-success"></span> Fast checkout</li>
+                        </ul>
+                        <p><button class="btn btn-info btn-block">Register Now</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#Login").click(function () {
+            $("#loginErrorMsg").hide();
+            $("#Email").removeAttr("style");
+            $("#Password").removeAttr("style");
+            $.ajax({
+                type: "POST",
+                url: "Security/Authenticate",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: JSON.stringify({
+                    Email: $("#Email").val(),
+                    Password: sha256($("#Password").val())
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var loggedin = JSON.parse(response);
+                    if (loggedin) {
+                        location.reload();
+                    } else {
+                        $("#loginErrorMsg").show();
+                        $("#Email").css("border-color", "red");
+                        $("#Password").css("border-color", "red");
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+
+        });
+    });
+</script>

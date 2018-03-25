@@ -26,6 +26,14 @@ body {
     margin: 15px;
 }
 
+.line-hieght-9{
+    line-height: .9;
+}
+
+.margin-top-10{
+    margin-top: 10px;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */
