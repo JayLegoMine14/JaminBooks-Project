@@ -14,5 +14,24 @@ namespace JaminBooks.Pages
         {
             return new JsonResult(Authentication.SetCurrentUser(Request));
         }
+
+        [Route("Security/Exists")]
+        public IActionResult Exists()
+        {
+            return new JsonResult(Authentication.EmailExists(Request));
+        }
+
+        [Route("Security/Create")]
+        public IActionResult Create()
+        {
+            return new JsonResult(Authentication.CreateUser(Request));
+        }
+
+        [Route("Security/Logout")]
+        public void Logout()
+        {
+            Authentication.LogoutCurrentUser(HttpContext);
+            Response.Redirect("/Index");
+        }
     }
 }

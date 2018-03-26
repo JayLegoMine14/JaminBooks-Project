@@ -16,9 +16,8 @@ namespace JaminBooks.Model
         public string LastName;
         public string Email;
         public bool IsDeleted = false;
-        public bool IsAdmin =  false;
-
-        private string Password;
+        public bool IsAdmin = false;
+        public string Password;
 
         public User() { }
 
@@ -53,6 +52,9 @@ namespace JaminBooks.Model
                 new Param("Password", Password),
                 new Param("IsDeleted", IsDeleted),
                 new Param("IsAdmin", IsAdmin));
+
+            if (dt.Rows.Count > 0)
+                UserID = (int) dt.Rows[0]["UserID"];
         }
 
         public void Delete()
@@ -67,7 +69,7 @@ namespace JaminBooks.Model
                 new Param("Email", Email),
                 new Param("Password", Password));
             id = results.Rows.Count != 1 ? null : results.Rows[0]["UserID"] as int?;
-            return results.Rows.Count == 1;
+            return results.Rows.Count >= 1;
         }
 
         public static bool Exists(string Email, string Password)
@@ -75,7 +77,14 @@ namespace JaminBooks.Model
             DataTable results = SQL.Execute("uspGetUserByEmailAndPassword",
                 new Param("Email", Email),
                 new Param("Password", Password));
-            return results.Rows.Count == 1;
+            return results.Rows.Count >= 1;
+        }
+
+        public static bool Exists(string Email)
+        {
+            DataTable results = SQL.Execute("uspGetUserByEmail",
+                new Param("Email", Email));
+            return results.Rows.Count >= 1;
         }
     }
 }

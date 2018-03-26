@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace JaminBooks.Tools
@@ -19,17 +20,28 @@ namespace JaminBooks.Tools
             return ID == null ? null : new User(ID.Value);
        }
 
+        public static void LogoutCurrentUser(HttpContext context)
+        {
+            context.Session.Remove("UserID");
+        }
+
         public static bool UserExists(HttpRequest request)
         {
-            KeyValuePair<string, string> user = GetCredentials(request);
-            return User.Exists(user.Key, user.Value);
+            Dictionary<string, string> user = GetCredentials(request);
+            return User.Exists(user["Email"], Hash(user["Password"]));
+        }
+
+        public static bool EmailExists(HttpRequest request)
+        {
+            Dictionary<string, string> user = GetCredentials(request);
+            return User.Exists(user["Email"]);
         }
 
         public static bool SetCurrentUser(HttpRequest request)
         {
-            KeyValuePair<string, string> user = GetCredentials(request);
+            Dictionary<string, string> user = GetCredentials(request);
             int? UserID;
-            if (User.Exists(user.Key, user.Value, out UserID) 
+            if (User.Exists(user["Email"], Hash(user["Password"]), out UserID) 
                 && !new User(UserID.Value).IsDeleted)
             {
                 request.HttpContext.Session.SetInt32("UserID", UserID.Value);
@@ -38,7 +50,37 @@ namespace JaminBooks.Tools
             else return false;
         }
 
-        public static KeyValuePair<string, string> GetCredentials(HttpRequest request)
+        public static bool CreateUser(HttpRequest request)
+        {
+            try
+            {
+                Dictionary<string, string> creds = GetCredentials(request);
+
+                User user = new User();
+                user.FirstName = creds["FirstName"];
+                user.LastName = creds["LastName"];
+                user.Email = creds["Email"];
+                user.Password = Hash(creds["Password"]);
+
+                if (user.FirstName != "" &&
+                    user.LastName != "" &&
+                    !User.Exists(user.Email) &&
+                    new Regex("^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")
+                    .IsMatch(user.Email))
+                {
+                    user.Save();
+                    request.HttpContext.Session.SetInt32("UserID", user.UserID);
+                    return true;
+                }
+                else return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static Dictionary<string, string> GetCredentials(HttpRequest request)
         {
             MemoryStream stream = new MemoryStream();
             request.Body.CopyTo(stream);
@@ -52,7 +94,7 @@ namespace JaminBooks.Tools
                         JsonConvert.DeserializeObject<Dictionary<string, string>>(requestBody);
                     if (user != null)
                     {
-                        return new KeyValuePair<string, string>(user["Email"], Hash(user["Password"]));
+                        return user;
                     }
                 }
             }
