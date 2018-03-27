@@ -1,11 +1,7 @@
 ﻿@Html.AntiForgeryToken()
-<div id="authenticationModal" class="modal" tabindex="-1" role="dialog">
+<div id="authenticationModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                <h3 class="modal-title" id="myModalLabel">Login to Jamin' Books</h3>
-            </div>
             <div class="modal-body">
                 <div class="row" id="LoginDiv">
                     <div class="col-xs-6">
@@ -20,19 +16,20 @@
                                 <input type="password" class="form-control" id="Password" name="password" title="Please enter your password">
                                 <span class="help-block"></span>
                             </div>
-                            <div id="loginErrorMsg" class="alert text-danger" style="display:none">Wrong username or password</div>
+                            <div id="loginErrorMsg" class="text-danger" style="display:none">Incorrect username or password</div>
               
-                            <button id="Login" class="btn btn-success btn-block">Login</button>
+                            <button id="Login" class="btn btn-secondary btn-block">Login</button>
                         </div>
                     </div>
                     <div class="col-xs-6">
                         <p class="lead">Register now for <span class="text-success">FREE</span></p>
                         <ul class="list-unstyled" style="line-height: 2">
-                            <li><span class="fa fa-check text-success"></span> Rate books</li>
-                            <li><span class="fa fa-check text-success"></span> Place orders</li>
-                            <li><span class="fa fa-check text-success"></span> Fast checkout</li>
+                            <li><span class="fa fa-check text-success"></span> Rate Books</li>
+                            <li><span class="fa fa-check text-success"></span> Special Deals</li>
+                            <li><span class="fa fa-check text-success"></span> Save Addresses and Payment</li>
+                            <li><span class="fa fa-check text-success"></span> Fast Checkout</li>
                         </ul>
-                        <p><button id="RegisterView" class="btn btn-info btn-block">Register Now</button></p>
+                        <p><button id="RegisterView" class="btn btn-info btn-block btn-dark-red">Register Now</button></p>
                     </div>
                 </div>
                 <div class="row" id="RegistrationDiv" style="display:none">
@@ -97,7 +94,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-6 col-xs-offset-3">
-                                    <input id="Register" type="submit" value="Register" class="btn btn-primary btn-block">
+                                    <input id="Register" type="submit" value="Register" class="btn btn-primary btn-block btn-dark-red">
                                 </div>
                             </div>
                         </div>

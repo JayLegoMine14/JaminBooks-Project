@@ -1,5 +1,7 @@
 body {
-    padding-top: 50px;
+    padding-top: 80px;
+    color: #020202;
+    background-color: #f0e7d8;
 }
 
 /* Wrapping element */
@@ -25,13 +27,90 @@ body {
     margin: 15px;
 }
 
+.navbar { 
+    background-color: #2b303a;
+}
+
+.navbar-collapse:not(.in) {
+    margin-top: 15px;
+}
+
+.navbar-collapse {
+    font-size: 2em;
+}
+
+.navbar-nav:not(.navbar-right) a {
+    color: white !important;
+    transition: .2s;
+}
+
+    .navbar-nav:not(.navbar-right) a:hover {
+        border-bottom: 4px solid #a31631;
+    }
+
+.modal {
+    text-align: center;
+    padding: 0 !important;
+}
+
+    .modal:before {
+        content: '';
+        display: inline-block;
+        height: 80%;
+        vertical-align: middle;
+        margin-right: -4px;
+    }
+
+.modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.modal-header {
+    background-color: #a31631;
+}
+
+.modal-body {
+    overflow: hidden;
+}
+
+#loginErrorMsg {
+    padding: 10px 0;
+    text-align:center;
+
+}
+
+.btn-dark-red {
+    background-color: #650d1b;
+    border-color: #500A15;
+}
+
+    .btn-dark-red:hover, .btn-dark-red:active, .btn-dark-red:focus, .btn-dark-red:link {
+        background-color: #500A15 !important;
+        border-color: #400810 !important;
+    }
+
 .back-btn {
-    color:#aaa;
+    color: #aaa;
     margin-bottom: 5px;
 }
 
 .back-btn:hover {
     color: #888;
+}
+
+.brand-logo {
+    height: 80px;
+    display:inline;
+    padding: 5px;
+}
+
+.brand-name {
+    height: 40px;
+    display: inline;
+    margin-left: 20px;
+    margin-right: 40px;
 }
 
 .card {
@@ -50,24 +129,24 @@ body {
     text-align:center;
 }
 
-.line-hieght-9{
-    line-height: .9;
+.line-height-0 {
+    line-height: 0 !important;
 }
 
 .margin-top-10{
     margin-top: 10px;
 }
 
-.light-gray-text {
-    color: #9d9d9d;
+.white-text {
+    color: white !important;
 }
 
 footer {
-    background: #111 !important;
+    background: #650d1b !important;
     padding: 20px 0;
 }
     footer a {
-        color: #9d9d9d;
+        color: white;
         text-decoration: none !important;
         background-color: transparent;
         -webkit-text-decoration-skip: objects;
@@ -91,12 +170,8 @@ footer {
 
         footer ul.social li a,
         footer ul.quick-links li a {
-            color: #9d9d9d;
+            color: white;
         }
-
-            footer ul.social li a:hover {
-                color: #ffffff;
-            }
 
     footer ul.quick-links li {
         padding: 3px 0;
