@@ -36,63 +36,72 @@
                     </div>
                 </div>
                 <div class="row" id="RegistrationDiv" style="display:none">
-                    <div class="col-xs-12">
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-6">
-                                <div class="form-group">
-                                    <input type="text" id="RegFirstName" class="form-control input-sm" placeholder="First Name">
-                                </div>
-                            </div>
-                            <div class="col-xs-6 col-sm-6 col-md-6">
-                                <div class="form-group">
-                                    <input type="text" id="RegLastName" class="form-control input-sm" placeholder="Last Name">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="RegEmail" class="form-control input-sm" placeholder="Email Address">
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-6">
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <div class="form-group">
-                                            <input type="password" id="RegPassword" class="form-control input-sm" placeholder="Password">
-                                        </div>
+                    <a>
+                        <span aria-hidden="true"><span class="back-btn fa fa-lg fa-chevron-left"></span></span><span class="sr-only">Close</span>
+                    </a>
+                        <div class="col-xs-12">
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" id="RegFirstName" class="form-control input-sm" maxlength="50" placeholder="First Name">
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <div class="form-group">
-                                            <input type="password" id="RegPasswordConfirm" class="form-control input-sm" placeholder="Confirm Password">
-                                        </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" id="RegLastName" class="form-control input-sm" maxlength="50" placeholder="Last Name">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xs-6 col-sm-6 col-md-6">
-                                <ul class="list-unstyled" style="line-height: 1.7">
-                                    <li><span id="CharsRed" class="fa fa-times text-danger"></span>
-                                    <span id="CharsGreen" class="fa fa-check text-success" style="display:none"></span> 
-                                    At least 8 characters</li>
+                            <div class="form-group">
+                                <input type="email" id="RegEmail" class="form-control input-sm" maxlength="100" placeholder="Email Address">
+                            </div>
 
-                                    <li><span id="CapsRed" class="fa fa-times text-danger"></span>
-                                    <span id="CapsGreen" class="fa fa-check text-success" style="display:none"></span> 
-                                    Capitals and numbers</li>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <input type="password" id="RegPassword" class="form-control input-sm" placeholder="Password">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <input type="password" id="RegPasswordConfirm" class="form-control input-sm" placeholder="Confirm Password">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <ul class="list-unstyled" style="line-height: 1.7">
+                                        <li>
+                                            <span id="CharsRed" class="fa fa-times text-danger"></span>
+                                            <span id="CharsGreen" class="fa fa-check text-success" style="display:none"></span>
+                                            At least 8 characters
+                                        </li>
 
-                                    <li><span id="MatchRed" class="fa fa-times text-danger"></span>
-                                    <span id="MatchGreen" class="fa fa-check text-success" style="display:none"></span> 
-                                    Matching passwords</li>
-                                </ul>
+                                        <li>
+                                            <span id="CapsRed" class="fa fa-times text-danger"></span>
+                                            <span id="CapsGreen" class="fa fa-check text-success" style="display:none"></span>
+                                            Capitals and numbers
+                                        </li>
+
+                                        <li>
+                                            <span id="MatchRed" class="fa fa-times text-danger"></span>
+                                            <span id="MatchGreen" class="fa fa-check text-success" style="display:none"></span>
+                                            Matching passwords
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-xs-offset-3">
+                                    <input id="Register" type="submit" value="Register" class="btn btn-primary btn-block">
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-xs-6 col-xs-offset-3">
-                                <input id="Register" type="submit" value="Register" class="btn btn-primary btn-block">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+</div>
             </div>
         </div>
     </div>
@@ -119,6 +128,13 @@
                 $("#Password").removeAttr("style");
                 showLogin();
         })
+
+        $(".back-btn").click(function () {
+            $("#loginErrorMsg").hide();
+            $("#Email").removeAttr("style");
+            $("#Password").removeAttr("style");
+            showLogin();
+        });
 
         $("#Login").click(function () {
             $("#loginErrorMsg").hide();

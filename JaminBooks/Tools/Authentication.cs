@@ -64,6 +64,9 @@ namespace JaminBooks.Tools
 
                 if (user.FirstName != "" &&
                     user.LastName != "" &&
+                    user.FirstName.Length <= 50 &&
+                    user.LastName.Length <= 50 &&
+                    user.Email.Length <= 100 &&
                     !User.Exists(user.Email) &&
                     new Regex("^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")
                     .IsMatch(user.Email))
