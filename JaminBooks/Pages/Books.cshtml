@@ -5,6 +5,8 @@
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName;
 }
+
+<script>$("a.books").addClass("active")</script>
 <h2>@ViewData["Title"]</h2>
 <h3>@Model.Message</h3>
 

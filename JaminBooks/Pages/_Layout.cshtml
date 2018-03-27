@@ -9,10 +9,8 @@
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
         <link rel="stylesheet" href="~/css/jquery-confirm.css" />
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     </environment>
     <environment exclude="Development">
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" href="~/css/jquery-confirm.css" />
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -22,6 +20,7 @@
 </head>
 
 <environment include="Development">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/js/sha256.min.js"></script>
     <script src="~/js/jquery-confirm.js"></script>
@@ -29,6 +28,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 </environment>
 <environment exclude="Development">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
     <script src="~/js/sha256.min.js" asp-append-version="true"></script>
     <script src="~/js/jquery-confirm.js" asp-append-version="true"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -49,54 +49,50 @@
 @RenderSection("Scripts", required: false)
 
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <img class="brand-logo" src="~/images/slogo.png" />
-                <img class="brand-name" src="~/images/mnamewhite.png" />
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-page="/Index">Home</a></li>
-                    <li><a asp-page="/Books">Books</a></li>
+            <img class="brand-logo" src="~/images/slogo.png" />
+            <img class="brand-name" src="~/images/mnamewhite.png" />
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="#Navbar">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item ml-2"><a class="nav-link home" asp-page="/Index">Home</a></li>
+                    <li class="nav-item ml-2"><a class="nav-link books" asp-page="/Books">Books</a></li>
                 </ul>
 
-                <ul class="nav navbar-nav navbar-right">
-                @if (Convert.ToBoolean(ViewData["IsLoggedIn"]))
-                {
-                    <li>
-                        <div class="dropdown">
-                            <button class="btn btn-dark-red dropdown-toggle btn-lg white-text" type="button" id="UserDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                @ViewData["Name"] <i class="fa fa-chevron-down"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="UserDropDown">
-                                <li><a href="#">My Account</a></li>
-                                <li><a href="/Security/Logout" class="dropdown-item">Logout</a></li>    
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-lg fa-shopping-cart line-height-0"></i></a>
-                    </li>
-                }
-                else
-                {
-                    <li>
-                        <button type="button" class="btn btn-primary btn-lg btn-dark-red" data-toggle="modal" data-target="#authenticationModal">
-                            Login
+                <ul class="navbar-nav navbar-right">
+                    @if (Convert.ToBoolean(ViewData["IsLoggedIn"]))
+            {
+                <li class="nav-item">
+                    <div class="dropdown">
+                        <button class="btn btn-dark-red dropdown-toggle btn-lg white-text" type="button" id="UserDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            @ViewData["Name"] <i class="fa fa-chevron-down"></i>
                         </button>
-                    </li>
-                }
+                        <ul class="dropdown-menu" aria-labelledby="UserDropDown">
+                            <li><a class="dropdown-item" href="#">My Account</a></li>
+                            <li><a href="/Security/Logout" class="dropdown-item">Logout</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item ml-4">
+                    <a href="#" class="cart-icon"><i class="fas fa-shopping-cart line-height-0"></i></a>
+                </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <button type="button" class="btn btn-primary btn-lg btn-dark-red" data-toggle="modal" data-target="#authenticationModal">
+                Login
+            </button>
+        </li>
+}
                 </ul>
             </div>
         </div>
-    </nav>
+</nav>
+
     <div class="container body-content">
         @RenderBody()
     </div>
@@ -105,18 +101,18 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
                     <ul class="list-unstyled list-inline social text-center">
-                        <li class="list-inline-item"><a><i class="fa fa-facebook-square"></i></a></li>
-                        <li class="list-inline-item"><a><i class="fa fa-twitter-square"></i></a></li>
-                        <li class="list-inline-item"><a><i class="fa fa-envelope"></i></a></li>
+                        <li class="list-inline-item"><a><i class="fab fa-facebook-square"></i></a></li>
+                        <li class="list-inline-item"><a><i class="fab fa-twitter-square"></i></a></li>
+                        <li class="list-inline-item"><a><i class="fas fa-envelope"></i></a></li>
                     </ul>
                 </div>
-                <hr/>
+                <hr />
             </div>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 text-center white-text">
                     <p>&copy James And Michael</p>
                 </div>
-                <hr/>
+                <hr />
             </div>
         </div>
     </footer>
