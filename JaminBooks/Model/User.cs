@@ -10,14 +10,39 @@ namespace JaminBooks.Model
     public class User
     {
         public int UserID { private set; get; } = -1;
-        public DateTime CreationDate { get; }
+        public DateTime CreationDate { private set; get; }
 
         public string FirstName;
         public string LastName;
         public string Email;
         public bool IsDeleted = false;
         public bool IsAdmin = false;
+        public bool IsConfirmed = false;
+        public string ConfirmationCode;
         public string Password;
+
+        public List<Address> Addresses {
+            get
+            {
+                return Address.GetAddresses(this.UserID);
+            }
+        }
+
+        public List<Card> Cards
+        {
+            get
+            {
+                return Card.GetCards(this.UserID);
+            }
+        }
+
+        public List<Phone> Phones
+        {
+            get
+            {
+                return Phone.GetPhones(this.UserID);
+            }
+        }
 
         public User() { }
 
@@ -35,6 +60,8 @@ namespace JaminBooks.Model
                 this.Email = (String) dt.Rows[0]["Email"];
                 this.IsDeleted = (Boolean) dt.Rows[0]["IsDeleted"];
                 this.IsAdmin = (Boolean) dt.Rows[0]["IsAdmin"];
+                this.IsConfirmed = (Boolean)dt.Rows[0]["IsConfirmed"];
+                this.ConfirmationCode = (String)dt.Rows[0]["ConfirmationCode"];
             }
             else
             {
@@ -51,7 +78,9 @@ namespace JaminBooks.Model
                 new Param("Email", Email),
                 new Param("Password", Password),
                 new Param("IsDeleted", IsDeleted),
-                new Param("IsAdmin", IsAdmin));
+                new Param("IsAdmin", IsAdmin),
+                new Param("IsConfirmed", IsConfirmed),
+                new Param("ConfirmationCode", ConfirmationCode));
 
             if (dt.Rows.Count > 0)
                 UserID = (int) dt.Rows[0]["UserID"];
@@ -61,6 +90,21 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspDeleteUser", new Param("UserID", UserID));
             UserID = -1;
+        }
+
+        public void AddAddress(Address a)
+        {
+            a.AddUser(this.UserID);
+        }
+
+        public void AddCard(Card c)
+        {
+            c.User = this;
+        }
+
+        public void AddPhone(Phone p)
+        {
+            p.AddUser(this.UserID);
         }
 
         public static bool Exists(string Email, string Password, out int? id)

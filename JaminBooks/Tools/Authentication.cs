@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,6 +16,11 @@ namespace JaminBooks.Tools
 {
     public class Authentication
     {
+       public static string Email;
+       public static string Password;
+       public static string Name;
+       static Random RANDOM = new Random();
+
        public static User GetCurrentUser(HttpContext context)
        {
             int? ID = context.Session.GetInt32("UserID");
@@ -71,16 +78,77 @@ namespace JaminBooks.Tools
                     new Regex("^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")
                     .IsMatch(user.Email))
                 {
+                    user.ConfirmationCode = GenerateConfirmationCode();
                     user.Save();
+                    SendConfirmationEmail(request, user);
                     request.HttpContext.Session.SetInt32("UserID", user.UserID);
                     return true;
                 }
                 else return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
+        }
+
+        public static void SendConfirmationEmail(HttpRequest request, User u)
+        {
+            var fromAddress = new MailAddress(Email, Name);
+            var toAddress = new MailAddress(u.Email, u.FirstName + " " + u.LastName);
+            string callbackURL = "http://" + request.Host + @"/Security/Confirm?id=" + u.UserID + "&c=" + u.ConfirmationCode;
+            string subject = "Email Confirmation | Jamin' Books";
+            string body = @"
+            <div style = ""background-color:#fff;margin:0 auto 0 auto;padding:30px 0 30px 0;color:#4f565d;font-size:13px;line-height:20px;font-family:""Helvetica Neue"",Arial,sans-serif;text-align:left;"">
+                        <center>
+                          <table style = ""width:550px;text-align:center"">
+                            <tbody>
+                              <tr>
+                                <td colspan = ""2"" style = ""padding:30px 0;"">
+                                  <p style = ""color:#1d2227;line-height:28px;font-size:22px;margin:12px 10px 20px 10px;font-weight:400;""> Welcome to Jamin' Books.</p>
+                                  <p style = ""color:#1d2227;margin:0 10px 10px 10px;padding:0;""> We'd like to make sure we got your email address right:</p>
+                                  <p>
+                                    <a style = ""display:inline-block;text-decoration:none;padding:15px 20px;background-color:#650d1b;border:1px solid #500A15;border-radius:3px;color:#FFF;font-weight:bold;"" href = """
+                                        + callbackURL + @""" target = ""_blank"" > Confirm Email Address </ a >
+                                  </p>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </center>
+                      </div>";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, Password)
+            };
+
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                IsBodyHtml = true,
+                Body = body
+            })
+            {
+                smtp.Send(message);
+            }
+        }
+
+        public static string GenerateConfirmationCode()
+        {
+            const string allowedChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789";
+            char[] chars = new char[64];
+
+            for (int i = 0; i < 64; i++)
+            {
+                chars[i] = allowedChars[RANDOM.Next(0, allowedChars.Length)];
+            }
+
+            return new string(chars);
         }
 
         public static Dictionary<string, string> GetCredentials(HttpRequest request)

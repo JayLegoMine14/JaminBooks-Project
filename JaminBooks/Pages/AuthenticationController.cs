@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JaminBooks.Model;
 using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,26 @@ namespace JaminBooks.Pages
         {
             Authentication.LogoutCurrentUser(HttpContext);
             Response.Redirect("/Index");
+        }
+
+        [Route("Security/Confirm")]
+        public void Confirm(int id)
+        {
+            string code = HttpContext.Request.Query["c"].ToString();
+            try
+            {
+                User u = new User(id);
+                if(u.ConfirmationCode == code)
+                {
+                    u.IsConfirmed = true;
+                    u.Save();
+                    Response.Redirect("/Confirmed");
+                }
+                else Response.Redirect("/Error");
+            }catch
+            {
+                Response.Redirect("/Error");
+            }
         }
     }
 }

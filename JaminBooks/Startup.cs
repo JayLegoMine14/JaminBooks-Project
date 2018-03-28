@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JaminBooks.Model;
+using JaminBooks.Tools;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,9 @@ namespace JaminBooks
         {
             Configuration = configuration;
             SQL.ConnectionString = Configuration["ConnectionString"];
+            Authentication.Email = Configuration["Email"];
+            Authentication.Password = Configuration["EmailPassword"];
+            Authentication.Name = Configuration["WebsiteName"];
         }
 
         public IConfiguration Configuration { get; }
