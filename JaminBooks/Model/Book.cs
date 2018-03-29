@@ -66,6 +66,23 @@ namespace JaminBooks.Model
 
             if (dt.Rows.Count > 0)
                 BookID = (int)dt.Rows[0]["BookID"];
+            else
+            {
+                throw new Exception("Invalid Book ID");
+            }
+        }
+
+        public void delete()
+        {
+            DataTable dt = SQL.Execute("uspDeleteBook",
+                new Param("BookID", BookID));
+            if (dt.Rows.Count > 0)
+                IsDeleted = true;
+            else
+            {
+                throw new Exception("Invalid  ID");
+            }
+
         }
     }
 }
