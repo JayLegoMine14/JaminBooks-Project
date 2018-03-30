@@ -20,7 +20,7 @@ namespace JaminBooks.Model
         public bool IsConfirmed = false;
         public string ConfirmationCode;
         public string Password;
-        public string IconLink;
+        public byte[] Icon;
 
         public List<Address> Addresses {
             get
@@ -63,7 +63,7 @@ namespace JaminBooks.Model
                 this.IsAdmin = (Boolean) dt.Rows[0]["IsAdmin"];
                 this.IsConfirmed = (Boolean)dt.Rows[0]["IsConfirmed"];
                 this.ConfirmationCode = dt.Rows[0]["ConfirmationCode"] == DBNull.Value ? null : (String)dt.Rows[0]["ConfirmationCode"];
-                this.IconLink = dt.Rows[0]["IconLink"] == DBNull.Value ? null : (String) dt.Rows[0]["IconLink"];
+                this.Icon = dt.Rows[0]["Icon"] == DBNull.Value ? null : (byte[]) dt.Rows[0]["Icon"];
             }
             else
             {
@@ -73,7 +73,7 @@ namespace JaminBooks.Model
 
         private User(int UserID, string FirstName, string LastName, DateTime CreationDate, 
             string Password, string Email, bool IsDeleted, bool IsAdmin, bool IsConfirmed, 
-            string ConfirmationCode, string IconLink)
+            string ConfirmationCode, byte[] Icon)
         {
             this.UserID = UserID;
             this.FirstName = FirstName;
@@ -85,7 +85,7 @@ namespace JaminBooks.Model
             this.IsAdmin = IsAdmin;
             this.IsConfirmed = IsConfirmed;
             this.ConfirmationCode = ConfirmationCode;
-            this.IconLink = IconLink;
+            this.Icon = Icon;
         }
 
         public void Save()
@@ -100,7 +100,7 @@ namespace JaminBooks.Model
                 new Param("IsAdmin", IsAdmin),
                 new Param("IsConfirmed", IsConfirmed),
                 new Param("ConfirmationCode", ConfirmationCode),
-                new Param("IconLink", (object) IconLink ?? DBNull.Value));
+                new Param("Icon", (object) Icon ?? DBNull.Value));
 
             if (dt.Rows.Count > 0)
                 UserID = (int) dt.Rows[0]["UserID"];
@@ -143,7 +143,7 @@ namespace JaminBooks.Model
                     (Boolean)dr["IsAdmin"],
                     (Boolean)dr["IsConfirmed"],
                     (String)dr["ConfirmationCode"],
-                    (String)dr["IconLink"]));
+                    (byte[])dr["Icon"]));
             return users;
         }
 

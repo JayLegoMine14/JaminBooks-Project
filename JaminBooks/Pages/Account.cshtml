@@ -3,16 +3,86 @@
 @{
     ViewData["Title"] = "Account";
     Layout = "~/Pages/_Layout.cshtml";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+
+    var userIcon = Model.DisplayUser.Icon != null ?
+    String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.DisplayUser.Icon)) :
+    "";
 }
 
-@if( Model.DisplayUser != null)
+@if ( Model.DisplayUser != null)
 {
 <div class="container">
     <div class="row">
         <div class="col-12 text-center">
-            @(Model.DisplayUser.FirstName + " " + Model.DisplayUser.LastName)
+            <div style="width:300px;height:300px;overflow:hidden;border-radius:300px;margin:auto;">
+                <img id="Image" src="@userIcon" />
+            </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-12 text-center">
+            <h3>@(Model.DisplayUser.FirstName + " " + Model.DisplayUser.LastName)</h3>
+        </div>
+    </div>
+    <div>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+    </div>
+    <button id="Button">Upload</button>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#Button").click(function () {
+            var canvas = document.createElement("canvas");
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var img = new Image();
+                img.onload = function () {
+                    var size = 300;
+                    if (img.height > img.width) {
+                        canvas.width = size;
+                        canvas.height = size * img.height / img.width;
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    } else {
+                        canvas.width = size * img.width / img.height;
+                        canvas.height = size;
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    }
+
+                    $("#Image").get(0).src = canvas.toDataURL('image/png')
+
+                    $.ajax({
+                        type: "POST",
+                        url: "Model/SaveUserIcon",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify({
+                            Icon: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, '')
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+
+                        },
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+                }
+                img.src = reader.result;
+            }
+            reader.readAsDataURL($("#customFile").get(0).files[0]); 
+        });
+    });
+</script>
+
 }
 

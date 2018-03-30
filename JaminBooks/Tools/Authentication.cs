@@ -35,19 +35,19 @@ namespace JaminBooks.Tools
 
         public static bool UserExists(HttpRequest request)
         {
-            Dictionary<string, string> user = GetCredentials(request);
+            Dictionary<string, string> user = AJAX.GetFields(request);
             return User.Exists(user["Email"], Hash(user["Password"]));
         }
 
         public static bool EmailExists(HttpRequest request)
         {
-            Dictionary<string, string> user = GetCredentials(request);
+            Dictionary<string, string> user = AJAX.GetFields(request);
             return User.Exists(user["Email"]);
         }
 
         public static bool SetCurrentUser(HttpRequest request)
         {
-            Dictionary<string, string> user = GetCredentials(request);
+            Dictionary<string, string> user = AJAX.GetFields(request);
             int? UserID;
             if (User.Exists(user["Email"], Hash(user["Password"]), out UserID) 
                 && !new User(UserID.Value).IsDeleted)
@@ -62,7 +62,7 @@ namespace JaminBooks.Tools
         {
             try
             {
-                Dictionary<string, string> creds = GetCredentials(request);
+                Dictionary<string, string> creds = AJAX.GetFields(request);
 
                 User user = new User();
                 user.FirstName = creds["FirstName"];
@@ -177,28 +177,6 @@ namespace JaminBooks.Tools
             }
 
             return new string(chars);
-        }
-
-        public static Dictionary<string, string> GetCredentials(HttpRequest request)
-        {
-            MemoryStream stream = new MemoryStream();
-            request.Body.CopyTo(stream);
-            stream.Position = 0;
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                string requestBody = reader.ReadToEnd();
-                if (requestBody.Length > 0)
-                {
-                    Dictionary<string, string> user = 
-                        JsonConvert.DeserializeObject<Dictionary<string, string>>(requestBody);
-                    if (user != null)
-                    {
-                        return user;
-                    }
-                }
-            }
-
-            throw new Exception("Invalid JSON Object");
         }
 
         public static string Hash(string data)
