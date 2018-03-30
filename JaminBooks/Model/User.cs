@@ -20,6 +20,7 @@ namespace JaminBooks.Model
         public bool IsConfirmed = false;
         public string ConfirmationCode;
         public string Password;
+        public string IconLink;
 
         public List<Address> Addresses {
             get
@@ -61,12 +62,30 @@ namespace JaminBooks.Model
                 this.IsDeleted = (Boolean) dt.Rows[0]["IsDeleted"];
                 this.IsAdmin = (Boolean) dt.Rows[0]["IsAdmin"];
                 this.IsConfirmed = (Boolean)dt.Rows[0]["IsConfirmed"];
-                this.ConfirmationCode = (String)dt.Rows[0]["ConfirmationCode"];
+                this.ConfirmationCode = dt.Rows[0]["ConfirmationCode"] == DBNull.Value ? null : (String)dt.Rows[0]["ConfirmationCode"];
+                this.IconLink = dt.Rows[0]["IconLink"] == DBNull.Value ? null : (String) dt.Rows[0]["IconLink"];
             }
             else
             {
                 throw new Exception("Invalid User ID");
             }
+        }
+
+        private User(int UserID, string FirstName, string LastName, DateTime CreationDate, 
+            string Password, string Email, bool IsDeleted, bool IsAdmin, bool IsConfirmed, 
+            string ConfirmationCode, string IconLink)
+        {
+            this.UserID = UserID;
+            this.FirstName = FirstName;
+            this.LastName = LastName;
+            this.CreationDate = CreationDate;
+            this.Password = Password;
+            this.Email = Email;
+            this.IsDeleted = IsDeleted;
+            this.IsAdmin = IsAdmin;
+            this.IsConfirmed = IsConfirmed;
+            this.ConfirmationCode = ConfirmationCode;
+            this.IconLink = IconLink;
         }
 
         public void Save()
@@ -80,7 +99,8 @@ namespace JaminBooks.Model
                 new Param("IsDeleted", IsDeleted),
                 new Param("IsAdmin", IsAdmin),
                 new Param("IsConfirmed", IsConfirmed),
-                new Param("ConfirmationCode", ConfirmationCode));
+                new Param("ConfirmationCode", ConfirmationCode),
+                new Param("IconLink", (object) IconLink ?? DBNull.Value));
 
             if (dt.Rows.Count > 0)
                 UserID = (int) dt.Rows[0]["UserID"];
@@ -105,6 +125,26 @@ namespace JaminBooks.Model
         public void AddPhone(Phone p)
         {
             p.AddUser(this.UserID);
+        }
+
+        public static List<User> GetUsers()
+        {
+            DataTable dt = SQL.Execute("uspGetUsers");
+            List<User> users = new List<User>();
+            foreach (DataRow dr in dt.Rows)
+                users.Add(new User(
+                    (int)dr["UserID"],
+                    (String)dr["FirstName"],
+                    (String)dr["LastName"],
+                    (DateTime)dr["CreationDate"],
+                    (String)dr["Password"],
+                    (String)dr["Email"],
+                    (Boolean)dr["IsDeleted"],
+                    (Boolean)dr["IsAdmin"],
+                    (Boolean)dr["IsConfirmed"],
+                    (String)dr["ConfirmationCode"],
+                    (String)dr["IconLink"]));
+            return users;
         }
 
         public static bool Exists(string Email, string Password, out int? id)

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -57,7 +58,7 @@ namespace JaminBooks.Tools
             else return false;
         }
 
-        public static bool CreateUser(HttpRequest request)
+        public static int CreateUser(HttpRequest request)
         {
             try
             {
@@ -69,72 +70,99 @@ namespace JaminBooks.Tools
                 user.Email = creds["Email"];
                 user.Password = Hash(creds["Password"]);
 
+                var phoneNumber = creds["Phone"];
+
                 if (user.FirstName != "" &&
                     user.LastName != "" &&
                     user.FirstName.Length <= 50 &&
                     user.LastName.Length <= 50 &&
                     user.Email.Length <= 100 &&
+                    phoneNumber.Length <= 20 &&
                     !User.Exists(user.Email) &&
                     new Regex("^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")
-                    .IsMatch(user.Email))
+                    .IsMatch(user.Email) &&
+                    new Regex("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$")
+                    .IsMatch(phoneNumber))
                 {
                     user.ConfirmationCode = GenerateConfirmationCode();
+
+                    Phone p = new Phone();
+                    p.Number = phoneNumber;
+                    p.Category = creds["PhoneCat"];
+                    p.Save();
+
                     user.Save();
-                    SendConfirmationEmail(request, user);
+                    user.AddPhone(p);
+                    if (!SendConfirmationEmail(request, user)) return 2;
                     request.HttpContext.Session.SetInt32("UserID", user.UserID);
-                    return true;
+                    return 1;
                 }
-                else return false;
+                else return 0;
             }
             catch (Exception e)
             {
-                return false;
+                return 0;
             }
         }
 
-        public static void SendConfirmationEmail(HttpRequest request, User u)
+        public static bool SendConfirmationEmail(HttpRequest request, User u)
         {
-            var fromAddress = new MailAddress(Email, Name);
-            var toAddress = new MailAddress(u.Email, u.FirstName + " " + u.LastName);
-            string callbackURL = "http://" + request.Host + @"/Security/Confirm?id=" + u.UserID + "&c=" + u.ConfirmationCode;
-            string subject = "Email Confirmation | Jamin' Books";
-            string body = @"
-            <div style = ""background-color:#fff;margin:0 auto 0 auto;padding:30px 0 30px 0;color:#4f565d;font-size:13px;line-height:20px;font-family:""Helvetica Neue"",Arial,sans-serif;text-align:left;"">
-                        <center>
-                          <table style = ""width:550px;text-align:center"">
-                            <tbody>
-                              <tr>
-                                <td colspan = ""2"" style = ""padding:30px 0;"">
-                                  <p style = ""color:#1d2227;line-height:28px;font-size:22px;margin:12px 10px 20px 10px;font-weight:400;""> Welcome to Jamin' Books.</p>
-                                  <p style = ""color:#1d2227;margin:0 10px 10px 10px;padding:0;""> We'd like to make sure we got your email address right:</p>
-                                  <p>
-                                    <a style = ""display:inline-block;text-decoration:none;padding:15px 20px;background-color:#650d1b;border:1px solid #500A15;border-radius:3px;color:#FFF;font-weight:bold;"" href = """
-                                        + callbackURL + @""" target = ""_blank"" > Confirm Email Address </ a >
-                                  </p>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </center>
-                      </div>";
+            try
+            {
+                var fromAddress = new MailAddress(Email, Name);
+                var toAddress = new MailAddress(u.Email, u.FirstName + " " + u.LastName);
+                string callbackURL = "http://" + request.Host + @"/Security/Confirm?id=" + u.UserID + "&c=" + u.ConfirmationCode;
+                string subject = "Email Confirmation | Jamin' Books";
 
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, Password)
-            };
+                LinkedResource res = new LinkedResource("wwwroot/images/slogo.png");
+                res.ContentId = Guid.NewGuid().ToString();
 
-            using (var message = new MailMessage(fromAddress, toAddress)
+                string body = @"
+                <div style = ""background-color:#fff;margin:0 auto 0 auto;padding:30px 0 30px 0;color:#4f565d;font-size:13px;line-height:20px;font-family:""Helvetica Neue"",Arial,sans-serif;text-align:left;"">
+                            <center>
+                              <table style = ""width:550px;text-align:center"">
+                                <tbody>
+                                  <tr>
+                                    <td colspan = ""2"" style = ""padding:30px 0;"">
+                                      <img src='cid:" + res.ContentId + @"'/>
+                                      <p style = ""color:#1d2227;line-height:28px;font-size:22px;margin:12px 10px 20px 10px;font-weight:400;""> Welcome to Jamin' Books.</p>
+                                      <p style = ""color:#1d2227;margin:0 10px 10px 10px;padding:0;""> We'd like to make sure we got your email address right:</p>
+                                      <p>
+                                        <a style = ""display:inline-block;text-decoration:none;padding:15px 20px;background-color:#650d1b;border:1px solid #500A15;border-radius:3px;color:#FFF;font-weight:bold;"" href = """
+                                            + callbackURL + @""" target = ""_blank"" > Confirm Email Address </ a >
+                                      </p>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </center>
+                          </div>";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, Password)
+                };
+
+                AlternateView alternateView = AlternateView.CreateAlternateViewFromString(body, null, MediaTypeNames.Text.Html);
+                alternateView.LinkedResources.Add(res);
+
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    IsBodyHtml = true
+                })
+                {
+                    message.AlternateViews.Add(alternateView);
+                    smtp.Send(message);
+                    return true;
+                }
+            }catch(Exception e)
             {
-                Subject = subject,
-                IsBodyHtml = true,
-                Body = body
-            })
-            {
-                smtp.Send(message);
+                return false;
             }
         }
 

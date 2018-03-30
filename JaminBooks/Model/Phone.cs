@@ -74,5 +74,15 @@ namespace JaminBooks.Model
                     ));
             return phones;
         }
+
+        public static Dictionary<int, string> GetPhoneCategories()
+        {
+            DataTable dt = SQL.Execute("uspGetPhoneCategories");
+            Dictionary<int, string> cats = new Dictionary<int, string>();
+            foreach (DataRow dr in dt.Rows)
+                cats.Add((int)dr["PhoneCategoryID"], (String)dr["PhoneCategory"]);
+            return cats;
+        }
+
     }
 }

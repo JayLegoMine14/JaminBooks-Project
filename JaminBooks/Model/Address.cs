@@ -61,7 +61,7 @@ namespace JaminBooks.Model
             DataTable dt = SQL.Execute("uspSaveAddress",
                new Param("AddressID", AddressID),
                new Param("Line1", Line1),
-               new Param("Line1", Line1),
+               new Param("Line2", Line2),
                new Param("City", City),
                new Param("State", State),
                new Param("Country", Country),

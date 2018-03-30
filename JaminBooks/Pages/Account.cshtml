@@ -1,0 +1,18 @@
+﻿@page
+@model JaminBooks.Pages.AccountModel
+@{
+    ViewData["Title"] = "Account";
+    Layout = "~/Pages/_Layout.cshtml";
+}
+
+@if( Model.DisplayUser != null)
+{
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            @(Model.DisplayUser.FirstName + " " + Model.DisplayUser.LastName)
+        </div>
+    </div>
+</div>
+}
+
