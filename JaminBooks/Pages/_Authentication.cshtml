@@ -98,7 +98,7 @@
                         </div>
                         <div class="row">
                             <div class=" col-12 text-center mb-2">
-                                By registering an account, you are conseting to this site's use of cookies.
+                                By registering an account, you are consenting to this site's use of cookies.
                             </div>
                         </div>
                         <div class="row">
@@ -116,6 +116,15 @@
 <script>
     $(document).ready(function () {
 
+        $('body').keypress(function (ev) {
+
+            if (ev.which === 13)
+                if ($("#RegistrationDiv").is(":visible") && $("#RegistrationDiv").height() > 0)
+                    $('#Register').click();
+                else
+                    $('#Login').click();
+        });
+
         $.ajax({
             type: "POST",
             url: "Model/GetPhoneCategories",
@@ -132,15 +141,17 @@
         });
 
         $("#RegisterView").click(function () {
-            $("#loginErrorMsg").hide();
-            $("#Email").removeAttr("style");
-            $("#Password").removeAttr("style");
-            $("#LoginDiv").animate({ marginLeft: '-200%', marginRight: '200%' }, 350);
-            $("#LoginDiv").css("height", "0");
-            $("#RegistrationDiv").css("margin-left", "200%");
-            $("#RegistrationDiv").css("margin-right", "-200%");
-            $("#RegistrationDiv").show();
-            $("#RegistrationDiv").animate({ marginLeft: '0%', marginRight: '0%' }, 350);
+            if (!$("#RegistrationDiv").is(":visible") || !$("#RegistrationDiv").height() > 0) {
+                $("#loginErrorMsg").hide();
+                $("#Email").removeAttr("style");
+                $("#Password").removeAttr("style");
+                $("#LoginDiv").animate({ marginLeft: '-200%', marginRight: '200%' }, 350);
+                $("#LoginDiv").css("height", "0");
+                $("#RegistrationDiv").css("margin-left", "200%");
+                $("#RegistrationDiv").css("margin-right", "-200%");
+                $("#RegistrationDiv").show();
+                $("#RegistrationDiv").animate({ marginLeft: '0%', marginRight: '0%' }, 350);
+            }
         });
 
         $('#authenticationModal').on('hidden.bs.modal', function () {

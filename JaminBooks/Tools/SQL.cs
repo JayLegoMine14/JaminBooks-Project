@@ -35,11 +35,14 @@ namespace JaminBooks.Model
                     foreach (Param p in parameters)
                         cmd.Parameters.Add(new SqlParameter(p.Name, p.Value));
 
-                    SqlDataReader sdr = cmd.ExecuteReader();
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
 
-                    var dt = new DataTable();
-                    dt.Load(sdr);
-                    return dt;
+                    var ds = new DataSet();
+                    adapter.Fill(ds);
+                    if (ds.Tables.Count == 0)
+                        return new DataTable();
+                    else
+                        return ds.Tables[ds.Tables.Count - 1];
                 }
             }
         }

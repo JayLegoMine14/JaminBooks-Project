@@ -21,7 +21,7 @@ namespace JaminBooks.Model
 
         public Address(int AddressID)
         {
-            DataTable dt = SQL.Execute("uspGetAddressByID", new Param("AddessID", AddressID));
+            DataTable dt = SQL.Execute("uspGetAddressByID", new Param("AddressID", AddressID));
 
             if (dt.Rows.Count > 0)
             {
@@ -29,7 +29,7 @@ namespace JaminBooks.Model
                 this.Line1 = (String)dt.Rows[0]["AddressLine1"];
                 this.Line2 = (String)dt.Rows[0]["AddressLine2"];
                 this.City = (String)dt.Rows[0]["City"];
-                this.State = (String)dt.Rows[0]["Sate"];
+                this.State = (String)dt.Rows[0]["State"];
                 this.Country = (String)dt.Rows[0]["Country"];
                 this.ZIP = (String)dt.Rows[0]["ZIP"];
             }

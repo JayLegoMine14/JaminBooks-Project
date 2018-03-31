@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using static JaminBooks.Model.SQL;
@@ -100,7 +101,7 @@ namespace JaminBooks.Model
                 new Param("IsAdmin", IsAdmin),
                 new Param("IsConfirmed", IsConfirmed),
                 new Param("ConfirmationCode", ConfirmationCode),
-                new Param("Icon", (object) Icon ?? DBNull.Value));
+                new Param("Icon", Icon ?? SqlBinary.Null));
 
             if (dt.Rows.Count > 0)
                 UserID = (int) dt.Rows[0]["UserID"];
