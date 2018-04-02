@@ -22,6 +22,12 @@ namespace JaminBooks.Pages
             return new JsonResult(Authentication.EmailExists(Request));
         }
 
+        [Route("Security/ExistsWithException")]
+        public IActionResult ExistsWithException()
+        {
+            return new JsonResult(Authentication.EmailExistsWithException(Request));
+        }
+
         [Route("Security/Create")]
         public IActionResult Create()
         {
