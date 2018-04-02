@@ -45,6 +45,13 @@ namespace JaminBooks.Tools
             return User.Exists(user["Email"]);
         }
 
+        public static bool EmailExistsWithException(HttpRequest request)
+        {
+            Dictionary<string, string> user = AJAX.GetFields(request);
+            return new User(Convert.ToInt32(user["ID"])).Email != user["Email"] 
+                && User.Exists(user["Email"]);
+        }
+
         public static bool SetCurrentUser(HttpRequest request)
         {
             Dictionary<string, string> user = AJAX.GetFields(request);

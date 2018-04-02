@@ -11,179 +11,260 @@
     "/images/user.png";
 }
 
-@if ( Model.DisplayUser != null)
+@if (Model.DisplayUser != null)
 {
 
-<style>
-    .icon-div {
-        width: 200px;
-        height: 200px;
-        overflow: hidden;
-        border-radius: 200px;
-        float: right;
-    }
-    .create-card {
-        text-align: center;
-        border: 2px dashed #2b303a;
-        margin: 10px;
-        font-size: 3rem;
-        background-color: #ccc;
-    }
-</style>
+    <style>
+        .icon-div {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 200px;
+            float: right;
+        }
 
-<div class="container">
-    <div class="row mb-3 mt-3">
-        <div class="col-6">
-            <div class="icon-div">
-                <img id="Image" src="@userIcon" />
-            </div>
-        </div>
-        <div class="col-3 pt-3">
-            <div class="custom-file">
-                <div class="input-group mb-3">
-                    <input type="file" class="custom-file-input" id="customFile">
-                    <label class="custom-file-label" for="customFile">
-                        Choose file...
-                    </label>
-                    <button id="Button" class="btn btn-secondary mt-2">Upload</button>
+        .create-card {
+            text-align: center;
+            border: 2px dashed #2b303a;
+            margin: 10px;
+            font-size: 3rem;
+            background-color: #ccc;
+            transition: .3s;
+        }
+        .create-card:hover {
+            transform: scale(1.1);
+        }
+    </style>
+
+    <div class="container">
+        <div class="row mb-3 mt-3">
+            <div class="col-6">
+                <div class="icon-div">
+                    <img id="Image" src="@userIcon" />
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-8 offset-2">
-            <div class="row">
-                <div class="col-xs-6 col-sm-6 col-md-6">
-                    <div class="form-group">
-                        <input type="text" id="FirstName" value="@Model.DisplayUser.FirstName" class="form-control input-sm" maxlength="50" placeholder="First Name">
+            <div class="col-4 pt-3">
+                <div class="custom-file">
+                    <div class="input-group mb-3">
+                        <input type="file" class="custom-file-input" id="customFile">
+                        <label class="custom-file-label" for="customFile">
+                            Choose file...
+                        </label>
+                        <button id="Button" class="btn btn-secondary mt-2">Upload</button>
                     </div>
                 </div>
-                <div class="col-xs-6 col-sm-6 col-md-6">
-                    <div class="form-group">
-                        <input type="text" id="LastName" value="@Model.DisplayUser.LastName" class="form-control input-sm" maxlength="50" placeholder="Last Name">
-                    </div>
-                </div>
             </div>
-            <div class="form-group">
-                <input type="email" id="Email" value="@Model.DisplayUser.Email" class="form-control input-sm" maxlength="100" placeholder="Email Address">
-            </div>
-            <div class="row mb-3">
-                <div class="col-6 offset-3 text-center">
-                    <input id="Save" type="submit" value="Save Changes" class="btn btn-primary btn-block btn-dark-red">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-6 col-sm-6 col-md-6">
-                    <div class="col-xs-12">
+        </div>
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
                         <div class="form-group">
-                            <input type="password" id="Password" class="form-control input-sm" placeholder="New Password">
+                            <input type="text" id="FirstName" value="@Model.DisplayUser.FirstName" class="form-control input-sm" maxlength="50" placeholder="First Name">
                         </div>
                     </div>
-                    <div class="col-xs-12">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
                         <div class="form-group">
-                            <input type="password" id="PasswordConfirm" class="form-control input-sm" placeholder="Confirm New Password">
+                            <input type="text" id="LastName" value="@Model.DisplayUser.LastName" class="form-control input-sm" maxlength="50" placeholder="Last Name">
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-6 col-sm-6 col-md-6">
-                    <ul class="list-unstyled" style="line-height: 1.7">
-                        <li>
-                            <span id="CharsRed" class="fa fa-times text-danger"></span>
-                            <span id="CharsGreen" class="fa fa-check text-success" style="display:none"></span>
-                            At least 8 characters
-                        </li>
-
-                        <li>
-                            <span id="CapsRed" class="fa fa-times text-danger"></span>
-                            <span id="CapsGreen" class="fa fa-check text-success" style="display:none"></span>
-                            Capitals and numbers
-                        </li>
-
-                        <li>
-                            <span id="MatchRed" class="fa fa-times text-danger"></span>
-                            <span id="MatchGreen" class="fa fa-check text-success" style="display:none"></span>
-                            Matching passwords
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-6 offset-3 text-center">
-                    <input id="ChangePassword" type="submit" value="Change Password" class="btn btn-primary btn-block btn-dark-red">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-8 offset-2">
-            <div class="row">
-                <div class="col-12">
-                    <h3>Phones</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 card-deck mb-3">
-                    @foreach (Model.Phone phone in Model.DisplayUser.Phones)
+                <div class="form-group">
+                    <input type="email" id="Email" value="@Model.DisplayUser.Email" class="form-control input-sm valid" maxlength="100" placeholder="Email Address">
+                    @if (Model.DisplayUser.IsConfirmed)
                     {
-                        <div class="card" style="width: 12rem;">
-                            <div class="card-header">
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
+                    }
+                </div>
+                <div class="row mb-5">
+                    <div class="col-6 offset-3 text-center">
+                        <input id="Save" type="submit" value="Save Changes" class="btn btn-primary btn-block btn-dark-red">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <input type="password" id="Password" class="form-control input-sm" placeholder="New Password">
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <input type="password" id="PasswordConfirm" class="form-control input-sm" placeholder="Confirm New Password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <ul class="list-unstyled" style="line-height: 1.7">
+                            <li>
+                                <span id="CharsRed" class="fa fa-times text-danger"></span>
+                                <span id="CharsGreen" class="fa fa-check text-success" style="display:none"></span>
+                                At least 8 characters
+                            </li>
+
+                            <li>
+                                <span id="CapsRed" class="fa fa-times text-danger"></span>
+                                <span id="CapsGreen" class="fa fa-check text-success" style="display:none"></span>
+                                Capitals and numbers
+                            </li>
+
+                            <li>
+                                <span id="MatchRed" class="fa fa-times text-danger"></span>
+                                <span id="MatchGreen" class="fa fa-check text-success" style="display:none"></span>
+                                Matching passwords
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6 offset-3 text-center">
+                        <input id="ChangePassword" type="submit" value="Change Password" class="btn btn-primary btn-block btn-dark-red">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Phones</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="Phones" class="col-12 card-columns mb-5">
+                        @foreach (Model.Phone phone in Model.DisplayUser.Phones)
+                        {
+                            <div class="card">
+                                <div class="card-header">
+                                        <button type="button" data-id="@phone.PhoneID" onclick="return EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                        <button type="button" data-id="@phone.PhoneID" onclick="return DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title phone-number">@phone.Number</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <h5 class="card-title">@phone.Number</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">@phone.Category</h6>
+                        }
+                        <div class="card" style="width: 12rem;">
+                            <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
+                                <i class="fas fa-plus"></i>
                             </div>
-                        </div>
-                    }
-                    <div class="card" style="width: 12rem;">
-                        <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
-                            <i class="fas fa-plus"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-8 offset-2">
-            <div class="row">
-                <div class="col-12">
-                    <h3>Cards</h3>
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Cards</h3>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12 card-deck mb-3">
-                    @foreach (Model.Card card in Model.DisplayUser.Cards)
-                    {
-                        <div class="card" style="width: 12rem;">
-                            <div class="card-header">
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                <div class="row">
+                    <div class="col-12 card-deck mb-5">
+                        @foreach (Model.Card card in Model.DisplayUser.Cards)
+                        {
+                            <div class="card" style="width: 12rem;">
+                                <div class="card-header">
+                                    <div class="float-right">
+                                        <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">****-****-****-@card.LastFourDigits</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">@(card.ExpMonth + "/" + card.ExpYear)</h6>
+                                    <h5 class="card-title text-muted">@card.Name</h5>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <h5 class="card-title">****-****-****-@card.LastFourDigits</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">@(card.ExpMonth + "/" + card.ExpYear)</h6>
-                                <h5 class="card-title text-muted">@card.Name</h5>
+                        }
+                        <div class="card" style="width: 12rem;">
+                            <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
+                                <i class="fas fa-plus"></i>
                             </div>
                         </div>
-                    }
-                    <div class="card" style="width: 12rem;">
-                        <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
-                            <i class="fas fa-plus"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Addresses</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 card-deck mb-5">
+                        @foreach (Model.Address add in Model.DisplayUser.Addresses)
+                        {
+                            <div class="card" style="width: 12rem;">
+                                <div class="card-header">
+                                    <div class="float-right">
+                                        <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">@add.Line1</h6>
+                                    @if (add.Line2 != null)
+                                    {
+                                        <h6 class="card-title text-muted">@add.Line2</h6>
+                                    }
+                                    @if (add.State != null)
+                                    {
+                                        <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
+                                    }
+                                    else
+                                    {
+                                        <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        <div class="card" style="width: 12rem;">
+                            <div id="AddressCreate" class="card-body create-card" style="line-height: 130px">
+                                <i class="fas fa-plus"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
+    <div class="modal fade" id="PhoneModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" id="Phone" class="form-control" maxlength="20" placeholder="Phone Number">
+                                    <div class="input-group-append">
+                                        <select id="PhoneCat" class="form-control"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 offset-3 text-center">
+                            <input id="SavePhone" type="submit" value="Save" class="btn btn-success btn-block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
     $(document).ready(function () {
 
         updateProfileIcon();
@@ -194,6 +275,87 @@
         $('#customFile').change(function () {
             var filename = $(this).val().split('\\').pop();
             $(".custom-file-label").html(filename);
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "Model/GetPhoneCategories",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (response) {
+                response = JSON.parse(response);
+                $.each(response, function (key, value) {
+                    $("#PhoneCat").append("<option val=" + key + ">" + value + "</option>")
+                });
+            }
+        });
+
+        $("#Phone").on('input', function () {
+            var regex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+            if ($("#Phone").val().match(regex)) {
+                $("#Phone").addClass("valid")
+                $("#Phone").css("border-color", "green");
+            } else {
+                $("#Phone").removeClass("valid")
+                $("#Phone").removeAttr("style");
+            }
+        });
+
+        $("#PhoneCreate").click(function () {
+            $("#PhoneModal").data("id", -1);
+            $("#PhoneModal").modal("show");
+        });
+
+        $("#SavePhone").click(function () {
+            if ($("#Phone").hasClass("valid")) {
+                $.ajax({
+                    type: "POST",
+                    url: "Model/SavePhone",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify({
+                        ID: $("#PhoneModal").data("id"),
+                        Number: $("#Phone").val(),
+                        Category: $("#PhoneCat").val(),
+                        UserID: @Model.DisplayUser.UserID
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        var phone = $("#Phones .card button[data-id='" + response + "']").parents('.card');
+
+                        if (phone.length > 0) {
+                            phone.find(".phone-number").text($("#Phone").val());
+                            phone.find(".phone-cat").text($("#PhoneCat").val());
+                        } else {
+                            var card = "";
+
+                            card += '<div class="card">'
+                            card += '<div class="card-header">'
+                            card += '<button type="button" data-id="' + response + '" onclick="return EditPhone(this)" class="btn btn-sm btn-success phone-edit"><i class="fas fa-edit"></i></button>'
+                            card += '<button type="button" data-id="' + response + '" onclick="return DeletePhone(this)" class="btn btn-sm btn-danger phone-delete"><i class="fas fa-trash"></i></button>'
+                            card += '</div>'
+                            card += '<div class="card-body">'
+                            card += '<h5 class="card-title">' + $("#Phone").val() + '</h5>'
+                            card += '<h6 class="card-subtitle mb-2 text-muted">' + $("#PhoneCat").val() + '</h6>'
+                            card += '</div>'
+                            card += '</div>'
+
+                            $("#Phones .card:last").before(card);
+
+                        }
+
+                        $("#PhoneModal").modal("hide");
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+            }
         });
 
         $("#Button").click(function () {
@@ -238,7 +400,7 @@
                 }
                 img.src = reader.result;
             }
-            reader.readAsDataURL($("#customFile").get(0).files[0]); 
+            reader.readAsDataURL($("#customFile").get(0).files[0]);
         });
 
         function updateProfileIcon() {
@@ -247,8 +409,209 @@
             $("#Image").removeAttr("style");
             $("#Image").css(image.width > image.height ? "height" : "width", "200px");
         }
+
+        $("#Password").on('input', function () {
+            var password = $("#Password").val();
+
+            if (password.match(/^(?=.*[A-Z])(?=.*[0-9])/)) {
+                $("#CapsRed").hide();
+                $("#CapsGreen").show();
+                $("#Password").addClass("caps");
+            } else {
+                $("#CapsRed").show();
+                $("#CapsGreen").hide();
+                $("#Password").removeClass("caps");
+            }
+
+            if (password.length > 7) {
+                $("#CharsRed").hide();
+                $("#CharsGreen").show();
+                $("#Password").addClass("chars");
+            } else {
+                $("#CharsRed").show();
+                $("#CharsGreen").hide();
+                $("#Password").removeClass("chars");
+            }
+
+            if ($("#Password").hasClass("caps") && $("#RegPassword").hasClass("chars")) {
+                $("#Password").css("border-color", "green");
+            } else {
+                $("#Password").removeAttr("style");
+            }
+            confirmMatch();
+        });
+
+        $("#PasswordConfirm").on('input', function () {
+            confirmMatch();
+        });
+
+        function confirmMatch() {
+            var password = $("#PasswordConfirm").val();
+
+            if (password == $("#Password").val()) {
+                $("#MatchRed").hide();
+                $("#MatchGreen").show();
+                $("#Password").addClass("match");
+                $("#PasswordConfirm").css("border-color", "green");
+            } else {
+                $("#MatchRed").show();
+                $("#MatchGreen").hide();
+                $("#Password").removeClass("match");
+                $("#PasswordConfirm").removeAttr("style");
+            }
+        }
+
+        $("#Email").on('input', function () {
+            var regex = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if ($("#Email").val().match(regex) && $("#Email").val().length < 100) {
+                $("#Email").addClass("valid")
+                $("#Email").css("border-color", "green");
+            } else {
+                $("#Email").removeClass("valid")
+                $("#Email").removeAttr("style");
+            }
+        });
+
+        function validateChanges() {
+            var valid = true;
+
+            $("#FirstName").removeAttr("style");
+            $("#LastName").removeAttr("style");
+
+            if ($("#FirstName").val() == "") {
+                $("#FirstName").css("border-color", "red");
+                valid = false;
+            }
+
+            if ($("#LastName").val() == "") {
+                $("#LastName").css("border-color", "red");
+                valid = false;
+            }
+
+            if (!$("#Email").hasClass("valid")) {
+                $("#Email").css("border-color", "red");
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        function validatePassword() {
+            var valid = true;
+
+            if (!$("#Password").hasClass("caps") || !$("#Password").hasClass("chars")) {
+                $("#Password").css("border-color", "red");
+                valid = false;
+            }
+
+            if (!$("#Password").hasClass("match")) {
+                $("#PasswordConfirm").css("border-color", "red");
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        $("#Save").click(function () {
+            if (validateChanges()) {
+                $.ajax({
+                    type: "POST",
+                    url: "Security/ExistsWithException",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify({
+                        Email: $("#Email").val(),
+                        ID: @Model.DisplayUser.UserID
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (!JSON.parse(response)) {
+                            $.ajax({
+                                type: "POST",
+                                url: "Model/UpdateUser",
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("XSRF-TOKEN",
+                                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                                },
+                                data: JSON.stringify({
+                                    FirstName: $("#FirstName").val(),
+                                    LastName: $("#LastName").val(),
+                                    Email: $("#Email").val(),
+                                    ID: @Model.DisplayUser.UserID
+                                }),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (response) {
+                                    $.alert({
+                                        title: 'Changes Saved',
+                                        content: 'Changes to your account were saved successfully.',
+                                        type: 'green'
+                                    });
+                                },
+                                failure: function (response) {
+                                    alert(response);
+                                }
+                            });
+                        } else {
+                            $("#Email").css("border-color", "red");
+                            $.confirm({
+                                title: 'Account Already Exists',
+                                type: 'red',
+                                content: 'An account with this email address already exists. Please choose another address.'
+                            });
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+            }
+        });
+
+        $("#ChangePassword").click(function () {
+            if (validatePassword()) {
+                $.ajax({
+                    type: "POST",
+                    url: "Model/ChangePassword",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify({
+                        Password: sha256($("#Password").val()),
+                        ID: @Model.DisplayUser.UserID
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        $.alert({
+                            title: 'Password Changed',
+                            content: 'Your new password is ready to use.',
+                            type: 'green'
+                        });
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+            }
+        });
+
     });
-</script>
+
+    function EditPhone(button) {
+        button = $(button);
+        var card = button.parents(".card");
+        $("#PhoneModal").data("id", button.data("id"));
+        $("#Phone").val(card.find(".phone-number").text());
+        $("#PhoneCat").val(card.find(".phone-cat").text());
+        $("#PhoneModal").modal("show");
+    }
+
+    </script>
 
 }
 

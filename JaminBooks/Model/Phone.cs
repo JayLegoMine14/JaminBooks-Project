@@ -17,7 +17,7 @@ namespace JaminBooks.Model
 
         public Phone(int PhoneID)
         {
-            DataTable dt = SQL.Execute("uspGetPhoneByID", new Param("UserID", PhoneID));
+            DataTable dt = SQL.Execute("uspGetPhoneByID", new Param("PhoneID", PhoneID));
 
             if (dt.Rows.Count > 0)
             {
