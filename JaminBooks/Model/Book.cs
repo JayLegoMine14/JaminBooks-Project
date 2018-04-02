@@ -11,6 +11,7 @@ namespace JaminBooks.Model
     {
         public int BookID { private set; get; } = -1;
 
+
         public string Title;
         public int AuthorID;    
         public DateTime PublicationDate;
@@ -76,7 +77,7 @@ namespace JaminBooks.Model
             }
         }
 
-        public void delete()
+        public void delete(int BookID)
         {
             DataTable dt = SQL.Execute("uspDeleteBook",
                 new Param("BookID", BookID));
