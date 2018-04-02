@@ -21,6 +21,24 @@ namespace JaminBooks.Pages
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
+
+            DateTime DT = DateTime.Now;
+            Book book1 = new Book();
+            book1.AuthorID = 1;
+            book1.Title = "Happy Little Trees";
+            book1.PublicationDate = DT;
+            book1.PublisherID = 1;
+            book1.ISBN10 = "1234567890";
+            book1.ISBN13 = "1234567890123";
+            book1.Description = "Our Little Secret";
+            book1.CopyrightDate = DT;
+            book1.Price = 14.99M;
+            book1.Cost = 7.47M;
+
+
+            book1.Save();
+
+
         }
     }
 }
