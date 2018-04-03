@@ -18,6 +18,22 @@ namespace JaminBooks.Pages
             return new JsonResult(JsonConvert.SerializeObject(Phone.GetPhoneCategories()));
         }
 
+        [Route("Model/DeletePhone")]
+        public IActionResult DeletePhone()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Phone p = new Phone(Convert.ToInt32(fields["ID"]));
+
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == p.GetUserID() || currentUser.IsAdmin)
+            {
+                p.Delete();
+            }
+
+            return new JsonResult("");
+        }
+
         [Route("Model/SavePhone")]
         public IActionResult SavePhone()
         {

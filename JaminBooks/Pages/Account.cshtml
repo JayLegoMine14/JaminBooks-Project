@@ -32,10 +32,18 @@
             transition: .3s;
         }
         .create-card:hover {
-            transform: scale(1.1);
+            background-color: #aaa;
+        }
+
+        #Phones {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
         }
     </style>
 
+    <span id="UserID" class="d-none">@Model.DisplayUser.UserID</span>
     <div class="container">
         <div class="row mb-3 mt-3">
             <div class="col-6">
@@ -72,13 +80,13 @@
                 <div class="form-group">
                     <input type="email" id="Email" value="@Model.DisplayUser.Email" class="form-control input-sm valid" maxlength="100" placeholder="Email Address">
                     @if (Model.DisplayUser.IsConfirmed)
-                    {
-                        <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
-                    }
-                    else
-                    {
-                        <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
-                    }
+                {
+                    <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+            }
+            else
+            {
+                <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
+        }
                 </div>
                 <div class="row mb-5">
                     <div class="col-6 offset-3 text-center">
@@ -135,21 +143,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div id="Phones" class="col-12 card-columns mb-5">
+                    <div id="Phones" class="col-12 mb-5">
                         @foreach (Model.Phone phone in Model.DisplayUser.Phones)
-                        {
-                            <div class="card">
-                                <div class="card-header">
-                                        <button type="button" data-id="@phone.PhoneID" onclick="return EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                        <button type="button" data-id="@phone.PhoneID" onclick="return DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title phone-number">@phone.Number</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
-                                </div>
+                    {
+                        <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
+                            <div class="card-header">
+                                <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                             </div>
-                        }
-                        <div class="card" style="width: 12rem;">
+                            <div class="card-body">
+                                <h5 class="card-title phone-number">@phone.Number</h5>
+                                <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
+                            </div>
+                        </div>
+                }
+                        <div class="card d-inline-block" style="width:200px">
                             <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
                                 <i class="fas fa-plus"></i>
                             </div>
@@ -158,6 +166,9 @@
                 </div>
             </div>
         </div>
+
+        @await Html.PartialAsync("_Phone")
+
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
@@ -168,21 +179,21 @@
                 <div class="row">
                     <div class="col-12 card-deck mb-5">
                         @foreach (Model.Card card in Model.DisplayUser.Cards)
-                        {
-                            <div class="card" style="width: 12rem;">
-                                <div class="card-header">
-                                    <div class="float-right">
-                                        <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                        <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">****-****-****-@card.LastFourDigits</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">@(card.ExpMonth + "/" + card.ExpYear)</h6>
-                                    <h5 class="card-title text-muted">@card.Name</h5>
+                    {
+                        <div class="card" style="width: 12rem;">
+                            <div class="card-header">
+                                <div class="float-right">
+                                    <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
-                        }
+                            <div class="card-body">
+                                <h5 class="card-title">****-****-****-@card.LastFourDigits</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@(card.ExpMonth + "/" + card.ExpYear)</h6>
+                                <h5 class="card-title text-muted">@card.Name</h5>
+                            </div>
+                        </div>
+                }
                         <div class="card" style="width: 12rem;">
                             <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
                                 <i class="fas fa-plus"></i>
@@ -202,61 +213,35 @@
                 <div class="row">
                     <div class="col-12 card-deck mb-5">
                         @foreach (Model.Address add in Model.DisplayUser.Addresses)
-                        {
-                            <div class="card" style="width: 12rem;">
-                                <div class="card-header">
-                                    <div class="float-right">
-                                        <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                        <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="card-title">@add.Line1</h6>
-                                    @if (add.Line2 != null)
-                                    {
-                                        <h6 class="card-title text-muted">@add.Line2</h6>
-                                    }
-                                    @if (add.State != null)
-                                    {
-                                        <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
-                                    }
-                                    else
-                                    {
-                                        <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
-                                    }
+                    {
+                        <div class="card" style="width: 12rem;">
+                            <div class="card-header">
+                                <div class="float-right">
+                                    <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
+                            <div class="card-body">
+                                <h6 class="card-title">@add.Line1</h6>
+                                @if (add.Line2 != null)
+                            {
+                                <h6 class="card-title text-muted">@add.Line2</h6>
                         }
+                                @if (add.State != null)
+                            {
+                                <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
+                        }
+                        else
+                        {
+                            <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
+                    }
+                            </div>
+                        </div>
+                }
                         <div class="card" style="width: 12rem;">
                             <div id="AddressCreate" class="card-body create-card" style="line-height: 130px">
                                 <i class="fas fa-plus"></i>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="PhoneModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input type="text" id="Phone" class="form-control" maxlength="20" placeholder="Phone Number">
-                                    <div class="input-group-append">
-                                        <select id="PhoneCat" class="form-control"></select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 offset-3 text-center">
-                            <input id="SavePhone" type="submit" value="Save" class="btn btn-success btn-block">
                         </div>
                     </div>
                 </div>
@@ -275,87 +260,6 @@
         $('#customFile').change(function () {
             var filename = $(this).val().split('\\').pop();
             $(".custom-file-label").html(filename);
-        });
-
-        $.ajax({
-            type: "POST",
-            url: "Model/GetPhoneCategories",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("XSRF-TOKEN",
-                    $('input:hidden[name="__RequestVerificationToken"]').val());
-            },
-            success: function (response) {
-                response = JSON.parse(response);
-                $.each(response, function (key, value) {
-                    $("#PhoneCat").append("<option val=" + key + ">" + value + "</option>")
-                });
-            }
-        });
-
-        $("#Phone").on('input', function () {
-            var regex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-            if ($("#Phone").val().match(regex)) {
-                $("#Phone").addClass("valid")
-                $("#Phone").css("border-color", "green");
-            } else {
-                $("#Phone").removeClass("valid")
-                $("#Phone").removeAttr("style");
-            }
-        });
-
-        $("#PhoneCreate").click(function () {
-            $("#PhoneModal").data("id", -1);
-            $("#PhoneModal").modal("show");
-        });
-
-        $("#SavePhone").click(function () {
-            if ($("#Phone").hasClass("valid")) {
-                $.ajax({
-                    type: "POST",
-                    url: "Model/SavePhone",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: JSON.stringify({
-                        ID: $("#PhoneModal").data("id"),
-                        Number: $("#Phone").val(),
-                        Category: $("#PhoneCat").val(),
-                        UserID: @Model.DisplayUser.UserID
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        var phone = $("#Phones .card button[data-id='" + response + "']").parents('.card');
-
-                        if (phone.length > 0) {
-                            phone.find(".phone-number").text($("#Phone").val());
-                            phone.find(".phone-cat").text($("#PhoneCat").val());
-                        } else {
-                            var card = "";
-
-                            card += '<div class="card">'
-                            card += '<div class="card-header">'
-                            card += '<button type="button" data-id="' + response + '" onclick="return EditPhone(this)" class="btn btn-sm btn-success phone-edit"><i class="fas fa-edit"></i></button>'
-                            card += '<button type="button" data-id="' + response + '" onclick="return DeletePhone(this)" class="btn btn-sm btn-danger phone-delete"><i class="fas fa-trash"></i></button>'
-                            card += '</div>'
-                            card += '<div class="card-body">'
-                            card += '<h5 class="card-title">' + $("#Phone").val() + '</h5>'
-                            card += '<h6 class="card-subtitle mb-2 text-muted">' + $("#PhoneCat").val() + '</h6>'
-                            card += '</div>'
-                            card += '</div>'
-
-                            $("#Phones .card:last").before(card);
-
-                        }
-
-                        $("#PhoneModal").modal("hide");
-                    },
-                    failure: function (response) {
-                        alert(response);
-                    }
-                });
-            }
         });
 
         $("#Button").click(function () {
@@ -523,7 +427,7 @@
                     },
                     data: JSON.stringify({
                         Email: $("#Email").val(),
-                        ID: @Model.DisplayUser.UserID
+                        ID: $("#UserID").text()
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -540,7 +444,7 @@
                                     FirstName: $("#FirstName").val(),
                                     LastName: $("#LastName").val(),
                                     Email: $("#Email").val(),
-                                    ID: @Model.DisplayUser.UserID
+                                    ID:  $("#UserID").text()
                                 }),
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",
@@ -582,7 +486,7 @@
                     },
                     data: JSON.stringify({
                         Password: sha256($("#Password").val()),
-                        ID: @Model.DisplayUser.UserID
+                        ID: $("#UserID").text()
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -601,16 +505,6 @@
         });
 
     });
-
-    function EditPhone(button) {
-        button = $(button);
-        var card = button.parents(".card");
-        $("#PhoneModal").data("id", button.data("id"));
-        $("#Phone").val(card.find(".phone-number").text());
-        $("#PhoneCat").val(card.find(".phone-cat").text());
-        $("#PhoneModal").modal("show");
-    }
-
     </script>
 
 }

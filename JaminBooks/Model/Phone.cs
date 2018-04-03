@@ -62,6 +62,13 @@ namespace JaminBooks.Model
                 new Param("UserID", UserID));
         }
 
+        public int GetUserID()
+        {
+            DataTable dt = SQL.Execute("uspGetPhoneByID",
+                new Param("PhoneID", PhoneID));
+            return (int) dt.Rows[0]["UserID"];
+        }
+
         public static List<Phone> GetPhones(int UserID)
         {
             DataTable dt = SQL.Execute("uspGetPhones", new Param("UserID", UserID));
