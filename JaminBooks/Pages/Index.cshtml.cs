@@ -22,8 +22,8 @@ namespace JaminBooks.Pages
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
 
-            Book b1 = new Book();
-            b1.delete(4);
+            //Book b1 = new Book();
+            //b1.Delete(4);
 
             //DateTime DT = DateTime.Now;
             //Book book1 = new Book();
