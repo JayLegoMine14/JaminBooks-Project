@@ -13,9 +13,9 @@ namespace JaminBooks.Model
 
 
         public string Title;
-        public int AuthorID;    
+        public string AuthorID;    
         public DateTime PublicationDate;
-        public int PublisherID;
+        public string PublisherID;
         public string ISBN10;
         public string ISBN13;
         public string Description;
@@ -27,6 +27,10 @@ namespace JaminBooks.Model
         public bool IsDeleted;
         public string CategoryName;
         public int TempVal;
+        public string AFirstName;
+        public string ALastName;
+        public string AuthorName;
+        public string PublisherName;
 
         public Book() { }
 
@@ -36,9 +40,9 @@ namespace JaminBooks.Model
             if (dt.Rows.Count > 0)
             {
                 this.BookID = BookID;
-                this.AuthorID = (int)dt.Rows[0]["AuthorID"];
+                this.AuthorID = (string)dt.Rows[0]["AuthorID"];
                 this.PublicationDate = (DateTime)dt.Rows[0]["PublicationDate"];
-                this.PublisherID = (int)dt.Rows[0]["PublisherID"];
+                this.PublisherID = (string)dt.Rows[0]["PublisherID"];
                 this.ISBN10 = (string)dt.Rows[0]["ISBN10"];
                 this.ISBN13 = (string)dt.Rows[0]["ISBN13"];
                 this.Description = (String)dt.Rows[0]["Description"];
@@ -53,6 +57,45 @@ namespace JaminBooks.Model
             {
                 throw new Exception("Invalid User ID");
             }
+        }
+
+        public string GetAuthorIDByName(string AuthorName)
+        {
+            DataTable dt = SQL.Execute("uspGetAuthorIDByName",
+                new Param("FirstName", AFirstName),
+                new Param("FirstName", ALastName));
+
+            if (dt.Rows.Count == 0)
+            {
+                AuthorID = SaveAuthorName(AFirstName, ALastName);
+            }
+            else
+            {
+                TempVal = (int)dt.Rows[0]["AuthorID"];
+                AuthorName = TempVal.ToString();
+            }
+
+
+            return AuthorID;
+        }
+
+        public string SaveAuthorName(string AFirstName, string ALastName)
+        {
+
+            DataTable dt = SQL.Execute("uspSaveAuthorName",
+            new Param("AuthorName", AFirstName),
+            new Param("LastName", ALastName));
+            if (dt.Rows.Count > 0)
+            {
+                TempVal = (int)dt.Rows[0]["AuthorID"];
+                AuthorID = TempVal.ToString();
+            }
+            else
+            {
+                throw new Exception("Book Not Created");
+            }
+
+            return AuthorID;
         }
 
         public string GetCategoryIDByName(string CategoryName)
@@ -91,10 +134,51 @@ namespace JaminBooks.Model
             return CategoryID;
         }
 
+        public string SavePublisherName(string PublisherName)
+        {
+            {
+
+                DataTable dt = SQL.Execute("uspSavePublisherName",
+                new Param("PublisherName", PublisherName));
+                if (dt.Rows.Count > 0)
+                {
+                    TempVal = (int)dt.Rows[0]["PublisherID"];
+                    PublisherID = TempVal.ToString();
+                }
+                else
+                {
+                    throw new Exception("Book Not Created");
+                }
+
+                return PublisherID;
+            }
+        }
+
+        public string GetPublisherIDByName(string PublisherName)
+        {
+            DataTable dt = SQL.Execute("uspGetPublisherIDByName",
+                new Param("PublisherName", PublisherName));
+
+            if (dt.Rows.Count == 0)
+            {
+                PublisherID = SavePublisherName(PublisherName);
+            }
+            else
+            {
+                TempVal = (int)dt.Rows[0]["PublisherID"];
+                PublisherID = TempVal.ToString();
+            }
+
+
+            return PublisherID;
+        }
+
         public void Save()
         {
 
             GetCategoryIDByName(CategoryName);
+            GetAuthorIDByName(AuthorName);
+            GetPublisherIDByName(PublisherName);
 
                 DataTable dt = SQL.Execute("uspSaveBook",
                 new Param("Title", Title),
@@ -120,11 +204,9 @@ namespace JaminBooks.Model
                         
         }
 
-<<<<<<< HEAD
-        public void delete(int BookID)
-=======
+
+
         public void Delete(int BookID)
->>>>>>> master
         {
             DataTable dt = SQL.Execute("uspDeleteBook",
                 new Param("BookID", BookID));
