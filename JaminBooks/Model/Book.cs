@@ -24,6 +24,8 @@ namespace JaminBooks.Model
         public decimal Cost;
         public int Quantity;
         public bool IsDeleted;
+        public string CategoryName;
+        public int TempVal;
 
         public Book() { }
 
@@ -39,6 +41,7 @@ namespace JaminBooks.Model
                 this.ISBN10 = (string)dt.Rows[0]["ISBN10"];
                 this.ISBN13 = (string)dt.Rows[0]["ISBN13"];
                 this.Description = (String)dt.Rows[0]["Description"];
+                this.CategoryName = (String)dt.Rows[0]["CategoryName"];
                 this.CopyrightDate = (DateTime)dt.Rows[0]["CopyrightDate"];
                 this.Price = (Decimal)dt.Rows[0]["Price"];
                 this.Cost = (Decimal)dt.Rows[0]["Cost"];
@@ -51,9 +54,48 @@ namespace JaminBooks.Model
             }
         }
 
+        public string GetCategoryIDByName(string CategoryName)
+        {
+            DataTable dt = SQL.Execute("uspGetCategoryIDByName",
+                new Param("CategoryName", CategoryName));
+
+            if (dt.Rows.Count == 0)
+            {
+              CategoryID = SaveCategoryName(CategoryName);
+            }
+            else
+            {
+                TempVal = (int)dt.Rows[0]["CategoryID"];
+                CategoryID = TempVal.ToString();
+            }
+
+
+            return CategoryID;
+        }
+
+        public string SaveCategoryName(string CategoryName)
+        {
+           
+            DataTable dt = SQL.Execute("uspSaveCategoryName",
+            new Param("CategoryName", CategoryName));
+            if (dt.Rows.Count > 0)
+            {
+                TempVal = (int)dt.Rows[0]["CategoryID"];
+                CategoryID = TempVal.ToString();
+            } else
+            {
+                throw new Exception("Book Not Created");
+            }
+           
+            return CategoryID;
+        }
+
         public void Save()
         {
-            DataTable dt = SQL.Execute("uspSaveBook",
+
+            GetCategoryIDByName(CategoryName);
+
+                DataTable dt = SQL.Execute("uspSaveBook",
                 new Param("Title", Title),
                 new Param("BookID", BookID),
                 new Param("AuthorID", AuthorID),
@@ -68,15 +110,16 @@ namespace JaminBooks.Model
                 new Param("Cost", Cost),
                 new Param("Quantity", Quantity));
 
-            if (dt.Rows.Count > 0)
-                BookID = (int)dt.Rows[0]["BookID"];
-            else
-            {
-                throw new Exception("Invalid Book ID");
-            }
+                if (dt.Rows.Count > 0)
+                    BookID = (int)dt.Rows[0]["BookID"];
+                else
+                {
+                    throw new Exception("Invalid Entry");
+                }
+                        
         }
 
-        public void delete()
+        public void Delete(int BookID)
         {
             DataTable dt = SQL.Execute("uspDeleteBook",
                 new Param("BookID", BookID));
