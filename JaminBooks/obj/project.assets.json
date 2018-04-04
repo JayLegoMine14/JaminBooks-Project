@@ -13124,23 +13124,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\James Allison\\.nuget\\packages\\": {},
+    "C:\\Users\\cpetete\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\James Allison\\source\\repos\\JaminBooks\\JaminBooks\\JaminBooks.csproj",
+      "projectUniqueName": "C:\\Users\\cpetete\\Documents\\Gitprojects\\JaminBooks-Project3\\JaminBooks\\JaminBooks.csproj",
       "projectName": "JaminBooks",
-      "projectPath": "C:\\Users\\James Allison\\source\\repos\\JaminBooks\\JaminBooks\\JaminBooks.csproj",
-      "packagesPath": "C:\\Users\\James Allison\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\James Allison\\source\\repos\\JaminBooks\\JaminBooks\\obj\\",
+      "projectPath": "C:\\Users\\cpetete\\Documents\\Gitprojects\\JaminBooks-Project3\\JaminBooks\\JaminBooks.csproj",
+      "packagesPath": "C:\\Users\\cpetete\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\cpetete\\Documents\\Gitprojects\\JaminBooks-Project3\\JaminBooks\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\James Allison\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\cpetete\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

@@ -35,28 +35,39 @@ namespace JaminBooks.Model
             }
         }
 
-        public void Save()
+        public int Save(string AFirstName, string ALastName)
         {
 
-            DataTable dt = SQL.Execute("uspGetAuthorIDByName", new Param("AuthorID", AuthorID ));
+            DataTable dt = SQL.Execute("uspSaveAuthor",
+                new Param("FirstName", AFirstName ),
+                new Param("LastName", ALastName));
             if (dt.Rows.Count > 0)
                 AuthorID = (int)dt.Rows[0]["AuthorID"];
             else
             {
                 throw new Exception("");
             }
+            return AuthorID;
         }
 
         public void delete()
         {
-            DataTable dt = SQL.Execute("uspDeleteBook",
-                new Param("BookID", BookID));
+            DataTable dt = SQL.Execute("uspDeleteAuthor",
+                new Param("AuthorID", AuthorID));
 
         }
 
         public int GetAuthorIDByName(string AFirstName, string ALastName)
         {
-
+            DataTable dt = SQL.Execute("uspGetAuthorIDByName",
+                new Param("FirstName", AFirstName),
+                new Param("LastName", ALastName));
+            if (dt.Rows.Count > 0)
+                AuthorID = (int)dt.Rows[0]["AuthorID"];
+            else
+            {
+                AuthorID = Save(AFirstName, ALastName);
+            }
             return AuthorID;
         }
     }

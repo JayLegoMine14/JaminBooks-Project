@@ -145,9 +145,9 @@ namespace JaminBooks.Model
             Author auth = new Author();
 
 
-            GetCategoryIDByName(CategoryName);
-            auth.GetAuthorIDByName(AFirstName, ALastName);
-            pub.GetPublisherIDByName(PublisherName);
+           CategoryID = GetCategoryIDByName(CategoryName);
+           AuthorID =  auth.GetAuthorIDByName(AFirstName, ALastName);
+           PublisherID = pub.GetPublisherIDByName(PublisherName, AddressID, PhoneID, ContactFirstName, ContactLastName);
 
                 DataTable dt = SQL.Execute("uspSaveBook",
                 new Param("Title", Title),

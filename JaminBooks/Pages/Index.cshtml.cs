@@ -23,11 +23,9 @@ namespace JaminBooks.Pages
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
 
             Book book1 = new Book();
-            Author a1 = new Author();
-            Publisher p1 = new Publisher();
-            DateTime da = new DateTime();             
+            DateTime da = DateTime.Now;
 
-            book1.Title = "The bravest man on the rocks";
+            book1.Title = "The Man of the Statue";
             book1.AFirstName = "Phil";
             book1.ALastName = "Bardson";
             book1.PublicationDate = da;
@@ -40,11 +38,11 @@ namespace JaminBooks.Pages
             book1.Price = 10.99M;
             book1.Cost = 6.80M;
             book1.Quantity = 10;
-            p1.PublisherName = "SelfPublishing";
-            p1.AddressID = 1;
-            p1.PhoneID = 12;
-            p1.ContactFirstName = "Philson";
-            p1.ContactLastName = "Bard";
+            book1.PublisherName = "SelfPublishing";
+            book1.AddressID = 2;
+            book1.PhoneID = 12;
+            book1.ContactFirstName = "Philson";
+            book1.ContactLastName = "Bard";
 
 
 

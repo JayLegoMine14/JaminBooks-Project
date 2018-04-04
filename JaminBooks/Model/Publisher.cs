@@ -37,7 +37,7 @@ namespace JaminBooks.Model
             }
         }
 
-        public int SavePublisher(string PublisherName)
+        public int SavePublisher(string PublisherName, int AddressID, int PhoneID, string ContactFirstName, string ContactLastName)
         {
             {
 
@@ -63,7 +63,7 @@ namespace JaminBooks.Model
             }
         }
 
-        public int GetPublisherIDByName(string PublisherName)
+        public int GetPublisherIDByName(string PublisherName, int AddressID, int PhoneID, string ContactFirstName, string ContactLastName)
         {
             DataTable dt = SQL.Execute("uspGetPublisherIDByName",
                 new Param("PublisherName", PublisherName));
@@ -71,7 +71,7 @@ namespace JaminBooks.Model
 
             if (dt.Rows.Count == 0)
             {
-                PublisherID = SavePublisher(PublisherName);
+                PublisherID = SavePublisher( PublisherName,  AddressID,  PhoneID,  ContactFirstName,  ContactLastName);
             }
             else
             {
