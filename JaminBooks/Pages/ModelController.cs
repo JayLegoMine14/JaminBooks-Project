@@ -58,6 +58,40 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/SaveCard")]
+        public IActionResult SaveCard()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = new User(Convert.ToInt32(fields["UserID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                int id = Convert.ToInt32(fields["ID"]);
+                Card c = id != -1 ? new Card(id) : new Card();
+                Address a = c.Address != null ? c.Address : new Address();
+
+                a.Line1 = fields["Line1"];
+                if (fields["Line2"] != "") a.Line2 = fields["Line2"];
+                a.City = fields["City"];
+                a.Country = fields["Country"];
+                if(a.Country == "US") a.State = fields["State"];
+                a.ZIP = fields["ZIP"];
+                c.Address = a;
+
+                c.Number = fields["Number"];
+                c.CCV = fields["CCV"];
+                c.Name = fields["Name"];
+                c.ExpMonth = fields["ExpMonth"];
+                c.ExpYear = fields["ExpYear"];
+                c.User = user;
+                c.Save();
+
+                return new JsonResult(c.CardID);
+            }
+            return new JsonResult("");
+        }
+
         [Route("Model/ChangePassword")]
         public IActionResult ChangePassword()
         {
@@ -110,11 +144,16 @@ namespace JaminBooks.Pages
         public IActionResult SaveIcon()
         {
             Dictionary<string, string> fields = AJAX.GetFields(Request);
-            byte[] blob = Convert.FromBase64String(fields["Icon"]);
+            Model.User user = new User(Convert.ToInt32(fields["UserID"]));
 
-            User u = Authentication.GetCurrentUser(HttpContext);
-            u.Icon = blob;
-            u.Save();
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                byte[] blob = Convert.FromBase64String(fields["Icon"]);
+
+                user.Icon = blob;
+                user.Save();
+            }
             return new JsonResult("");
         }
     }

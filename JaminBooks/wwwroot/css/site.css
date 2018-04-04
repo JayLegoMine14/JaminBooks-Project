@@ -71,6 +71,18 @@ body {
         margin-right: -4px;
     }
 
+    .modal.lg {
+        margin-right: 4px;
+    }
+
+        .modal.lg .modal-content {
+            width: 800px;
+        }
+
+        .modal.lg .modal-dialog {
+            max-width: 100%;
+        }
+
 .modal-dialog {
     display: inline-block;
     text-align: left;
@@ -87,6 +99,16 @@ body {
 
 .modal-body {
     overflow: hidden;
+}
+
+.slash {
+    font-size: 2.1rem;
+    color: #ced4da;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+    padding-left: 10px;
+    line-height: 33px;
 }
 
 #loginErrorMsg {

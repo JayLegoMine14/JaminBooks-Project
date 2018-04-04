@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using static JaminBooks.Model.SQL;
@@ -61,9 +62,9 @@ namespace JaminBooks.Model
             DataTable dt = SQL.Execute("uspSaveAddress",
                new Param("AddressID", AddressID),
                new Param("Line1", Line1),
-               new Param("Line2", Line2),
+               new Param("Line2", Line2 ?? SqlString.Null),
                new Param("City", City),
-               new Param("State", State),
+               new Param("State", State ?? SqlString.Null),
                new Param("Country", Country),
                new Param("ZIP", ZIP));
 

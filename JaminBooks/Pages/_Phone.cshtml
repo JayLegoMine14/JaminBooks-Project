@@ -86,6 +86,10 @@
             }
         });
 
+        $('#PhoneModal').on('hidden.bs.modal', function () {
+            $("#Phone").val("");
+        })
+
         $("#Phone").on('input', function () {
             var regex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
             if ($("#Phone").val().match(regex)) {
@@ -115,7 +119,7 @@
                         ID: $("#PhoneModal").data("id"),
                         Number: $("#Phone").val(),
                         Category: $("#PhoneCat").val(),
-                        UserID: @Model.DisplayUser.UserID
+                        UserID: $("#UserID").text()
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
