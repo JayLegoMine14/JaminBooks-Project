@@ -31,6 +31,10 @@ namespace JaminBooks.Model
         public string ALastName;
         public string AuthorName;
         public string PublisherName;
+        public string ContactFirstName;
+        public string ContactLastName;
+        public int AddressID;
+        public int PhoneID;
 
         public Book() { }
 
