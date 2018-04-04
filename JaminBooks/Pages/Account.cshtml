@@ -31,11 +31,20 @@
             background-color: #ccc;
             transition: .3s;
         }
-        .create-card:hover {
-            transform: scale(1.1);
+
+            .create-card:hover {
+                background-color: #aaa;
+            }
+
+        #Phones {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
         }
     </style>
 
+    <span id="UserID" class="d-none">@Model.DisplayUser.UserID</span>
     <div class="container">
         <div class="row mb-3 mt-3">
             <div class="col-6">
@@ -135,13 +144,13 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div id="Phones" class="col-12 card-columns mb-5">
+                    <div id="Phones" class="col-12 mb-5">
                         @foreach (Model.Phone phone in Model.DisplayUser.Phones)
                         {
-                            <div class="card">
+                            <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
                                 <div class="card-header">
-                                        <button type="button" data-id="@phone.PhoneID" onclick="return EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                        <button type="button" data-id="@phone.PhoneID" onclick="return DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                    <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title phone-number">@phone.Number</h5>
@@ -149,7 +158,7 @@
                                 </div>
                             </div>
                         }
-                        <div class="card" style="width: 12rem;">
+                        <div class="card d-inline-block" style="width:200px">
                             <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
                                 <i class="fas fa-plus"></i>
                             </div>
@@ -158,6 +167,9 @@
                 </div>
             </div>
         </div>
+
+        @await Html.PartialAsync("_Phone")
+
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
@@ -238,380 +250,248 @@
         </div>
     </div>
 
-    <div class="modal fade" id="PhoneModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input type="text" id="Phone" class="form-control" maxlength="20" placeholder="Phone Number">
-                                    <div class="input-group-append">
-                                        <select id="PhoneCat" class="form-control"></select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 offset-3 text-center">
-                            <input id="SavePhone" type="submit" value="Save" class="btn btn-success btn-block">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        updateProfileIcon();
-        $("#Image").load(function () {
             updateProfileIcon();
-        });
+            $("#Image").load(function () {
+                updateProfileIcon();
+            });
 
-        $('#customFile').change(function () {
-            var filename = $(this).val().split('\\').pop();
-            $(".custom-file-label").html(filename);
-        });
+            $('#customFile').change(function () {
+                var filename = $(this).val().split('\\').pop();
+                $(".custom-file-label").html(filename);
+            });
 
-        $.ajax({
-            type: "POST",
-            url: "Model/GetPhoneCategories",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("XSRF-TOKEN",
-                    $('input:hidden[name="__RequestVerificationToken"]').val());
-            },
-            success: function (response) {
-                response = JSON.parse(response);
-                $.each(response, function (key, value) {
-                    $("#PhoneCat").append("<option val=" + key + ">" + value + "</option>")
-                });
-            }
-        });
+            $("#Button").click(function () {
+                var canvas = document.createElement("canvas");
 
-        $("#Phone").on('input', function () {
-            var regex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-            if ($("#Phone").val().match(regex)) {
-                $("#Phone").addClass("valid")
-                $("#Phone").css("border-color", "green");
-            } else {
-                $("#Phone").removeClass("valid")
-                $("#Phone").removeAttr("style");
-            }
-        });
-
-        $("#PhoneCreate").click(function () {
-            $("#PhoneModal").data("id", -1);
-            $("#PhoneModal").modal("show");
-        });
-
-        $("#SavePhone").click(function () {
-            if ($("#Phone").hasClass("valid")) {
-                $.ajax({
-                    type: "POST",
-                    url: "Model/SavePhone",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: JSON.stringify({
-                        ID: $("#PhoneModal").data("id"),
-                        Number: $("#Phone").val(),
-                        Category: $("#PhoneCat").val(),
-                        UserID: @Model.DisplayUser.UserID
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        var phone = $("#Phones .card button[data-id='" + response + "']").parents('.card');
-
-                        if (phone.length > 0) {
-                            phone.find(".phone-number").text($("#Phone").val());
-                            phone.find(".phone-cat").text($("#PhoneCat").val());
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var img = new Image();
+                    img.onload = function () {
+                        var size = 300;
+                        if (img.height > img.width) {
+                            canvas.width = size;
+                            canvas.height = size * img.height / img.width;
+                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                         } else {
-                            var card = "";
-
-                            card += '<div class="card">'
-                            card += '<div class="card-header">'
-                            card += '<button type="button" data-id="' + response + '" onclick="return EditPhone(this)" class="btn btn-sm btn-success phone-edit"><i class="fas fa-edit"></i></button>'
-                            card += '<button type="button" data-id="' + response + '" onclick="return DeletePhone(this)" class="btn btn-sm btn-danger phone-delete"><i class="fas fa-trash"></i></button>'
-                            card += '</div>'
-                            card += '<div class="card-body">'
-                            card += '<h5 class="card-title">' + $("#Phone").val() + '</h5>'
-                            card += '<h6 class="card-subtitle mb-2 text-muted">' + $("#PhoneCat").val() + '</h6>'
-                            card += '</div>'
-                            card += '</div>'
-
-                            $("#Phones .card:last").before(card);
-
+                            canvas.width = size * img.width / img.height;
+                            canvas.height = size;
+                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                         }
 
-                        $("#PhoneModal").modal("hide");
-                    },
-                    failure: function (response) {
-                        alert(response);
+                        $("#Image").get(0).src = canvas.toDataURL('image/png');
+
+                        $.ajax({
+                            type: "POST",
+                            url: "Model/SaveUserIcon",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            data: JSON.stringify({
+                                Icon: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, '')
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+
+                            },
+                            failure: function (response) {
+                                alert(response);
+                            }
+                        });
                     }
-                });
+                    img.src = reader.result;
+                }
+                reader.readAsDataURL($("#customFile").get(0).files[0]);
+            });
+
+            function updateProfileIcon() {
+                var image = new Image();
+                image.src = $("#Image").attr("src");
+                $("#Image").removeAttr("style");
+                $("#Image").css(image.width > image.height ? "height" : "width", "200px");
             }
-        });
 
-        $("#Button").click(function () {
-            var canvas = document.createElement("canvas");
+            $("#Password").on('input', function () {
+                var password = $("#Password").val();
 
-            var reader = new FileReader();
-            reader.onload = function (event) {
-                var img = new Image();
-                img.onload = function () {
-                    var size = 300;
-                    if (img.height > img.width) {
-                        canvas.width = size;
-                        canvas.height = size * img.height / img.width;
-                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    } else {
-                        canvas.width = size * img.width / img.height;
-                        canvas.height = size;
-                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    }
+                if (password.match(/^(?=.*[A-Z])(?=.*[0-9])/)) {
+                    $("#CapsRed").hide();
+                    $("#CapsGreen").show();
+                    $("#Password").addClass("caps");
+                } else {
+                    $("#CapsRed").show();
+                    $("#CapsGreen").hide();
+                    $("#Password").removeClass("caps");
+                }
 
-                    $("#Image").get(0).src = canvas.toDataURL('image/png');
+                if (password.length > 7) {
+                    $("#CharsRed").hide();
+                    $("#CharsGreen").show();
+                    $("#Password").addClass("chars");
+                } else {
+                    $("#CharsRed").show();
+                    $("#CharsGreen").hide();
+                    $("#Password").removeClass("chars");
+                }
 
+                if ($("#Password").hasClass("caps") && $("#RegPassword").hasClass("chars")) {
+                    $("#Password").css("border-color", "green");
+                } else {
+                    $("#Password").removeAttr("style");
+                }
+                confirmMatch();
+            });
+
+            $("#PasswordConfirm").on('input', function () {
+                confirmMatch();
+            });
+
+            function confirmMatch() {
+                var password = $("#PasswordConfirm").val();
+
+                if (password == $("#Password").val()) {
+                    $("#MatchRed").hide();
+                    $("#MatchGreen").show();
+                    $("#Password").addClass("match");
+                    $("#PasswordConfirm").css("border-color", "green");
+                } else {
+                    $("#MatchRed").show();
+                    $("#MatchGreen").hide();
+                    $("#Password").removeClass("match");
+                    $("#PasswordConfirm").removeAttr("style");
+                }
+            }
+
+            $("#Email").on('input', function () {
+                var regex = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if ($("#Email").val().match(regex) && $("#Email").val().length < 100) {
+                    $("#Email").addClass("valid")
+                    $("#Email").css("border-color", "green");
+                } else {
+                    $("#Email").removeClass("valid")
+                    $("#Email").removeAttr("style");
+                }
+            });
+            function validateChanges() {
+                var valid = true;
+                $("#FirstName").removeAttr("style");
+                $("#LastName").removeAttr("style");
+                if ($("#FirstName").val() == "") {
+                    $("#FirstName").css("border-color", "red");
+                    valid = false;
+                }
+                if ($("#LastName").val() == "") {
+                    $("#LastName").css("border-color", "red");
+                    valid = false;
+                }
+                if (!$("#Email").hasClass("valid")) {
+                    $("#Email").css("border-color", "red");
+                    valid = false;
+                }
+                return valid;
+            }
+            function validatePassword() {
+                var valid = true;
+                if (!$("#Password").hasClass("caps") || !$("#Password").hasClass("chars")) {
+                    $("#Password").css("border-color", "red");
+                    valid = false;
+                }
+                if (!$("#Password").hasClass("match")) {
+                    $("#PasswordConfirm").css("border-color", "red");
+                    valid = false;
+                }
+                return valid;
+            }
+            $("#Save").click(function () {
+                if (validateChanges()) {
                     $.ajax({
                         type: "POST",
-                        url: "Model/SaveUserIcon",
+                        url: "Security/ExistsWithException",
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("XSRF-TOKEN",
                                 $('input:hidden[name="__RequestVerificationToken"]').val());
                         },
                         data: JSON.stringify({
-                            Icon: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, '')
+                            Email: $("#Email").val(),
+                            ID: $("#UserID").text()
                         }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (response) {
-
+                            if (!JSON.parse(response)) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "Model/UpdateUser",
+                                    beforeSend: function (xhr) {
+                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                    },
+                                    data: JSON.stringify({
+                                        FirstName: $("#FirstName").val(),
+                                        LastName: $("#LastName").val(),
+                                        Email: $("#Email").val(),
+                                        ID: $("#UserID").text()
+                                    }),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (response) {
+                                        $.alert({
+                                            title: 'Changes Saved',
+                                            content: 'Changes to your account were saved successfully.',
+                                            type: 'green'
+                                        });
+                                    },
+                                    failure: function (response) {
+                                        alert(response);
+                                    }
+                                });
+                            } else {
+                                $("#Email").css("border-color", "red");
+                                $.confirm({
+                                    title: 'Account Already Exists',
+                                    type: 'red',
+                                    content: 'An account with this email address already exists. Please choose another address.'
+                                });
+                            }
                         },
                         failure: function (response) {
                             alert(response);
                         }
                     });
                 }
-                img.src = reader.result;
-            }
-            reader.readAsDataURL($("#customFile").get(0).files[0]);
-        });
-
-        function updateProfileIcon() {
-            var image = new Image();
-            image.src = $("#Image").attr("src");
-            $("#Image").removeAttr("style");
-            $("#Image").css(image.width > image.height ? "height" : "width", "200px");
-        }
-
-        $("#Password").on('input', function () {
-            var password = $("#Password").val();
-
-            if (password.match(/^(?=.*[A-Z])(?=.*[0-9])/)) {
-                $("#CapsRed").hide();
-                $("#CapsGreen").show();
-                $("#Password").addClass("caps");
-            } else {
-                $("#CapsRed").show();
-                $("#CapsGreen").hide();
-                $("#Password").removeClass("caps");
-            }
-
-            if (password.length > 7) {
-                $("#CharsRed").hide();
-                $("#CharsGreen").show();
-                $("#Password").addClass("chars");
-            } else {
-                $("#CharsRed").show();
-                $("#CharsGreen").hide();
-                $("#Password").removeClass("chars");
-            }
-
-            if ($("#Password").hasClass("caps") && $("#RegPassword").hasClass("chars")) {
-                $("#Password").css("border-color", "green");
-            } else {
-                $("#Password").removeAttr("style");
-            }
-            confirmMatch();
-        });
-
-        $("#PasswordConfirm").on('input', function () {
-            confirmMatch();
-        });
-
-        function confirmMatch() {
-            var password = $("#PasswordConfirm").val();
-
-            if (password == $("#Password").val()) {
-                $("#MatchRed").hide();
-                $("#MatchGreen").show();
-                $("#Password").addClass("match");
-                $("#PasswordConfirm").css("border-color", "green");
-            } else {
-                $("#MatchRed").show();
-                $("#MatchGreen").hide();
-                $("#Password").removeClass("match");
-                $("#PasswordConfirm").removeAttr("style");
-            }
-        }
-
-        $("#Email").on('input', function () {
-            var regex = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            if ($("#Email").val().match(regex) && $("#Email").val().length < 100) {
-                $("#Email").addClass("valid")
-                $("#Email").css("border-color", "green");
-            } else {
-                $("#Email").removeClass("valid")
-                $("#Email").removeAttr("style");
-            }
-        });
-
-        function validateChanges() {
-            var valid = true;
-
-            $("#FirstName").removeAttr("style");
-            $("#LastName").removeAttr("style");
-
-            if ($("#FirstName").val() == "") {
-                $("#FirstName").css("border-color", "red");
-                valid = false;
-            }
-
-            if ($("#LastName").val() == "") {
-                $("#LastName").css("border-color", "red");
-                valid = false;
-            }
-
-            if (!$("#Email").hasClass("valid")) {
-                $("#Email").css("border-color", "red");
-                valid = false;
-            }
-
-            return valid;
-        }
-
-        function validatePassword() {
-            var valid = true;
-
-            if (!$("#Password").hasClass("caps") || !$("#Password").hasClass("chars")) {
-                $("#Password").css("border-color", "red");
-                valid = false;
-            }
-
-            if (!$("#Password").hasClass("match")) {
-                $("#PasswordConfirm").css("border-color", "red");
-                valid = false;
-            }
-
-            return valid;
-        }
-
-        $("#Save").click(function () {
-            if (validateChanges()) {
-                $.ajax({
-                    type: "POST",
-                    url: "Security/ExistsWithException",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: JSON.stringify({
-                        Email: $("#Email").val(),
-                        ID: @Model.DisplayUser.UserID
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        if (!JSON.parse(response)) {
-                            $.ajax({
-                                type: "POST",
-                                url: "Model/UpdateUser",
-                                beforeSend: function (xhr) {
-                                    xhr.setRequestHeader("XSRF-TOKEN",
-                                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                                },
-                                data: JSON.stringify({
-                                    FirstName: $("#FirstName").val(),
-                                    LastName: $("#LastName").val(),
-                                    Email: $("#Email").val(),
-                                    ID: @Model.DisplayUser.UserID
-                                }),
-                                contentType: "application/json; charset=utf-8",
-                                dataType: "json",
-                                success: function (response) {
-                                    $.alert({
-                                        title: 'Changes Saved',
-                                        content: 'Changes to your account were saved successfully.',
-                                        type: 'green'
-                                    });
-                                },
-                                failure: function (response) {
-                                    alert(response);
-                                }
+            });
+            $("#ChangePassword").click(function () {
+                if (validatePassword()) {
+                    $.ajax({
+                        type: "POST",
+                        url: "Model/ChangePassword",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify({
+                            Password: sha256($("#Password").val()),
+                            ID: $("#UserID").text()
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            $.alert({
+                                title: 'Password Changed',
+                                content: 'Your new password is ready to use.',
+                                type: 'green'
                             });
-                        } else {
-                            $("#Email").css("border-color", "red");
-                            $.confirm({
-                                title: 'Account Already Exists',
-                                type: 'red',
-                                content: 'An account with this email address already exists. Please choose another address.'
-                            });
+                        },
+                        failure: function (response) {
+                            alert(response);
                         }
-                    },
-                    failure: function (response) {
-                        alert(response);
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
-
-        $("#ChangePassword").click(function () {
-            if (validatePassword()) {
-                $.ajax({
-                    type: "POST",
-                    url: "Model/ChangePassword",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: JSON.stringify({
-                        Password: sha256($("#Password").val()),
-                        ID: @Model.DisplayUser.UserID
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        $.alert({
-                            title: 'Password Changed',
-                            content: 'Your new password is ready to use.',
-                            type: 'green'
-                        });
-                    },
-                    failure: function (response) {
-                        alert(response);
-                    }
-                });
-            }
-        });
-
-    });
-
-    function EditPhone(button) {
-        button = $(button);
-        var card = button.parents(".card");
-        $("#PhoneModal").data("id", button.data("id"));
-        $("#Phone").val(card.find(".phone-number").text());
-        $("#PhoneCat").val(card.find(".phone-cat").text());
-        $("#PhoneModal").modal("show");
-    }
-
     </script>
-
 }
-
