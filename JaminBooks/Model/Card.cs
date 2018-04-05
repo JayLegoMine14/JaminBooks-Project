@@ -154,6 +154,5 @@ namespace JaminBooks.Model
                     ));
             return cards;
         }
-
     }
 }
