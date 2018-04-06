@@ -5,10 +5,14 @@
     Layout = "~/Pages/_Layout.cshtml";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    var userIcon = "";
 
-    var userIcon = Model.DisplayUser.Icon != null ?
-    String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.DisplayUser.Icon)) :
-    "/images/user.png";
+    if (Model.DisplayUser != null)
+    {
+        userIcon = Model.DisplayUser.Icon != null ?
+        String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.DisplayUser.Icon)) :
+        "/images/user.png";
+    }
 }
 
 @if (Model.DisplayUser != null)
@@ -36,7 +40,7 @@
                 background-color: #aaa;
             }
 
-        #Phones, #Cards {
+        #Phones, #Cards, #Addresses {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
@@ -45,455 +49,536 @@
     </style>
 
     <span id="UserID" class="d-none">@Model.DisplayUser.UserID</span>
-    <div class="container">
-        <div class="row mb-3 mt-3">
-            <div class="col-6">
-                <div class="icon-div">
-                    <img id="Image" src="@userIcon" />
+    <div class="container body-content">
+        <div class="container">
+            <div class="row mb-3 mt-3">
+                <div class="col-6 offset-2"><h3>User Icon</h3></div>
+                <div class="col-6">
+                    <div class="icon-div">
+                        <img id="Image" src="@userIcon" />
+                    </div>
+                </div>
+                <div class="col-4 pt-3">
+                    <div class="custom-file">
+                        <div class="input-group mb-3">
+                            <input type="file" class="custom-file-input" id="customFile">
+                            <label class="custom-file-label" for="customFile">
+                                Choose file...
+                            </label>
+                            <button id="Button" class="btn btn-secondary mt-2">Upload</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-4 pt-3">
-                <div class="custom-file">
-                    <div class="input-group mb-3">
-                        <input type="file" class="custom-file-input" id="customFile">
-                        <label class="custom-file-label" for="customFile">
-                            Choose file...
-                        </label>
-                        <button id="Button" class="btn btn-secondary mt-2">Upload</button>
+            <div class="row">
+                <div class="col-6 offset-2"><h3>Details</h3></div>
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <input type="text" id="FirstName" value="@Model.DisplayUser.FirstName" class="form-control input-sm" maxlength="50" placeholder="First Name">
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <input type="text" id="LastName" value="@Model.DisplayUser.LastName" class="form-control input-sm" maxlength="50" placeholder="Last Name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="Email" value="@Model.DisplayUser.Email" class="form-control input-sm valid" maxlength="100" placeholder="Email Address">
+                        @if (Model.DisplayUser.IsConfirmed)
+                    {
+                        <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+                }
+                else
+                {
+                    <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
+            }
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-6 offset-3 text-center">
+                            <input id="Save" type="submit" value="Save Changes" class="btn btn-primary btn-block btn-dark-red">
+                        </div>
+                    </div>
+                    <div class="row"><div class="col-6"><h3>Password</h3></div></div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <input type="password" id="Password" class="form-control input-sm" placeholder="New Password">
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <input type="password" id="PasswordConfirm" class="form-control input-sm" placeholder="Confirm New Password">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <ul class="list-unstyled" style="line-height: 1.7">
+                                <li>
+                                    <span id="CharsRed" class="fa fa-times text-danger"></span>
+                                    <span id="CharsGreen" class="fa fa-check text-success" style="display:none"></span>
+                                    At least 8 characters
+                                </li>
+
+                                <li>
+                                    <span id="CapsRed" class="fa fa-times text-danger"></span>
+                                    <span id="CapsGreen" class="fa fa-check text-success" style="display:none"></span>
+                                    Capitals and numbers
+                                </li>
+
+                                <li>
+                                    <span id="MatchRed" class="fa fa-times text-danger"></span>
+                                    <span id="MatchGreen" class="fa fa-check text-success" style="display:none"></span>
+                                    Matching passwords
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6 offset-3 text-center">
+                            <input id="ChangePassword" type="submit" value="Change Password" class="btn btn-primary btn-block btn-dark-red">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <h3>Phones</h3>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div id="Phones" class="col-12 mb-4">
+                            @foreach (Model.Phone phone in Model.DisplayUser.Phones)
+                        {
+                            <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
+                                <div class="card-header">
+                                    <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                    <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title phone-number">@phone.Number</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
+                                </div>
+                            </div>
+                    }
+                            <div class="card d-inline-block" style="width:200px">
+                                <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @await Html.PartialAsync("_Phone")
+
+            <div class="row">
+                <div class="col-8 offset-2">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <h3>Cards</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="Cards" class="col-12 mb-4">
+                            @foreach (Model.Card card in Model.DisplayUser.Cards)
+                        {
+                            <div class="card dc-card d-inline-block" data-id="@card.CardID" style="width:300px"
+                                 data-name="@card.Name"
+                                 data-last-four="@card.LastFourDigits" data-month="@card.ExpMonth"
+                                 data-year="@card.ExpYear" data-line1="@card.Address.Line1"
+                                 data-line2="@card.Address.Line2" data-city="@card.Address.City"
+                                 data-state="@card.Address.State" data-country="@card.Address.Country"
+                                 data-zip="@card.Address.ZIP">
+                                <div class="card-header">
+                                    <button type="button" onclick="EditCard(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                    <button type="button" onclick="DeleteCard(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    <span class="float-right text-dark show-address popup" data-tooltip-content="#AddressPopup"><i class="fas fa-home"></i></span>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title dc-card-last-four">****-****-****-@card.LastFourDigits</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted dc-card-exp">@(card.ExpMonth + "/" + card.ExpYear)</h6>
+                                    <h5 class="card-title text-muted dc-card-name">@card.Name</h5>
+                                </div>
+                            </div>
+                    }
+                            <div class="card d-inline-block" style="width:300px">
+                                <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @await Html.PartialAsync("_Card")
+
+            <div class="row">
+                <div class="col-8 offset-2">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <h3>Addresses</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="Addresses" class="col-12 mb-4">
+                            @foreach (Model.Address add in Model.DisplayUser.Addresses)
+                        {
+                            <div class="card address d-inline-block" data-id="@add.AddressID" style="width:300px"
+                                 data-line1="@add.Line1" data-line2="@add.Line2"
+                                 data-city="@add.City" data-state="@add.State"
+                                 data-country="@add.Country" data-zip="@add.ZIP">
+                                <div class="card-header">
+                                    <button type="button" onclick="EditAddress(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                    <button type="button" onclick="DeleteAddress(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">@add.Line1</h6>
+
+                                    @if (add.Line2 != null)
+                                {
+                                    <h6 class="card-title text-muted">@add.Line2</h6>
+                            }
+
+                                    @if (add.State != null)
+                                {
+                                    <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
+                            }
+                            else
+                            {
+                                <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
+                        }
+                                </div>
+                            </div>
+                    }
+                            <div class="card d-inline-block" style="width:300px">
+                                <div id="AddressCreate" class="card-body create-card" style="line-height: 95px">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        @await Html.PartialAsync("_Address")
+
         <div class="row">
             <div class="col-8 offset-2">
-                <div class="row">
-                    <div class="col-xs-6 col-sm-6 col-md-6">
-                        <div class="form-group">
-                            <input type="text" id="FirstName" value="@Model.DisplayUser.FirstName" class="form-control input-sm" maxlength="50" placeholder="First Name">
-                        </div>
+                <div class="row mb-2">
+                    <div class="col-12">
+                        <h3>Delete Account</h3>
                     </div>
-                    <div class="col-xs-6 col-sm-6 col-md-6">
-                        <div class="form-group">
-                            <input type="text" id="LastName" value="@Model.DisplayUser.LastName" class="form-control input-sm" maxlength="50" placeholder="Last Name">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="Email" value="@Model.DisplayUser.Email" class="form-control input-sm valid" maxlength="100" placeholder="Email Address">
-                    @if (Model.DisplayUser.IsConfirmed)
-                {
-                    <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
-            }
-            else
-            {
-                <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
-        }
                 </div>
                 <div class="row mb-5">
                     <div class="col-6 offset-3 text-center">
-                        <input id="Save" type="submit" value="Save Changes" class="btn btn-primary btn-block btn-dark-red">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6 col-sm-6 col-md-6">
-                        <div class="col-xs-12">
-                            <div class="form-group">
-                                <input type="password" id="Password" class="form-control input-sm" placeholder="New Password">
-                            </div>
-                        </div>
-                        <div class="col-xs-12">
-                            <div class="form-group">
-                                <input type="password" id="PasswordConfirm" class="form-control input-sm" placeholder="Confirm New Password">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-6 col-sm-6 col-md-6">
-                        <ul class="list-unstyled" style="line-height: 1.7">
-                            <li>
-                                <span id="CharsRed" class="fa fa-times text-danger"></span>
-                                <span id="CharsGreen" class="fa fa-check text-success" style="display:none"></span>
-                                At least 8 characters
-                            </li>
-
-                            <li>
-                                <span id="CapsRed" class="fa fa-times text-danger"></span>
-                                <span id="CapsGreen" class="fa fa-check text-success" style="display:none"></span>
-                                Capitals and numbers
-                            </li>
-
-                            <li>
-                                <span id="MatchRed" class="fa fa-times text-danger"></span>
-                                <span id="MatchGreen" class="fa fa-check text-success" style="display:none"></span>
-                                Matching passwords
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6 offset-3 text-center">
-                        <input id="ChangePassword" type="submit" value="Change Password" class="btn btn-primary btn-block btn-dark-red">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-8 offset-2">
-                <div class="row">
-                    <div class="col-12">
-                        <h3>Phones</h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="Phones" class="col-12 mb-5">
-                        @foreach (Model.Phone phone in Model.DisplayUser.Phones)
+                        @if (Model.DisplayUser.IsDeleted)
                     {
-                        <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
-                            <div class="card-header">
-                                <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title phone-number">@phone.Number</h5>
-                                <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
-                            </div>
-                        </div>
+                        <span class="text-danger">Account Deleted</span>
                 }
-                        <div class="card d-inline-block" style="width:200px">
-                            <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        @await Html.PartialAsync("_Phone")
-
-        <div class="row">
-            <div class="col-8 offset-2">
-                <div class="row">
-                    <div class="col-12">
-                        <h3>Cards</h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="Cards" class="col-12 mb-5">
-                        @foreach (Model.Card card in Model.DisplayUser.Cards)
-                    {
-                        <div class="card dc-card d-inline-block" data-id="@card.CardID" style="width:300px">
-                            <div class="card-header">
-                                <button type="button" onclick="EditCard(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                <button type="button" onclick="DeleteCard(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">****-****-****-@card.LastFourDigits</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">@(card.ExpMonth + "/" + card.ExpYear)</h6>
-                                <h5 class="card-title text-muted">@card.Name</h5>
-                            </div>
-                        </div>
-                }
-                        <div class="card d-inline-block" style="width:300px">
-                            <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        @await Html.PartialAsync("_Card")
-
-        <div class="row">
-            <div class="col-8 offset-2">
-                <div class="row">
-                    <div class="col-12">
-                        <h3>Addresses</h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 card-deck mb-5">
-                        @foreach (Model.Address add in Model.DisplayUser.Addresses)
-                    {
-                        <div class="card" style="width: 12rem;">
-                            <div class="card-header">
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <h6 class="card-title">@add.Line1</h6>
-                                @if (add.Line2 != null)
-                            {
-                                <h6 class="card-title text-muted">@add.Line2</h6>
-                        }
-                                @if (add.State != null)
-                            {
-                                <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
-                        }
-                        else
-                        {
-                            <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
-                    }
-                            </div>
-                        </div>
-                }
-                        <div class="card" style="width: 12rem;">
-                            <div id="AddressCreate" class="card-body create-card" style="line-height: 130px">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                        </div>
+                else
+                {
+                    <input id="DeleteAccount" type="submit" value="Delete Account" class="btn btn-danger btn-block">
+            }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        $(document).ready(function () {
+        <script>
+            $(document).ready(function () {
 
-            updateProfileIcon();
-            $("#Image").load(function () {
                 updateProfileIcon();
-            });
+                $("#Image").load(function () {
+                    updateProfileIcon();
+                });
 
-            $('#customFile').change(function () {
-                var filename = $(this).val().split('\\').pop();
-                $(".custom-file-label").html(filename);
-            });
+                $('#customFile').change(function () {
+                    var filename = $(this).val().split('\\').pop();
+                    $(".custom-file-label").html(filename);
+                });
 
-            $("#Button").click(function () {
-                var canvas = document.createElement("canvas");
+                $("#Button").click(function () {
+                    var canvas = document.createElement("canvas");
 
-                var reader = new FileReader();
-                reader.onload = function (event) {
-                    var img = new Image();
-                    img.onload = function () {
-                        var size = 300;
-                        if (img.height > img.width) {
-                            canvas.width = size;
-                            canvas.height = size * img.height / img.width;
-                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                        } else {
-                            canvas.width = size * img.width / img.height;
-                            canvas.height = size;
-                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        var img = new Image();
+                        img.onload = function () {
+                            var size = 300;
+                            if (img.height > img.width) {
+                                canvas.width = size;
+                                canvas.height = size * img.height / img.width;
+                                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                            } else {
+                                canvas.width = size * img.width / img.height;
+                                canvas.height = size;
+                                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                            }
+
+                            $("#Image").get(0).src = canvas.toDataURL('image/png');
+
+                            $.ajax({
+                                type: "POST",
+                                url: "Model/SaveUserIcon",
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("XSRF-TOKEN",
+                                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                                },
+                                data: JSON.stringify({
+                                    Icon: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, ''),
+                                    UserID: $("#UserID").text()
+                                }),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (response) {
+
+                                },
+                                failure: function (response) {
+                                    alert(response);
+                                }
+                            });
                         }
+                        img.src = reader.result;
+                    }
+                    reader.readAsDataURL($("#customFile").get(0).files[0]);
+                });
 
-                        $("#Image").get(0).src = canvas.toDataURL('image/png');
+                function updateProfileIcon() {
+                    var image = new Image();
+                    image.src = $("#Image").attr("src");
+                    $("#Image").removeAttr("style");
+                    $("#Image").css(image.width > image.height ? "height" : "width", "200px");
+                }
 
+                $("#Password").on('input', function () {
+                    var password = $("#Password").val();
+
+                    if (password.match(/^(?=.*[A-Z])(?=.*[0-9])/)) {
+                        $("#CapsRed").hide();
+                        $("#CapsGreen").show();
+                        $("#Password").addClass("caps");
+                    } else {
+                        $("#CapsRed").show();
+                        $("#CapsGreen").hide();
+                        $("#Password").removeClass("caps");
+                    }
+
+                    if (password.length > 7) {
+                        $("#CharsRed").hide();
+                        $("#CharsGreen").show();
+                        $("#Password").addClass("chars");
+                    } else {
+                        $("#CharsRed").show();
+                        $("#CharsGreen").hide();
+                        $("#Password").removeClass("chars");
+                    }
+
+                    if ($("#Password").hasClass("caps") && $("#RegPassword").hasClass("chars")) {
+                        $("#Password").css("border-color", "green");
+                    } else {
+                        $("#Password").removeAttr("style");
+                    }
+                    confirmMatch();
+                });
+
+                $("#PasswordConfirm").on('input', function () {
+                    confirmMatch();
+                });
+
+                function confirmMatch() {
+                    var password = $("#PasswordConfirm").val();
+
+                    if (password == $("#Password").val()) {
+                        $("#MatchRed").hide();
+                        $("#MatchGreen").show();
+                        $("#Password").addClass("match");
+                        $("#PasswordConfirm").css("border-color", "green");
+                    } else {
+                        $("#MatchRed").show();
+                        $("#MatchGreen").hide();
+                        $("#Password").removeClass("match");
+                        $("#PasswordConfirm").removeAttr("style");
+                    }
+                }
+
+                $("#Email").on('input', function () {
+                    var regex = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    if ($("#Email").val().match(regex) && $("#Email").val().length < 100) {
+                        $("#Email").addClass("valid")
+                        $("#Email").css("border-color", "green");
+                    } else {
+                        $("#Email").removeClass("valid")
+                        $("#Email").removeAttr("style");
+                    }
+                });
+                function validateChanges() {
+                    var valid = true;
+                    $("#FirstName").removeAttr("style");
+                    $("#LastName").removeAttr("style");
+                    if ($("#FirstName").val() == "") {
+                        $("#FirstName").css("border-color", "red");
+                        valid = false;
+                    }
+                    if ($("#LastName").val() == "") {
+                        $("#LastName").css("border-color", "red");
+                        valid = false;
+                    }
+                    if (!$("#Email").hasClass("valid")) {
+                        $("#Email").css("border-color", "red");
+                        valid = false;
+                    }
+                    return valid;
+                }
+                function validatePassword() {
+                    var valid = true;
+                    if (!$("#Password").hasClass("caps") || !$("#Password").hasClass("chars")) {
+                        $("#Password").css("border-color", "red");
+                        valid = false;
+                    }
+                    if (!$("#Password").hasClass("match")) {
+                        $("#PasswordConfirm").css("border-color", "red");
+                        valid = false;
+                    }
+                    return valid;
+                }
+                $("#Save").click(function () {
+                    if (validateChanges()) {
                         $.ajax({
                             type: "POST",
-                            url: "Model/SaveUserIcon",
+                            url: "Security/ExistsWithException",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("XSRF-TOKEN",
                                     $('input:hidden[name="__RequestVerificationToken"]').val());
                             },
                             data: JSON.stringify({
-                                Icon: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, ''),
-                                UserID: $("#UserID").text()
+                                Email: $("#Email").val(),
+                                ID: $("#UserID").text()
                             }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (response) {
-
+                                if (!JSON.parse(response)) {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "Model/UpdateUser",
+                                        beforeSend: function (xhr) {
+                                            xhr.setRequestHeader("XSRF-TOKEN",
+                                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                                        },
+                                        data: JSON.stringify({
+                                            FirstName: $("#FirstName").val(),
+                                            LastName: $("#LastName").val(),
+                                            Email: $("#Email").val(),
+                                            ID: $("#UserID").text()
+                                        }),
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "json",
+                                        success: function (response) {
+                                            $.alert({
+                                                title: 'Changes Saved',
+                                                content: 'Changes to your account were saved successfully.',
+                                                type: 'green'
+                                            });
+                                        },
+                                        failure: function (response) {
+                                            alert(response);
+                                        }
+                                    });
+                                } else {
+                                    $("#Email").css("border-color", "red");
+                                    $.confirm({
+                                        title: 'Account Already Exists',
+                                        type: 'red',
+                                        content: 'An account with this email address already exists. Please choose another address.'
+                                    });
+                                }
                             },
                             failure: function (response) {
                                 alert(response);
                             }
                         });
                     }
-                    img.src = reader.result;
-                }
-                reader.readAsDataURL($("#customFile").get(0).files[0]);
-            });
-
-            function updateProfileIcon() {
-                var image = new Image();
-                image.src = $("#Image").attr("src");
-                $("#Image").removeAttr("style");
-                $("#Image").css(image.width > image.height ? "height" : "width", "200px");
-            }
-
-            $("#Password").on('input', function () {
-                var password = $("#Password").val();
-
-                if (password.match(/^(?=.*[A-Z])(?=.*[0-9])/)) {
-                    $("#CapsRed").hide();
-                    $("#CapsGreen").show();
-                    $("#Password").addClass("caps");
-                } else {
-                    $("#CapsRed").show();
-                    $("#CapsGreen").hide();
-                    $("#Password").removeClass("caps");
-                }
-
-                if (password.length > 7) {
-                    $("#CharsRed").hide();
-                    $("#CharsGreen").show();
-                    $("#Password").addClass("chars");
-                } else {
-                    $("#CharsRed").show();
-                    $("#CharsGreen").hide();
-                    $("#Password").removeClass("chars");
-                }
-
-                if ($("#Password").hasClass("caps") && $("#RegPassword").hasClass("chars")) {
-                    $("#Password").css("border-color", "green");
-                } else {
-                    $("#Password").removeAttr("style");
-                }
-                confirmMatch();
-            });
-
-            $("#PasswordConfirm").on('input', function () {
-                confirmMatch();
-            });
-
-            function confirmMatch() {
-                var password = $("#PasswordConfirm").val();
-
-                if (password == $("#Password").val()) {
-                    $("#MatchRed").hide();
-                    $("#MatchGreen").show();
-                    $("#Password").addClass("match");
-                    $("#PasswordConfirm").css("border-color", "green");
-                } else {
-                    $("#MatchRed").show();
-                    $("#MatchGreen").hide();
-                    $("#Password").removeClass("match");
-                    $("#PasswordConfirm").removeAttr("style");
-                }
-            }
-
-            $("#Email").on('input', function () {
-                var regex = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                if ($("#Email").val().match(regex) && $("#Email").val().length < 100) {
-                    $("#Email").addClass("valid")
-                    $("#Email").css("border-color", "green");
-                } else {
-                    $("#Email").removeClass("valid")
-                    $("#Email").removeAttr("style");
-                }
-            });
-            function validateChanges() {
-                var valid = true;
-                $("#FirstName").removeAttr("style");
-                $("#LastName").removeAttr("style");
-                if ($("#FirstName").val() == "") {
-                    $("#FirstName").css("border-color", "red");
-                    valid = false;
-                }
-                if ($("#LastName").val() == "") {
-                    $("#LastName").css("border-color", "red");
-                    valid = false;
-                }
-                if (!$("#Email").hasClass("valid")) {
-                    $("#Email").css("border-color", "red");
-                    valid = false;
-                }
-                return valid;
-            }
-            function validatePassword() {
-                var valid = true;
-                if (!$("#Password").hasClass("caps") || !$("#Password").hasClass("chars")) {
-                    $("#Password").css("border-color", "red");
-                    valid = false;
-                }
-                if (!$("#Password").hasClass("match")) {
-                    $("#PasswordConfirm").css("border-color", "red");
-                    valid = false;
-                }
-                return valid;
-            }
-            $("#Save").click(function () {
-                if (validateChanges()) {
-                    $.ajax({
-                        type: "POST",
-                        url: "Security/ExistsWithException",
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("XSRF-TOKEN",
-                                $('input:hidden[name="__RequestVerificationToken"]').val());
-                        },
-                        data: JSON.stringify({
-                            Email: $("#Email").val(),
-                            ID: $("#UserID").text()
-                        }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            if (!JSON.parse(response)) {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "Model/UpdateUser",
-                                    beforeSend: function (xhr) {
-                                        xhr.setRequestHeader("XSRF-TOKEN",
-                                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                                    },
-                                    data: JSON.stringify({
-                                        FirstName: $("#FirstName").val(),
-                                        LastName: $("#LastName").val(),
-                                        Email: $("#Email").val(),
-                                        ID: $("#UserID").text()
-                                    }),
-                                    contentType: "application/json; charset=utf-8",
-                                    dataType: "json",
-                                    success: function (response) {
-                                        $.alert({
-                                            title: 'Changes Saved',
-                                            content: 'Changes to your account were saved successfully.',
-                                            type: 'green'
-                                        });
-                                    },
-                                    failure: function (response) {
-                                        alert(response);
-                                    }
+                });
+                $("#ChangePassword").click(function () {
+                    if (validatePassword()) {
+                        $.ajax({
+                            type: "POST",
+                            url: "Model/ChangePassword",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            data: JSON.stringify({
+                                Password: sha256($("#Password").val()),
+                                ID: $("#UserID").text()
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+                                $.alert({
+                                    title: 'Password Changed',
+                                    content: 'Your new password is ready to use.',
+                                    type: 'green'
                                 });
-                            } else {
-                                $("#Email").css("border-color", "red");
-                                $.confirm({
-                                    title: 'Account Already Exists',
-                                    type: 'red',
-                                    content: 'An account with this email address already exists. Please choose another address.'
-                                });
+                            },
+                            failure: function (response) {
+                                alert(response);
                             }
-                        },
-                        failure: function (response) {
-                            alert(response);
+                        });
+                    }
+                });
+
+                $("#DeleteAccount").click(function () {
+                    $.confirm({
+                        title: 'Delete Account',
+                        icon: 'fas fa-exclamation',
+                        content: 'Are you sure you want to delete your account?',
+                        autoClose: 'Cancel|5000',
+                        type: 'red',
+                        buttons: {
+                            delete: {
+                                text: 'Delete Account',
+                                btnClass: 'btn-red',
+                                action: function () {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "Model/DeleteAccount",
+                                        beforeSend: function (xhr) {
+                                            xhr.setRequestHeader("XSRF-TOKEN",
+                                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                                        },
+                                        data: JSON.stringify({
+                                            ID: $("#UserID").text()
+                                        }),
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "json",
+                                        success: function (logout) {
+                                            if (logout)
+                                                location.href = '/Security/Logout';
+                                            else
+                                                location.reload();
+                                        },
+                                        failure: function (response) {
+                                            alert(response);
+                                        }
+                                    });
+                                }
+                            },
+                            Cancel: function () { }
                         }
                     });
-                }
+                })
+
             });
-            $("#ChangePassword").click(function () {
-                if (validatePassword()) {
-                    $.ajax({
-                        type: "POST",
-                        url: "Model/ChangePassword",
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("XSRF-TOKEN",
-                                $('input:hidden[name="__RequestVerificationToken"]').val());
-                        },
-                        data: JSON.stringify({
-                            Password: sha256($("#Password").val()),
-                            ID: $("#UserID").text()
-                        }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            $.alert({
-                                title: 'Password Changed',
-                                content: 'Your new password is ready to use.',
-                                type: 'green'
-                            });
-                        },
-                        failure: function (response) {
-                            alert(response);
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-}
+        </script>
+        }

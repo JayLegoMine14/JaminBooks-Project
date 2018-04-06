@@ -18,6 +18,20 @@ namespace JaminBooks.Pages
             return new JsonResult(JsonConvert.SerializeObject(Phone.GetPhoneCategories()));
         }
 
+        [Route("Model/DeleteAccount")]
+        public IActionResult DeleteAccount()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = new User(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                user.Delete();
+            }
+            return new JsonResult(currentUser.UserID == user.UserID);
+        }
+
         [Route("Model/DeletePhone")]
         public IActionResult DeletePhone()
         {
@@ -29,6 +43,38 @@ namespace JaminBooks.Pages
             if (currentUser.UserID == p.GetUserID() || currentUser.IsAdmin)
             {
                 p.Delete();
+            }
+
+            return new JsonResult("");
+        }
+
+        [Route("Model/DeleteCard")]
+        public IActionResult DeleteCard()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Card c = new Card(Convert.ToInt32(fields["ID"]));
+
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == c.User.UserID || currentUser.IsAdmin)
+            {
+                c.Delete();
+            }
+
+            return new JsonResult("");
+        }
+
+        [Route("Model/DeleteAddress")]
+        public IActionResult DeleteAddress()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Address a = new Address(Convert.ToInt32(fields["ID"]));
+
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == a.GetUserID() || currentUser.IsAdmin)
+            {
+                a.Delete();
             }
 
             return new JsonResult("");
@@ -86,8 +132,33 @@ namespace JaminBooks.Pages
                 c.ExpYear = fields["ExpYear"];
                 c.User = user;
                 c.Save();
+                return new JsonResult(new object[] { id, c.CardID });
+            }
+            return new JsonResult("");
+        }
 
-                return new JsonResult(c.CardID);
+        [Route("Model/SaveAddress")]
+        public IActionResult SaveAddress()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = new User(Convert.ToInt32(fields["UserID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                int id = Convert.ToInt32(fields["ID"]);
+                Address a = id != -1 ? new Address(id) : new Address();
+
+                a.Line1 = fields["Line1"];
+                if (fields["Line2"] != "") a.Line2 = fields["Line2"];
+                a.City = fields["City"];
+                a.Country = fields["Country"];
+                if (a.Country == "US") a.State = fields["State"];
+                a.ZIP = fields["ZIP"];
+                a.Save();
+                user.AddAddress(a);
+
+                return new JsonResult(new object[] { id, a.AddressID });
             }
             return new JsonResult("");
         }

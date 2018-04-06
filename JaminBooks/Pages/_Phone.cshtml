@@ -124,7 +124,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        var phone = $(".phone[data-id='" + response + "']");
+                        var phone = $(".phone[data-id='" + response[0] + "']");
 
                         if (phone.length > 0) {
                             phone.find(".phone-number").text($("#Phone").val());
@@ -132,9 +132,9 @@
                         } else {
                             var card = "";
 
-                            card += '<div class="card phone" data-id="' + response + '">'
+                            card += '<div class="card phone d-inline-block" data-id="' + response + '" style="width:200px">'
                             card += '<div class="card-header">'
-                            card += '<button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>'
+                            card += '<button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success mr-1"><i class="fas fa-edit"></i></button>'
                             card += '<button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>'
                             card += '</div>'
                             card += '<div class="card-body">'

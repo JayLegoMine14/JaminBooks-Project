@@ -3,13 +3,98 @@
 @{
     ViewData["Title"] = "Books";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
-    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
 }
 
 <script>$("a.books").addClass("active")</script>
-<h2>@ViewData["Title"]</h2>
-<h3>@Model.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<div id="SearchBar" class="row">
+    <div class="col-6 offset-4">
+        <div class="form-group">
+            <div class="input-group mt-3">
+                <input type="text" id="Search" class="form-control" placeholder="Search...">
+                <div class="input-group-append">
+                    <select id="SearchType" class="form-control">
+                        <option value="1">General</option>
+                        <option value="2">Title</option>
+                        <option value="3">Author</option>
+                        <option value="4">Category</option>
+                        <option value="5">Publisher</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="Sidebar" class="col-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Category</h3>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <select id="SearchType" class="form-control">
+                                    <option>General</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="col-12">
+                    <h3>Price</h3>
+                    <div class="form-group">
+                        <div class="row">
+                            <label for="last_name" class="col-sm-3 col-form-label">Min: </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label for="last_name" class="col-sm-3 col-form-label">Max: </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+            <div class="row">
+                <div class="col-12">
+                    <h3>Sort By</h3>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-12">
+                                <select id="SortType" class="form-control">
+                                    <option value="1">Price: Low to High</option>
+                                    <option value="2">Price: High to Low</option>
+                                    <option value="3">New to Old</option>
+                                    <option value="4">Old to New</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-10">
+        <div class="row">
+            <div id="Books" class="col-12">
+                <div id="LoadIcon" class="row text-center mt-5">
+                    <div class="col-12">
+                        <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @await Html.PartialAsync("_Authentication")
