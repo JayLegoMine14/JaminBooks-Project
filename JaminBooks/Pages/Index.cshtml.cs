@@ -22,31 +22,50 @@ namespace JaminBooks.Pages
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
 
+            Author a = new Author();
+
             Book book1 = new Book();
+            Book book2 = new Book();
+            byte[] result = new byte[100];
+           
             DateTime da = DateTime.Now;
 
-            book1.Title = "The Man of the Statue";
-            book1.AFirstName = "Phil";
-            book1.ALastName = "Bardson";
+            book1.Title = "The book about nothing";
             book1.PublicationDate = da;
-            book1.PublisherName = "SelfPublishing";
-            book1.ISBN10 = "9876543210";
-            book1.ISBN13 = "9876543210123";
-            book1.Description = "Son of Bard Bardson, the Bard";
-            book1.CategoryName = "Fantasy";
+            book1.ISBN10 = "1234567890";
+            book1.ISBN13 = "1234567890123";
+            book1.Description = "The most interesting book you will ever read";
+            book1.CategoryName = "Reference";
             book1.CopyrightDate = da;
-            book1.Price = 10.99M;
-            book1.Cost = 6.80M;
-            book1.Quantity = 10;
-            book1.PublisherName = "SelfPublishing";
-            book1.AddressID = 2;
-            book1.PhoneID = 12;
-            book1.ContactFirstName = "Philson";
-            book1.ContactLastName = "Bard";
+            book1.Price = 0.01M;
+            book1.Cost = 0.00M;
+            book1.Quantity = 1000;
+            book1.BookImage = result;
+
+            book1.AFirstName = "Nemo";
+            book1.ALastName = "Nihil";
+
+            book1.PublisherName = "Nusquam Publishing";
+            book1.ContactFirstName = "Nadia";
+            book1.ContactLastName = "Outis";
+
+            book1.Line1 = "0000 Nicht Road";
+            book1.Line2 = "Apt #0";
+            book1.City = "Nowhere";
+            book1.State = "Oklahoma";
+            book1.Country = "Turkey";
+            book1.ZIP = "12345";
+
+            book1.Number = "1(800)948-8488";
+            book1.Category = "Work";
 
 
+            //a.AFirstName = ""
+            //a.GetAuthorIDByName();
+            //a.delete();
 
-            book1.Save();
+            book2.Delete(32);
+
 
         }
     }
