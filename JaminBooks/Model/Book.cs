@@ -83,8 +83,6 @@ namespace JaminBooks.Model
             }
         }
 
-        
-
         public void Save()
         {
             Publisher Publisher = new Publisher();
@@ -124,8 +122,6 @@ namespace JaminBooks.Model
            AuthorID = Author.GetAuthorIDByName();
            PublisherID = Publisher.GetPublisherIDByName();
 
-            
-
             DataTable dt = SQL.Execute("uspSaveBook",
             new Param("Title", Title),
             new Param("BookID", BookID),
@@ -152,8 +148,6 @@ namespace JaminBooks.Model
              Category.SaveCategoryToBook(BookID);           
         }
 
-
-
         public void Delete(int BookID)
         {
             DataTable dt = SQL.Execute("uspDeleteBook",
@@ -161,6 +155,10 @@ namespace JaminBooks.Model
                 IsDeleted = true;
         }
 
-        
+        public static List<Book> getBookList(DataTable dt)
+        {
+            List<Book> books = new List<Book>();
+            return books;
+        }     
     }
 }

@@ -130,12 +130,7 @@
             $("#BookCat").val(-1);
         });
 
-        $("#BookCat, #SearchType, #SortType").change(function () {
-            resetLoad();
-            loadBooks();
-        });
-
-        $("#Search").input(function () {
+        $("#BookCat, #SearchType, #SortType, #Search").change(function () {
             resetLoad();
             loadBooks();
         });
