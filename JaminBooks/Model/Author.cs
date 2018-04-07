@@ -13,10 +13,7 @@ namespace JaminBooks.Model
 
         public int AuthorID;
         public string AFirstName;
-        public string ALastName;
-
-
-       
+        public string ALastName;     
 
         public Author() { }
 
@@ -35,29 +32,31 @@ namespace JaminBooks.Model
             }
         }
 
-        public int Save(string AFirstName, string ALastName)
-        {
 
+        public void Save()
+        {
             DataTable dt = SQL.Execute("uspSaveAuthor",
-                new Param("FirstName", AFirstName ),
-                new Param("LastName", ALastName));
+            new Param("FirstName", AFirstName),
+            new Param("LastName", ALastName));
             if (dt.Rows.Count > 0)
+            {
                 AuthorID = (int)dt.Rows[0]["AuthorID"];
+            }
             else
             {
-                throw new Exception("");
+                throw new Exception("Book Not Created");
             }
-            return AuthorID;
         }
 
         public void delete()
         {
             DataTable dt = SQL.Execute("uspDeleteAuthor",
                 new Param("AuthorID", AuthorID));
+                AuthorID = -1;
 
         }
 
-        public int GetAuthorIDByName(string AFirstName, string ALastName)
+        public int GetAuthorIDByName()
         {
             DataTable dt = SQL.Execute("uspGetAuthorIDByName",
                 new Param("FirstName", AFirstName),
@@ -66,9 +65,10 @@ namespace JaminBooks.Model
                 AuthorID = (int)dt.Rows[0]["AuthorID"];
             else
             {
-                AuthorID = Save(AFirstName, ALastName);
+                Save();
             }
             return AuthorID;
         }
+
     }
 }
