@@ -34,11 +34,14 @@
                     <h3>Category</h3>
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-sm-12">
-                                <select id="SearchType" class="form-control">
-                                    <option>General</option>
+                            <div class="col-12">
+                                <select id="BookCat" class="form-control">
+                                    <option value="-1">Category...</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div id="SearchCats" class="col-12"></div>
                         </div>
                     </div>
                 </div>
@@ -66,7 +69,7 @@
             </div>*@
             <div class="row">
                 <div class="col-12">
-                    <h3>Sort By</h3>
+                    <h4>Sort By</h4>
                     <div class="form-group">
                         <div class="row">
                             <div class="col-12">
@@ -96,5 +99,115 @@
     </div>
 </div>
 
+<script>
+    var index = 0;
+    var loading = false;
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: "Model/GetBookCategories",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (response) {
+                response = JSON.parse(response);
+                $.each(response, function (key, value) {
+                    $("#BookCat").append("<option value=" + key + ">" + value + "</option>")
+                });
+            }
+        });
+
+        $("#BookCat").change(function () {
+            var id = $("#BookCat").val();
+            var name = $("#BookCat option:selected").text();
+
+            if (id == -1) return;
+            $("#SearchCats").append('<span class="badge badge-primary m-1" data-id='
+                + id + '><i class="fas fa-times mr-1" onclick="removeCat(this)"></i>' + name + '</span>');
+
+            $("#BookCat option:selected").hide();
+            $("#BookCat").val(-1);
+        });
+
+        $("#BookCat, #SearchType, #SortType").change(function () {
+            resetLoad();
+            loadBooks();
+        });
+
+        $("#Search").input(function () {
+            resetLoad();
+            loadBooks();
+        });
+
+        $(window).scroll(function () {
+            if ($("#Books .book").last().isInViewport()) {
+                loadBooks();
+            }
+        });
+    });
+
+    function resetLoad() {
+        index = 0;
+        $("#Books .book").remove();
+    }
+
+    function removeCat(button) {
+        var cat = $(button).parent();
+        cat.remove();
+        $("#BookCat option[value='" + cat.data("id") + "']").show();
+        resetLoad();
+        loadBooks();
+    }
+
+    function loadBooks() {
+        if (loading) return;
+        loading = true;
+        var count = 10;
+
+        var cats = [];
+        $("#SearchCats .badge").each(function () { cats.push($(this).data("id")) });
+
+        var data = {
+            Index: index,
+            Count: count,
+            Search: $("#Search").val(),
+            SearchType: $("#SearchType").val(),
+            Cats: cats,
+            SortType: $("#SortType").val()
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "Model/LoadBooks",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+
+
+                index += 10;
+                loading = false;
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+
+    $.fn.isInViewport = function () {
+        var elementTop = $(this).offset().top;
+        var elementBottom = elementTop + $(this).outerHeight();
+        var viewportTop = $(window).scrollTop();
+        var viewportBottom = viewportTop + $(window).height();
+        return elementBottom > viewportTop && elementTop < viewportBottom;
+    };
+
+</script>
 
 @await Html.PartialAsync("_Authentication")

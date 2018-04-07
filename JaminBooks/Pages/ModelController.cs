@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,6 +17,16 @@ namespace JaminBooks.Pages
         public IActionResult GetPhoneCategories()
         {
             return new JsonResult(JsonConvert.SerializeObject(Phone.GetPhoneCategories()));
+        }
+
+        [Route("Model/GetBookCategories")]
+        public IActionResult GetBookCategories()
+        {
+            DataTable dt = SQL.Execute("uspGetCategories");
+            Dictionary<int, string> cats = new Dictionary<int, string>();
+            foreach (DataRow dr in dt.Rows)
+                cats.Add((int)dr["CategoryID"], (string)dr["CategoryName"]);
+            return new JsonResult(JsonConvert.SerializeObject(cats));
         }
 
         [Route("Model/DeleteAccount")]
