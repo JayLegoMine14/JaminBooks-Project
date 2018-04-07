@@ -13,7 +13,8 @@ namespace JaminBooks.Model
 
         public int AuthorID;
         public string AFirstName;
-        public string ALastName;     
+        public string ALastName;
+        public bool IsDeleted;
 
         public Author() { }
 
@@ -52,7 +53,7 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspDeleteAuthor",
                 new Param("AuthorID", AuthorID));
-                AuthorID = -1;
+                IsDeleted = false;
 
         }
 

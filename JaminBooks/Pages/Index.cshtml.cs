@@ -57,14 +57,10 @@ namespace JaminBooks.Pages
             book1.ZIP = "12345";
 
             book1.Number = "1(800)948-8488";
-            book1.Category = "Work";
+            book1.PhoneCategory = "Work";
 
 
-            //a.AFirstName = ""
-            //a.GetAuthorIDByName();
-            //a.delete();
-
-            book2.Delete(32);
+            book1.Save();
 
 
         }

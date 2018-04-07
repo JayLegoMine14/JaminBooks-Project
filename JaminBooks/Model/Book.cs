@@ -54,7 +54,7 @@ namespace JaminBooks.Model
 
         //Phone Fields
         public string Number;
-        public string Category;
+        public string PhoneCategory;
 
         public Book() { }
 
@@ -82,12 +82,14 @@ namespace JaminBooks.Model
                 throw new Exception("Invalid User ID");
             }
         }
-    
+
+        
 
         public void Save()
         {
-           Publisher Publisher = new Publisher();
+            Publisher Publisher = new Publisher();
             Author Author = new Author();
+            Category Category = new Category();
 
             Publisher.PublisherName = PublisherName;
             Publisher.AddressID = AddressID;
@@ -95,6 +97,7 @@ namespace JaminBooks.Model
             Publisher.ContactFirstName = ContactFirstName;
             Publisher.ContactLastName = ContactLastName;
 
+            //address 
             Publisher.Line1 = Line1;
             Publisher.Line2 = Line2;
             Publisher.City = City;
@@ -102,19 +105,26 @@ namespace JaminBooks.Model
             Publisher.Country = Country;
             Publisher.ZIP = ZIP;
 
+            //phone 
             Publisher.Number = Number;
-            Publisher.Category = Category;
+            Publisher.Category = PhoneCategory;
 
+            //author
             Author.AFirstName = AFirstName;
             Author.ALastName = ALastName;
 
+            Category.CategoryName = CategoryName;
 
-           Publisher.Save();
+
+            Publisher.Save();
+            Category.Save();
+            
                      
-           GetCategoryIDByName();
+           CategoryID = Category.GetCategoryIDByName();
            AuthorID = Author.GetAuthorIDByName();
            PublisherID = Publisher.GetPublisherIDByName();
 
+            
 
             DataTable dt = SQL.Execute("uspSaveBook",
             new Param("Title", Title),
@@ -138,7 +148,8 @@ namespace JaminBooks.Model
                 {
                     throw new Exception("Invalid Entry");
                 }
-                        
+
+             Category.SaveCategoryToBook(BookID);           
         }
 
 
@@ -150,38 +161,6 @@ namespace JaminBooks.Model
                 IsDeleted = true;
         }
 
-        public void GetCategoryIDByName()
-        {
-            DataTable dt = SQL.Execute("uspGetCategoryIDByName",
-                new Param("CategoryName", CategoryName));
-
-            if (dt.Rows.Count == 0)
-            {
-                SaveCategoryName();
-            }
-            else
-            {
-                CategoryID = (int)dt.Rows[0]["CategoryID"];
-
-            }
-
-        }
-
-        public void SaveCategoryName()
-        {
-
-            DataTable dt = SQL.Execute("uspSaveCategoryName",
-            new Param("CategoryName", CategoryName));
-            if (dt.Rows.Count > 0)
-            {
-                CategoryID = (int)dt.Rows[0]["CategoryID"];
-
-            }
-            else
-            {
-                throw new Exception("Book Not Created");
-            }
-
-        }
+        
     }
 }
