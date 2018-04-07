@@ -3,13 +3,211 @@
 @{
     ViewData["Title"] = "Books";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
-    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
 }
 
 <script>$("a.books").addClass("active")</script>
-<h2>@ViewData["Title"]</h2>
-<h3>@Model.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<div id="SearchBar" class="row">
+    <div class="col-6 offset-4">
+        <div class="form-group">
+            <div class="input-group mt-3">
+                <input type="text" id="Search" class="form-control" placeholder="Search...">
+                <div class="input-group-append">
+                    <select id="SearchType" class="form-control">
+                        <option value="1">General</option>
+                        <option value="2">Title</option>
+                        <option value="3">Author</option>
+                        <option value="4">Category</option>
+                        <option value="5">Publisher</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="Sidebar" class="col-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Category</h3>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-12">
+                                <select id="BookCat" class="form-control">
+                                    <option value="-1">Category...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div id="SearchCats" class="col-12"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="col-12">
+                    <h3>Price</h3>
+                    <div class="form-group">
+                        <div class="row">
+                            <label for="last_name" class="col-sm-3 col-form-label">Min: </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label for="last_name" class="col-sm-3 col-form-label">Max: </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+            <div class="row">
+                <div class="col-12">
+                    <h4>Sort By</h4>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-12">
+                                <select id="SortType" class="form-control">
+                                    <option value="1">Price: Low to High</option>
+                                    <option value="2">Price: High to Low</option>
+                                    <option value="3">New to Old</option>
+                                    <option value="4">Old to New</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-10">
+        <div class="row">
+            <div id="Books" class="col-12">
+                <div id="LoadIcon" class="row text-center mt-5">
+                    <div class="col-12">
+                        <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var index = 0;
+    var loading = false;
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: "Model/GetBookCategories",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (response) {
+                response = JSON.parse(response);
+                $.each(response, function (key, value) {
+                    $("#BookCat").append("<option value=" + key + ">" + value + "</option>")
+                });
+            }
+        });
+
+        $("#BookCat").change(function () {
+            var id = $("#BookCat").val();
+            var name = $("#BookCat option:selected").text();
+
+            if (id == -1) return;
+            $("#SearchCats").append('<span class="badge badge-primary m-1" data-id='
+                + id + '><i class="fas fa-times mr-1" onclick="removeCat(this)"></i>' + name + '</span>');
+
+            $("#BookCat option:selected").hide();
+            $("#BookCat").val(-1);
+        });
+
+        $("#BookCat, #SearchType, #SortType").change(function () {
+            resetLoad();
+            loadBooks();
+        });
+
+        $("#Search").input(function () {
+            resetLoad();
+            loadBooks();
+        });
+
+        $(window).scroll(function () {
+            if ($("#Books .book").last().isInViewport()) {
+                loadBooks();
+            }
+        });
+    });
+
+    function resetLoad() {
+        index = 0;
+        $("#Books .book").remove();
+    }
+
+    function removeCat(button) {
+        var cat = $(button).parent();
+        cat.remove();
+        $("#BookCat option[value='" + cat.data("id") + "']").show();
+        resetLoad();
+        loadBooks();
+    }
+
+    function loadBooks() {
+        if (loading) return;
+        loading = true;
+        var count = 10;
+
+        var cats = [];
+        $("#SearchCats .badge").each(function () { cats.push($(this).data("id")) });
+
+        var data = {
+            Index: index,
+            Count: count,
+            Search: $("#Search").val(),
+            SearchType: $("#SearchType").val(),
+            Cats: cats,
+            SortType: $("#SortType").val()
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "Model/LoadBooks",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+
+
+                index += 10;
+                loading = false;
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+
+    $.fn.isInViewport = function () {
+        var elementTop = $(this).offset().top;
+        var elementBottom = elementTop + $(this).outerHeight();
+        var viewportTop = $(window).scrollTop();
+        var viewportBottom = viewportTop + $(window).height();
+        return elementBottom > viewportTop && elementTop < viewportBottom;
+    };
+
+</script>
 
 @await Html.PartialAsync("_Authentication")

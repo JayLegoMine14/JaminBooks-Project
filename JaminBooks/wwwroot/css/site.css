@@ -166,6 +166,24 @@ body {
     text-align:center;
 }
 
+#Sidebar{
+    background-color: #ddd;
+    padding-top: 50px;
+}
+
+#SearchBar {
+    background-color: #650d1b;
+}
+
+#SortType{
+    font-size: small;
+}
+
+#Books {
+    min-height: 70vh;
+}
+
+
 .line-height-0 {
     line-height: 0 !important;
 }

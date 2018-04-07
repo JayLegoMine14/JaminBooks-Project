@@ -28,9 +28,9 @@ namespace JaminBooks.Model
             {
                 this.AddressID = AddressID;
                 this.Line1 = (String)dt.Rows[0]["AddressLine1"];
-                this.Line2 = (String)dt.Rows[0]["AddressLine2"];
+                this.Line2 = dt.Rows[0]["AddressLine2"] != DBNull.Value ? (String)dt.Rows[0]["AddressLine2"] : null;
                 this.City = (String)dt.Rows[0]["City"];
-                this.State = (String)dt.Rows[0]["State"];
+                this.State = dt.Rows[0]["State"] != DBNull.Value ? (String)dt.Rows[0]["State"] : null;
                 this.Country = (String)dt.Rows[0]["Country"];
                 this.ZIP = (String)dt.Rows[0]["ZIP"];
             }
@@ -79,7 +79,24 @@ namespace JaminBooks.Model
                 new Param("UserID", UserID));
         }
 
+        public int GetUserID()
+        {
+            DataTable dt = SQL.Execute("uspGetAddressByID",
+                new Param("AddressID", AddressID));
+            return (int)dt.Rows[0]["UserID"];
+        }
+
         public static List<Address> GetAddresses(int UserID)
+        {
+            return GetAddresses(UserID, "uspGetAddresses");
+        }
+
+        public static List<Address> GetAddressesIncludingCards(int UserID)
+        {
+            return GetAddresses(UserID, "uspGetAddressesIncludingCards");
+        }
+
+        private static List<Address> GetAddresses(int UserID, string proc)
         {
             DataTable dt = SQL.Execute("uspGetAddresses", new Param("UserID", UserID));
             List<Address> addresses = new List<Address>();
@@ -87,9 +104,9 @@ namespace JaminBooks.Model
                 addresses.Add(new Address(
                     (int)dr["AddressID"],
                     (String)dr["AddressLine1"],
-                    (String)dr["AddressLine2"],
+                    dr["AddressLine2"] != DBNull.Value ? (String)dr["AddressLine2"] : null,
                     (String)dr["City"],
-                    (String)dr["State"],
+                    dr["State"] != DBNull.Value ? (String)dr["State"] : null,
                     (String)dr["Country"],
                     (String)dr["ZIP"]));
             return addresses;

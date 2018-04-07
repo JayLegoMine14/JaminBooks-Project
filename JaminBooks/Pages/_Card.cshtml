@@ -136,7 +136,66 @@
         </div>
     </div>
 </div>
+
+<div class="d-none">
+    <span id="AddressPopup">
+        <img src="myimage.png" /> <strong>This is the content of my tooltip!</strong>
+    </span>
+</div>
+
 <script>
+
+    function EditCard(button) {
+        var card = $(button).parents(".dc-card");
+        $("#CardModal").data("id", card.data("id"));
+        $("#Number4").val(card.data("last-four"));
+        $("#ExpMonth").val(card.data("month"));
+        $("#ExpYear").val(card.data("year"));
+        $("#Name").val(card.data("name"));
+        $("#Line1").val(card.data("line1"));
+        $("#Line2").val(card.data("line2"));
+        $("#City").val(card.data("city")); 
+        $("#State").val(card.data("state"));
+        $("#Country").val(card.data("country")); 
+        $("#ZIP").val(card.data("zip"));
+        $("#CardModal").modal("show");
+    }
+
+    function DeleteCard(button) {
+        var card = $(button).parents(".dc-card");
+        $.confirm({
+            title: 'Delete Card',
+            content: 'Are you sure you want to delete this card?',
+            type: 'red',
+            buttons: {
+                yes: function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "Model/DeleteCard",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify({
+                            ID: card.data("id")
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function () {
+                            card.fadeOut(function () {
+                                card.remove();
+                            });
+                        },
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+                },
+                no: function () { }
+            }
+        });
+    }
+
     $(document).ready(function () {
         $("#CardCreate").click(function () {
             $("#CardModal").modal("show");
@@ -148,10 +207,35 @@
             else $("#State").parent().show();
         });
 
+        $("#Number1, #Number2, #Number3, #Number4").on('input', function () {
+            if ($(this).val().length == 4) {
+                $(this).parent().next().find("input").focus();
+            }
+        });
+
+        initPopup();
+
         $("#SaveCard").click(function () {
             var validCard = validateCard();
-            var calidAddress = validateAddress();
-            if (validCard && validateAddress) {
+            var validAddress = validateAddress();
+
+            var data = {
+                ID: $("#CardModal").data("id"),
+                Number: $("#Number1").val() + $("#Number2").val() + $("#Number3").val() + $("#Number4").val(),
+                Name: $("#Name").val(),
+                ExpMonth: $("#ExpMonth").val(),
+                ExpYear: $("#ExpYear").val(),
+                CCV: $("#CCV").val(),
+                Line1: $("#Line1").val(),
+                Line2: $("#Line2").val(),
+                City: $("#City").val(),
+                State: $("#State").val(),
+                Country: $("#Country").val(),
+                ZIP: $("#ZIP").val(),
+                UserID: $("#UserID").text()
+            };
+
+            if (validCard && validAddress) {
                 $.ajax({
                     type: "POST",
                     url: "Model/SaveCard",
@@ -159,46 +243,45 @@
                         xhr.setRequestHeader("XSRF-TOKEN",
                             $('input:hidden[name="__RequestVerificationToken"]').val());
                     },
-                    data: JSON.stringify({
-                        ID: $("#CardModal").data("id"),
-                        Number: $("#Number1").val() + $("#Number2").val() + $("#Number3").val() + $("#Number4").val(),
-                        Name: $("#Name").val(),
-                        ExpMonth: $("#ExpMonth").val(),
-                        ExpYear: $("#ExpYear").val(),
-                        CCV: $("#CCV").val(),
-                        Line1: $("#Line1").val(),
-                        Line2: $("#Line2").val(),
-                        City: $("#City").val(),
-                        State: $("#State").val(),
-                        Country: $("#Country").val(),
-                        ZIP: $("#ZIP").val(),
-                        UserID: $("#UserID").text()
-                    }),
+                    data: JSON.stringify(data),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        var phone = $(".dc-card[data-id='" + response + "']");
+                        var dccard = $(".dc-card[data-id='" + response[0] + "']");
+                        dccard.fadeOut(function () {
+                            dccard.remove();
+                        });
 
-                        if (phone.length > 0) {
-                            
-                        } else {
-                            var card = "";
+                        var card = "";
 
-                            card += '<div class="card phone" data-id="' + response + '">'
-                            card += '<div class="card-header">'
-                            card += '<button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>'
-                            card += '<button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>'
-                            card += '</div>'
-                            card += '<div class="card-body">'
-                            card += '<h5 class="card-title phone-number">' + $("#Phone").val() + '</h5>'
-                            card += '<h6 class="card-subtitle mb-2 text-muted phone-cat">' + $("#PhoneCat").val() + '</h6>'
-                            card += '</div>'
-                            card += '</div>'
+                        card += '<div class="card dc-card d-inline-block" data-id="' + response[1] + '" style="width:300px" '
+                        card += 'data-name="' + data.Name + '" ';
+                        card += 'data-month="' + data.ExpMonth + '" ';
+                        card += 'data-year="' + data.ExpYear + '" ';
+                        card += 'data-last-four="' + data.Number.substr(data.Number.length - 4) + '" ';
+                        card += 'data-line1="' + data.Line1 + '" ';
+                        card += 'data-line2="' + data.Line2 + '" ';
+                        card += 'data-state="' + data.State + '" ';
+                        card += 'data-city="' + data.City + '" ';
+                        card += 'data-country="' + data.Country + '" ';
+                        card += 'data-zip="' + data.ZIP + '" ';
+                        card += '>'
+                        card += '<div class="card-header">'
+                        card += '<button type="button" onclick="EditCard(this)" class="btn btn-sm btn-success mr-1"><i class="fas fa-edit"></i></button>'
+                        card += '<button type="button" onclick="DeleteCard(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>'
+                        card += '<span class="float-right text-dark show-address popup" data-tooltip-content="#AddressPopup"><i class="fas fa-home"></i></span>'
+                        card += '</div>'
+                        card += '<div class="card-body">'
+                        card += '<h5 class="card-title dc-card-last-four">****-****-****-' + data.Number.substr(data.Number.length - 4) + '</h5>'
+                        card += '<h6 class="card-subtitle mb-2 text-muted dc-card-exp">' + data.ExpMonth + "/" + data.ExpYear + '</h6>'
+                        card += '<h5 class="card-title text-muted dc-card-name">' + data.Name + '</h5>'
+                        card += '</div>'
+                        card += '</div>'
 
-                            $("#Cards .card:last").before(card);
-                        }
+                        $("#Cards .card:last").before(card);
 
                         $("#CardModal").modal("hide");
+                        initPopup();
                     },
                     failure: function (response) {
                         alert(response);
@@ -240,6 +323,32 @@
                 $("#ZIP").css("border-color", "red");
                 valid = false;
             }
+
+            return valid;
+        }
+
+        function initPopup() {
+            $('.popup').tooltipster({
+                contentCloning: true,
+                contentAsHTML: true,
+                theme: 'tooltipster-light',
+                functionBefore: function (instance, helper) {
+                    var data = "";
+
+                    var card = $(helper.origin).parents(".dc-card");
+                    data += '<div>'
+                    data += '<h6 class="card-title">' + card.data("line1") + '</h6>'
+                    if (card.data("line2") != "")
+                        data += '<h6 class="card-title text-muted">' + card.data("line2") + '</h6>'
+                    data += '<h6 class="card-title text-muted">' + card.data("city") + ', ' +
+                        (card.data("country") != "US" ? card.data("country") : card.data("state"))
+                        + ' ' + card.data("zip") + '</h6>'
+                    data += '</div>'
+
+                    instance.content(data);
+                }
+            });
+
         }
 
         function validateCard() {
