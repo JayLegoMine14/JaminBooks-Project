@@ -1,47 +1,11 @@
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.deps.json
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.json
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.dev.json
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.dll
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.pdb
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csprojResolveAssemblyReference.cache
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csproj.CoreCompileInputs.cache
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfoInputs.cache
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
-c:\users\james allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.deps.json
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.json
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.dev.json
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.dll
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.pdb
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csprojResolveAssemblyReference.cache
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csproj.CoreCompileInputs.cache
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfoInputs.cache
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
-C:\Users\cpetete\Documents\Gitprojects\JaminBooks-Project3\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
-<<<<<<< HEAD
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.deps.json
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.json
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.dev.json
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.dll
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.pdb
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csprojResolveAssemblyReference.cache
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csproj.CoreCompileInputs.cache
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfoInputs.cache
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
-C:\Users\Michael\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
-=======
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.deps.json
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.json
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.dev.json
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.dll
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.pdb
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csprojResolveAssemblyReference.cache
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csproj.CoreCompileInputs.cache
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfoInputs.cache
-C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
->>>>>>> 26088c989ef78276aeed0cd9d8a4af35f40ecebf
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.deps.json
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.json
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.dev.json
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.dll
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.pdb
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csprojResolveAssemblyReference.cache
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csproj.CoreCompileInputs.cache
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfoInputs.cache
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
