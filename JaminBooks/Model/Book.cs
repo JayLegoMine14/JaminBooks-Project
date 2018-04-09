@@ -12,8 +12,9 @@ namespace JaminBooks.Model
     {
         public int BookID { private set; get; } = -1;
 
-        //Book Fields
-        public string Title;   
+        public string Title;
+        public int AuthorID = -1;
+        public int PublisherID = -1;
         public DateTime PublicationDate;
         public string ISBN10;
         public string ISBN13;
@@ -22,60 +23,45 @@ namespace JaminBooks.Model
         public decimal Price;
         public decimal Cost;
         public int Quantity;
-        public bool IsDeleted;
-        public string CategoryName;
+        public bool IsDeleted = false;
         public byte[] BookImage;
 
-        //book ID prerequisites
-        public int AuthorID;
-        public int PublisherID;
-        public int CategoryID;
+        public List<Category> Categories
+        {
+            get
+            {
+                return Category.GetCategories(this.BookID);
+            }
+        }
 
-        //Author Fields
-        public string AFirstName;
-        public string ALastName;
-        
-        //publusher fields
-        public string PublisherName;
-        public string ContactFirstName;
-        public string ContactLastName;
-
-        //Publisher requisites
-        public int AddressID;
-        public int PhoneID;
-
-        //Address Fields
-        public string Line1;
-        public string Line2;
-        public string City;
-        public string State;
-        public string Country;
-        public string ZIP;
-
-        //Phone Fields
-        public string Number;
-        public string PhoneCategory;
+        public List<Author> Authors
+        {
+            get
+            {
+                return Author.GetAuthors(this.BookID);
+            }
+        }
 
         public Book() { }
 
         public Book(int BookID)
         {
             DataTable dt = SQL.Execute("uspGetBookByID", new Param("BookID", BookID));
+
             if (dt.Rows.Count > 0)
             {
                 this.BookID = BookID;
-                this.AuthorID = (int)dt.Rows[0]["AuthorID"];
                 this.PublicationDate = (DateTime)dt.Rows[0]["PublicationDate"];
                 this.PublisherID = (int)dt.Rows[0]["PublisherID"];
                 this.ISBN10 = (string)dt.Rows[0]["ISBN10"];
                 this.ISBN13 = (string)dt.Rows[0]["ISBN13"];
-                this.Description = (String)dt.Rows[0]["Description"];
-                this.CategoryName = (String)dt.Rows[0]["CategoryName"];
+                this.Description = (string)dt.Rows[0]["Description"];
                 this.CopyrightDate = (DateTime)dt.Rows[0]["CopyrightDate"];
-                this.Price = (Decimal)dt.Rows[0]["Price"];
-                this.Cost = (Decimal)dt.Rows[0]["Cost"];
+                this.Price = (decimal)dt.Rows[0]["Price"];
+                this.Cost = (decimal)dt.Rows[0]["Cost"];
                 this.Quantity = (int)dt.Rows[0]["Quantity"];
                 this.IsDeleted = (bool)dt.Rows[0]["IsDeleted"];
+                this.BookImage = dt.Rows[0]["BookImage"] == DBNull.Value ? null : (byte[])dt.Rows[0]["BookImage"];
             }
             else
             {
@@ -83,82 +69,88 @@ namespace JaminBooks.Model
             }
         }
 
+        private Book(int BookID, string Title, DateTime PublicationDate, int PublisherID, string ISBN10,
+            string ISBN13, string Description, DateTime CopyrightDate, decimal Price, decimal Cost,
+            int Quantity, bool IsDeleted, byte[] BookImage)
+        {
+            this.BookID = BookID;
+            this.Title = Title;
+            this.PublicationDate = PublicationDate;
+            this.PublisherID = PublisherID;
+            this.ISBN10 = ISBN10;
+            this.ISBN13 = ISBN13;
+            this.Description = Description;
+            this.CopyrightDate = CopyrightDate;
+            this.Price = Price;
+            this.Cost = Cost;
+            this.Quantity = Quantity;
+            this.IsDeleted = IsDeleted;
+            this.BookImage = BookImage;
+
+        }
+
         public void Save()
         {
-            Publisher Publisher = new Publisher();
-            Author Author = new Author();
-            Category Category = new Category();
-
-            Publisher.PublisherName = PublisherName;
-            Publisher.AddressID = AddressID;
-            Publisher.PhoneID = PhoneID;
-            Publisher.ContactFirstName = ContactFirstName;
-            Publisher.ContactLastName = ContactLastName;
-
-            //address 
-            Publisher.Line1 = Line1;
-            Publisher.Line2 = Line2;
-            Publisher.City = City;
-            Publisher.State = State;
-            Publisher.Country = Country;
-            Publisher.ZIP = ZIP;
-
-            //phone 
-            Publisher.Number = Number;
-            Publisher.Category = PhoneCategory;
-
-            //author
-            Author.AFirstName = AFirstName;
-            Author.ALastName = ALastName;
-
-            Category.CategoryName = CategoryName;
-
-
-            Publisher.Save();
-            Category.Save();
-            
-                     
-           CategoryID = Category.GetCategoryIDByName();
-           AuthorID = Author.GetAuthorIDByName();
-           PublisherID = Publisher.GetPublisherIDByName();
-
-            DataTable dt = SQL.Execute("uspSaveBook",
-            new Param("Title", Title),
-            new Param("BookID", BookID),
-            new Param("AuthorID", AuthorID),
-            new Param("PublicationDate", PublicationDate),
-            new Param("PublisherID", PublisherID),
-            new Param("ISBN10", ISBN10),
-            new Param("ISBN13", ISBN13),
-            new Param("Description", Description),
-            new Param("CategoryID", CategoryID),
-            new Param("CopyrightDate", CopyrightDate),
-            new Param("Price", Price),
-            new Param("Cost", Cost),
-            new Param("Quantity", Quantity),
-            new Param("BookImage", BookImage ?? SqlBinary.Null));
+            DataTable dt = SQL.Execute("uspSaveBook", 
+                new Param("Title", Title),
+                new Param("BookID", BookID),
+                new Param("PublicationDate", PublicationDate),
+                new Param("PublisherID", PublisherID),
+                new Param("ISBN10", ISBN10),
+                new Param("ISBN13", ISBN13),
+                new Param("Description", Description),
+                new Param("CopyrightDate", CopyrightDate),
+                new Param("Price", Price),
+                new Param("Cost", Cost),
+                new Param("Quantity", Quantity),
+                new Param("BookImage", BookImage ?? SqlBinary.Null));
 
             if (dt.Rows.Count > 0)
-                    BookID = (int)dt.Rows[0]["BookID"];
-                else
-                {
-                    throw new Exception("Invalid Entry");
-                }
-
-             Category.SaveCategoryToBook(BookID);           
+                BookID = (int)dt.Rows[0]["BookID"];
         }
 
-        public void Delete(int BookID)
+        public void Delete()
         {
-            DataTable dt = SQL.Execute("uspDeleteBook",
-                new Param("BookID", BookID));
-                IsDeleted = true;
+            DataTable dt = SQL.Execute("uspDeleteBook", new Param("BookID", BookID));
+            BookID = -1;
+
         }
 
-        public static List<Book> getBookList(DataTable dt)
+        public void AddPublisher(Publisher p)
         {
+            p.AddPublisher(this.BookID);
+        }
+
+        public void AddAuthor(Author a)
+        {
+            a.AddAuthor(this.BookID);
+        }
+
+        public void AddCategory(Category c)
+        {
+            c.AddCategory(this.BookID);
+        }
+
+        public static List<Book> GetBooks()
+        {
+            DataTable dt = SQL.Execute("uspGetBooks");
             List<Book> books = new List<Book>();
+            foreach (DataRow dr in dt.Rows)
+                books.Add(new Book(
+                    (int)dr["BookID"],
+                    (string)dr["Title"],
+                    (DateTime)dr["PublicationDate"],
+                    (int)dr["PublisherID"],
+                    (String)dr["ISBN10"],
+                    (String)dr["ISBN13"],
+                    (String)dr["Description"],
+                    (DateTime)dr["CopyrightDate"],
+                    (decimal)dr["Price"],
+                    (decimal)dr["Cost"],
+                    (int)dr["Quantity"],
+                    (bool)dr["IsDeleted"],
+                    (byte[])dr["BookImage"]));
             return books;
-        }     
+        }
     }
 }
