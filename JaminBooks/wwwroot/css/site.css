@@ -2,6 +2,7 @@ body {
     padding-top: 95px;
     color: #020202;
     background-color: #f0e7d8;
+    overflow-x: hidden;
 }
 
 /* Wrapping element */
@@ -177,10 +178,6 @@ body {
 
 #SortType{
     font-size: small;
-}
-
-#Books {
-    min-height: 70vh;
 }
 
 

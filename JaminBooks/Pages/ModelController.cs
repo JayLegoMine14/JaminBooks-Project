@@ -8,6 +8,8 @@ using JaminBooks.Model;
 using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using static JaminBooks.Model.SQL;
 
 namespace JaminBooks.Pages
 {
@@ -237,6 +239,85 @@ namespace JaminBooks.Pages
                 user.Save();
             }
             return new JsonResult("");
+        }
+
+        [Route("Model/LoadBooks")]
+        public IActionResult LoadBooks()
+        {
+            Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
+
+            int index = Convert.ToInt32(fields["Index"]);
+            int count = Convert.ToInt32(fields["Count"]);
+
+            string search = fields["Search"].ToString();
+            int searchtype = Convert.ToInt32(fields["SearchType"]);
+            int sorttype = Convert.ToInt32(fields["SortType"]);
+            int[] categories = ((JArray)fields["Cats"]).Select(j => (int)j).ToArray();
+
+            String searchProcedure = "uspSearchBookByAll";
+            switch (searchtype) {
+                case 1:
+                    searchProcedure = "uspSearchBookByAll";
+                    break;
+                case 2:
+                    searchProcedure = "uspSearchBookByTitle";
+                    break;
+                case 3:
+                    searchProcedure = "uspSearchBookByAuthor";
+                    break;
+                case 4:
+                    searchProcedure = "uspSearchBookByPublisher";
+                    break;
+                case 5:
+                    searchProcedure = "uspSearchBookByISBN";
+                    break;
+            }
+
+            search = "%" + search.Trim().Replace(" ", "%") + "%";
+            DataTable bookresults = SQL.Execute(searchProcedure, new Param("@Search", search));
+            List<Book> books = GetBookList(bookresults);
+
+            //This needs to get all books that have at least one cat in the cat list
+            if(categories.Count() > 0)
+                books = books.Where(b => categories.Contains(b.CategoryID)).ToList();
+
+            switch (sorttype)
+            {
+                case 1:
+                    books.Sort((b1, b2) => 1.CompareTo(1));
+                    break;
+                case 2:
+                    books.Sort((b1, b2) => b1.Price.CompareTo(b2.Price));
+                    break;
+                case 3:
+                    books.Sort((b1, b2) => b2.Price.CompareTo(b1.Price));
+                    break;
+                case 4:
+                    books.Sort((b1, b2) => b1.PublicationDate.CompareTo(b2.PublicationDate));
+                    break;
+                case 5:
+                    books.Sort((b1, b2) => b2.PublicationDate.CompareTo(b1.PublicationDate));
+                    break;
+            }
+
+            count = books.Count - index < count ? books.Count - index : count;
+            books = books.GetRange(index, count);
+
+            return new JsonResult(JsonConvert.SerializeObject(new object[] { count, books }));
+        }
+
+        public List<Book> GetBookList(DataTable dt)
+        {
+            List<Book> books = new List<Book>();
+            foreach(DataRow dr in dt.Rows)
+            {
+                Book book = new Book();
+                book.Title = (String)dr["Title"];
+                book.Price = (decimal)dr["Price"];
+                book.BookImage = dr["BookImage"] != DBNull.Value ? (byte[])dr["BookImage"] : new byte[100];
+                books.Add(book);
+            }
+            return books;
         }
     }
 }

@@ -31,5 +31,27 @@ namespace JaminBooks.Tools
 
             throw new Exception("Invalid JSON Object");
         }
+
+        public static Dictionary<string, object> GetObjectFields(HttpRequest request)
+        {
+            MemoryStream stream = new MemoryStream();
+            request.Body.CopyTo(stream);
+            stream.Position = 0;
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string requestBody = reader.ReadToEnd();
+                if (requestBody.Length > 0)
+                {
+                    Dictionary<string, object> fields =
+                        JsonConvert.DeserializeObject<Dictionary<string, object>>(requestBody);
+                    if (fields != null)
+                    {
+                        return fields;
+                    }
+                }
+            }
+
+            throw new Exception("Invalid JSON Object");
+        }
     }
 }

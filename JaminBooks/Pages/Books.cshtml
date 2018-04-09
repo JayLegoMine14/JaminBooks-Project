@@ -8,6 +8,61 @@
 
 <script>$("a.books").addClass("active")</script>
 
+<style>
+    .book-overlay {
+        background-color: rgba(0, 0, 0, .5);
+        text-align: center;
+    }
+    #Books {
+        min-height: 30vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .book {
+        margin: 25px;
+    }
+    #BookView {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1050;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-color: rgba(0, 0, 0, .8);
+        transition: background-color .4s;
+    }
+
+        #BookView.hovered {
+            background-color: rgba(0, 0, 0, .4);
+        }
+
+        #BookViewBody {
+            width: 75%;
+            margin: auto;
+            background-color: white;
+            margin-top: 180px;
+            position: relative;
+        }
+
+    #BookImage {
+        height: 350px;
+        position: absolute;
+        top: -50px;
+        left: -50px;
+    }
+
+    .star-overlay {
+        position: absolute;
+        width: 20px;
+        height: 21px;
+    }
+</style>
+
 <div id="SearchBar" class="row">
     <div class="col-6 offset-4">
         <div class="form-group">
@@ -18,8 +73,8 @@
                         <option value="1">General</option>
                         <option value="2">Title</option>
                         <option value="3">Author</option>
-                        <option value="4">Category</option>
-                        <option value="5">Publisher</option>
+                        <option value="4">Publisher</option>
+                        <option value="5">ISBN</option>
                     </select>
                 </div>
             </div>
@@ -74,10 +129,11 @@
                         <div class="row">
                             <div class="col-12">
                                 <select id="SortType" class="form-control">
-                                    <option value="1">Price: Low to High</option>
-                                    <option value="2">Price: High to Low</option>
-                                    <option value="3">New to Old</option>
-                                    <option value="4">Old to New</option>
+                                    <option value="1">Relavence</option>
+                                    <option value="2">Price: Low to High</option>
+                                    <option value="3">Price: High to Low</option>
+                                    <option value="4">New to Old</option>
+                                    <option value="5">Old to New</option>
                                 </select>
                             </div>
                         </div>
@@ -89,9 +145,102 @@
     <div class="col-10">
         <div class="row">
             <div id="Books" class="col-12">
-                <div id="LoadIcon" class="row text-center mt-5">
+
+            </div>
+            <div class="col-12">
+                <div id="LoadIcon" class="row text-center mt-5 mb-5">
                     <div class="col-12">
                         <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="BookView" style="display:none">
+    <div id="BookViewBody" class="pb-5">
+        <img id="BookImage" src="/images/love elliot.png"/>
+        <div class="container" style="overflow:auto;">
+            <div class="row mt-3">
+                <div class="col-3">
+                    <div style="margin-top: 320px">
+                        <button class="btn btn-primary btn-lg ml-4">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <h2 id="BookTitle">Title</h2>
+                    <h4 id="BookAuther">Author</h4>
+                    <h3>$<span id="BookPrice">0.00</span></h3>
+                    <div id="Rating">
+                        <span>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </span>
+                    </div>
+                    <div id="Description" class="mt-3">
+                        It was at this moment that Fyodor Pavlovitch played his last prank. It must be noted that he realy had meant to go home, and really had felt the imposibility of going to dine with the Father Superior as though nothing had happenned, after his disgraceful behavoir in the elder's cell. Not that he was so very much ashamed of himself -- quite the contrary perhaps. But still he felt it would be unseemly to go to dinner. Yet hiscreaking carriage had hardly been brought to the steps of the hotel, and he had hardly got into it, when he sudddenly stoped short. He remembered his own words at the elder's: "I always feel when I meet people that I am lower than all, and that they all take me for a buffon; so I say let me play the
+                    </div>
+                    <hr />
+                    <div id="Details" class="mt-3">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label font-weight-bold">ISBN 10:</label>
+                                    <div class="col-8">
+                                        <input id="ISBN10" type="text" readonly class="form-control-plaintext" value="1234567890">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label font-weight-bold">ISBN 13:</label>
+                                    <div class="col-8">
+                                        <input id="ISBN13" type="text" readonly class="form-control-plaintext" value="1234567890">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label font-weight-bold">Copyright:</label>
+                                    <div class="col-8">
+                                        <input id="CopyrightDate" type="text" readonly class="form-control-plaintext" value="5/45/16">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label font-weight-bold">Publication Date:</label>
+                                    <div class="col-8">
+                                        <input id="PublicationDate" type="text" readonly class="form-control-plaintext" value="5/45/16">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label font-weight-bold">Publisher:</label>
+                                    <div class="col-8">
+                                        <input id="Publisher" type="text" readonly class="form-control-plaintext" value="Self Publishing Org.">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="Ratings" class="mt-3">
+                        <h3>Leave a review</h3>
+                        <div class="col-12">
+                            <span id="RatingStars">
+                                <span class="star-overlay"></span>
+                                <i class="fas fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                            </span>
+                            <textarea class="w-100 mt-3" placeholder="What did you think?..."></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -102,6 +251,7 @@
 <script>
     var index = 0;
     var loading = false;
+    var loaded = false;
     $(document).ready(function () {
         $.ajax({
             type: "POST",
@@ -118,6 +268,29 @@
             }
         });
 
+        $("#BookView").click(function (e) {
+            if (e.target === this) {
+                $("#BookView").fadeOut(function () { 
+                    $("body").removeAttr("style");
+                    $("nav").removeAttr("style");
+                });
+                $("#BookView").unbind("hover");
+                $("#BookViewBody").unbind("hover");
+                $("#BookView").removeClass("hovered");
+            }
+        });
+
+        $("#RatingStars .star-overlay").click(function () {
+            var star = $(this).next("svg");
+
+            if (star.attr("data-prefix") == "far") {
+                star.attr("data-prefix", "fas");
+                star.prevAll("svg").attr("data-prefix", "fas");
+            } else {
+                $(this).next().nextAll("svg").attr("data-prefix", "far");
+            }
+        });
+
         $("#BookCat").change(function () {
             var id = $("#BookCat").val();
             var name = $("#BookCat option:selected").text();
@@ -130,34 +303,40 @@
             $("#BookCat").val(-1);
         });
 
-        $("#BookCat, #SearchType, #SortType, #Search").change(function () {
-            resetLoad();
-            loadBooks();
+        $("#BookCat, #SearchType, #SortType").change(function () {
+            loadBooks(true);
+        });
+
+        $("#Search").on('input', function () {
+            loadBooks(true);
         });
 
         $(window).scroll(function () {
             if ($("#Books .book").last().isInViewport()) {
-                loadBooks();
+                loadBooks(false);
             }
         });
-    });
 
-    function resetLoad() {
-        index = 0;
-        $("#Books .book").remove();
-    }
+        loadBooks();
+    });
 
     function removeCat(button) {
         var cat = $(button).parent();
         cat.remove();
         $("#BookCat option[value='" + cat.data("id") + "']").show();
-        resetLoad();
-        loadBooks();
+        loadBooks(true);
     }
 
-    function loadBooks() {
-        if (loading) return;
+    function loadBooks(reset) {
+
+        if (reset) {
+            index = 0;
+            loaded = false;
+        }
+
+        if (loading || loaded) return;
         loading = true;
+        if(!reset) $("#LoadIcon").show();
         var count = 10;
 
         var cats = [];
@@ -183,17 +362,78 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
+                response = JSON.parse(response);
 
+                if (reset) $("#Books").empty();
 
+                response[1].forEach(function (book) {
 
-                index += 10;
+                    var bookcard = "";
+
+                    bookcard += '<div class="card text-white book" onclick="showBookView(this)" style="width: 200px" '
+                    bookcard += 'data-title="' + book.Title + '"'
+                    bookcard += 'data-price="' + book.Price + '"'
+                    bookcard += '> '
+                    bookcard += '<img class="card-img" src="/images/love elliot.png">'
+                    bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
+                    bookcard += '<h5 class="card-title">' + book.Title + '</h5>'
+                    bookcard += '<h5 class="card-text mt-4">$' + book.Price + '</h5>'
+                    bookcard += '</div>'
+                    bookcard += '</div>'
+
+                    $("#Books").append(bookcard);
+                });
+
+                $(".book").hover(function () {
+                    $(this).find(".book-overlay").fadeIn();
+                },
+                function () {
+                    $(this).find(".book-overlay").fadeOut();
+                })
+
+                if (response[0] < count)
+                    loaded = true;
+                index += response[0];
                 loading = false;
+                $("#LoadIcon").hide();
             },
             failure: function (response) {
                 alert(response);
             }
         });
     }
+
+    function showBookView(book) {
+        book = $(book);
+        $("#BookTitle").text(book.data("title"));
+        $("#BookPrice").text(book.data("price"));
+        $("body").css("overflow", "hidden");
+        $("body").css("margin-right", getScrollBarWidth());
+        $("nav").css("margin-right", getScrollBarWidth());
+        $("#BookView").fadeIn(function () { 
+            $("#BookViewBody").hover(function (event) {
+                $("#BookView").removeClass("hovered");
+            }, function () {
+                $("#BookView").addClass("hovered");
+            });
+
+            $("#BookView").hover(function (event) {
+                $("#BookView").addClass("hovered");
+            }, function () {
+                $("#BookView").removeClass("hovered");
+            });
+            $("#BookView").removeClass("hovered");
+        });
+
+        addStarListeners();
+    }
+
+    function getScrollBarWidth() {
+        var $outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body'),
+            widthWithScroll = $('<div>').css({ width: '100%' }).appendTo($outer).outerWidth();
+        $outer.remove();
+        return 100 - widthWithScroll;
+    };
 
     $.fn.isInViewport = function () {
         var elementTop = $(this).offset().top;
