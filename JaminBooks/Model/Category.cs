@@ -71,7 +71,7 @@ namespace JaminBooks.Model
 
         public static List<Category> GetCategories(int BookID)
         {
-            DataTable dt = SQL.Execute("uspGetCategories", new Param("BookID", BookID));
+            DataTable dt = SQL.Execute("uspGetCategoriesByBookID", new Param("BookID", BookID));
             List<Category> categories = new List<Category>();
             foreach (DataRow dr in dt.Rows)
                 categories.Add(new Category(

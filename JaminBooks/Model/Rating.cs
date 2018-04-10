@@ -11,10 +11,23 @@ namespace JaminBooks.Model
     {
         public int RatingID { private get; set; } = -1;
 
-        public int bRating;
+        public int RatingValue;
         public string Comment;
         public int BookID;
         public int UserID;
+
+        public string[] NameAndImage
+        {
+            get
+            {
+                User u = new User(UserID);
+                var username = u.FirstName + " " + u.LastName;
+                var image = u.Icon != null ?
+                String.Format("data:image/png;base64,{0}", Convert.ToBase64String(u.Icon)) :
+                "/images/user.png";
+                return new string[] { username, image };
+            }
+        }
 
         public Rating() { }
 
@@ -25,7 +38,7 @@ namespace JaminBooks.Model
             if (dt.Rows.Count > 0)
             {
                 this.RatingID = RatingID;
-                this.bRating = (int)dt.Rows[0]["Rating"];
+                this.RatingValue = (int)dt.Rows[0]["Rating"];
                 this.Comment = (String)dt.Rows[0]["Comment"];
                 this.BookID = (int)dt.Rows[0]["BookID"];
                 this.UserID = (int)dt.Rows[0]["UserID"];
@@ -40,7 +53,7 @@ namespace JaminBooks.Model
         private Rating(int RatingID, int bRating, string Comment, int BookID, int UserID)
         {
             this.RatingID = RatingID;
-            this.bRating = bRating;
+            this.RatingValue = bRating;
             this.Comment = Comment;
             this.BookID = BookID;
             this.UserID = UserID;
@@ -50,7 +63,7 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspSaveRating",
                 new Param("AuthorID", RatingID),
-                new Param("FirstName", bRating),
+                new Param("FirstName", RatingValue),
                 new Param("LastName", Comment),
                 new Param("IsDeleted", BookID),
                 new Param("IsDeleted", UserID)
@@ -70,8 +83,8 @@ namespace JaminBooks.Model
             foreach (DataRow dr in dt.Rows)
                 ratings.Add(new Rating(
                     (int)dr["RatingID"],
-                    (int)dr["bRating"],
-                    (String)dr["Comment"],
+                    (int)dr["Rating"],
+                    dr["Comment"] != DBNull.Value ? (String)dr["Comment"] : "",
                     (int)dr["BookID"],
                     (int)dr["UserID"]
                     ));

@@ -61,6 +61,13 @@
         width: 20px;
         height: 21px;
     }
+
+    .icon-div {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        border-radius: 100px;
+    }
 </style>
 
 <div id="SearchBar" class="row">
@@ -169,8 +176,9 @@
                     </div>
                 </div>
                 <div class="col-8">
+                    <span id="BookID" class="d-none">-1</span>
                     <h2 id="BookTitle">Title</h2>
-                    <h4 id="BookAuther">Author</h4>
+                    <h4 id="BookAuthor">Author</h4>
                     <h3>$<span id="BookPrice">0.00</span></h3>
                     <div id="Rating">
                         <span>
@@ -181,9 +189,7 @@
                             <i class="far fa-star"></i>
                         </span>
                     </div>
-                    <div id="Description" class="mt-3">
-                        It was at this moment that Fyodor Pavlovitch played his last prank. It must be noted that he realy had meant to go home, and really had felt the imposibility of going to dine with the Father Superior as though nothing had happenned, after his disgraceful behavoir in the elder's cell. Not that he was so very much ashamed of himself -- quite the contrary perhaps. But still he felt it would be unseemly to go to dinner. Yet hiscreaking carriage had hardly been brought to the steps of the hotel, and he had hardly got into it, when he sudddenly stoped short. He remembered his own words at the elder's: "I always feel when I meet people that I am lower than all, and that they all take me for a buffon; so I say let me play the
-                    </div>
+                    <div id="Description" class="mt-3"></div>
                     <hr />
                     <div id="Details" class="mt-3">
                         <div class="row">
@@ -191,19 +197,19 @@
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label font-weight-bold">ISBN 10:</label>
                                     <div class="col-8">
-                                        <input id="ISBN10" type="text" readonly class="form-control-plaintext" value="1234567890">
+                                        <input id="ISBN10" type="text" readonly class="form-control-plaintext" value="Unknown">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label font-weight-bold">ISBN 13:</label>
                                     <div class="col-8">
-                                        <input id="ISBN13" type="text" readonly class="form-control-plaintext" value="1234567890">
+                                        <input id="ISBN13" type="text" readonly class="form-control-plaintext" value="Unknown">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label font-weight-bold">Copyright:</label>
                                     <div class="col-8">
-                                        <input id="CopyrightDate" type="text" readonly class="form-control-plaintext" value="5/45/16">
+                                        <input id="CopyrightDate" type="text" readonly class="form-control-plaintext" value="Unknown">
                                     </div>
                                 </div>
                             </div>
@@ -211,13 +217,13 @@
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label font-weight-bold">Publication Date:</label>
                                     <div class="col-8">
-                                        <input id="PublicationDate" type="text" readonly class="form-control-plaintext" value="5/45/16">
+                                        <input id="PublicationDate" type="text" readonly class="form-control-plaintext" value="Unknown">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label font-weight-bold">Publisher:</label>
                                     <div class="col-8">
-                                        <input id="Publisher" type="text" readonly class="form-control-plaintext" value="Self Publishing Org.">
+                                        <input id="Publisher" type="text" readonly class="form-control-plaintext" value="Unknown">
                                     </div>
                                 </div>
                             </div>
@@ -241,6 +247,7 @@
                             </span>
                             <textarea class="w-100 mt-3" placeholder="What did you think?..."></textarea>
                         </div>
+                        <div id="RatingMessages"></div>
                     </div>
                 </div>
             </div>
@@ -370,14 +377,32 @@
 
                     var bookcard = "";
 
+                    var bookrating = "</span>";
+                    var count = 5;
+                    for (var i = 0; i < book.Rating; i++, count--)
+                        bookrating += '<i class="fas fa-star"></i>'
+                    for (var i = count; i > 0; i--)
+                        bookrating += '<i class="far fa-star"></i>'
+
                     bookcard += '<div class="card text-white book" onclick="showBookView(this)" style="width: 200px" '
+                    bookcard += 'data-id="' + book.BookID + '"'
                     bookcard += 'data-title="' + book.Title + '"'
                     bookcard += 'data-price="' + book.Price + '"'
+                    bookcard += 'data-description="' + book.Description + '"'
+                    bookcard += 'data-authors=\'' + JSON.stringify(book.Authors) + '\''
+                    bookcard += 'data-categories=\'' + JSON.stringify(book.Categories) + '\''
+                    bookcard += 'data-rating="' + book.Rating + '"'
+                    bookcard += 'data-isbn10="' + book.ISBN10 + '"'
+                    bookcard += 'data-isbn13="' + book.ISBN13 + '"'
+                    bookcard += 'data-copyright="' + book.CopyrightDate + '"'
+                    bookcard += 'data-publication="' + book.PublicationDate + '"'
+                    bookcard += 'data-publisher="' + book.Publisher.PublisherName + '"'
                     bookcard += '> '
                     bookcard += '<img class="card-img" src="/images/love elliot.png">'
                     bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
                     bookcard += '<h5 class="card-title">' + book.Title + '</h5>'
                     bookcard += '<h5 class="card-text mt-4">$' + book.Price + '</h5>'
+                    bookcard += '<h5 class="card-text mt-4">' + bookrating + '</h5>'
                     bookcard += '</div>'
                     bookcard += '</div>'
 
@@ -407,9 +432,30 @@
         book = $(book);
         $("#BookTitle").text(book.data("title"));
         $("#BookPrice").text(book.data("price"));
+        $("#Description").text(book.data("description"));
+
+        $("#ISBN10").val(book.data("isbn10"));
+        $("#ISBN13").val(book.data("isbn13"));
+        $("#CopyrightDate").val(book.data("copyright"));
+        $("#PublicationDate").val(book.data("publication"));
+        $("#Publisher").val(book.data("publisher"));
+        $("#RatingMessages").empty();
+
+        var authors = book.data("authors");
+        var authorstring = "";
+        authors.forEach(function (author) { authorstring += author.FirstName + " " + author.LastName + ", " })
+        $("#BookAuthor").text(authorstring.slice(0, -2));
+
+        var rating = book.data("rating");
+        $("#Rating svg").each(function (i) { 
+            if (i < rating) $(this).attr("data-prefix", "fas");
+            else $(this).attr("data-prefix", "far");
+        })
+
         $("body").css("overflow", "hidden");
         $("body").css("margin-right", getScrollBarWidth());
         $("nav").css("margin-right", getScrollBarWidth());
+
         $("#BookView").fadeIn(function () { 
             $("#BookViewBody").hover(function (event) {
                 $("#BookView").removeClass("hovered");
@@ -425,7 +471,55 @@
             $("#BookView").removeClass("hovered");
         });
 
-        addStarListeners();
+        $.ajax({
+            type: "POST",
+            url: "Model/GetRatings",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify({ BookID: book.data("id") }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                response = JSON.parse(response);
+
+                response.forEach(function (rating) {
+
+                    var ratingmessage = "";
+                    var ratingstars = "</span>";
+                    var count = 5;
+                    for (var i = 0; i < rating.RatingValue; i++ , count--)
+                        ratingstars += '<i class="fas fa-star"></i>'
+                    for (var i = count; i > 0; i--)
+                        ratingstars += '<i class="far fa-star"></i>'
+
+                    ratingmessage += '<div class="rating"'
+                    ratingmessage += 'data-id="' + rating.RatingID + '"'
+                    ratingmessage += '> '
+                    ratingmessage += '<div class="icon-div">'
+                    ratingmessage += '<img class="userIcon" src="' + rating.NameAndImage[1] + '" />'
+                    ratingmessage += '</div>'
+                    ratingmessage += '<h5 class="d-inline">' + rating.NameAndImage[0] + '</h5>'
+                    ratingmessage += '<h5>' + ratingstars + '</h5>'
+                    ratingmessage += '<h5>' + rating.Comment + '</h5>'
+                    ratingmessage += '</div>'
+
+                    $("#RatingMessages").append(ratingmessage);
+                });
+
+                var image = new Image();
+                $(".userIcon").each(function () {
+                    image.src = $(this).attr("src");
+                    $(this).removeAttr("style");
+                    $(this).css(image.width > image.height ? "height" : "width", "100px");
+                })
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+
     }
 
     function getScrollBarWidth() {

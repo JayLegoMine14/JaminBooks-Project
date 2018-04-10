@@ -241,6 +241,14 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/GetRatings")]
+        public IActionResult GetRatings()
+        {
+            Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
+            int BookID = Convert.ToInt32(fields["BookID"]);
+            return new JsonResult(JsonConvert.SerializeObject(Rating.GetRatings(BookID)));
+        }
+
         [Route("Model/LoadBooks")]
         public IActionResult LoadBooks()
         {
@@ -275,11 +283,11 @@ namespace JaminBooks.Pages
 
             search = "%" + search.Trim().Replace(" ", "%") + "%";
             DataTable bookresults = SQL.Execute(searchProcedure, new Param("@Search", search));
-            List<Book> books = GetBookList(bookresults);
+            List<Book> books = Book.GetBooks(bookresults);
 
             //This needs to get all books that have at least one cat in the cat list
             if(categories.Count() > 0)
-                books = books.Where(b => categories.Contains(b.CategoryID)).ToList();
+                books = books.Where(b => b.Categories.Any(c => categories.Contains(c.CategoryID))).ToList();
 
             switch (sorttype)
             {
@@ -304,20 +312,6 @@ namespace JaminBooks.Pages
             books = books.GetRange(index, count);
 
             return new JsonResult(JsonConvert.SerializeObject(new object[] { count, books }));
-        }
-
-        public List<Book> GetBookList(DataTable dt)
-        {
-            List<Book> books = new List<Book>();
-            foreach(DataRow dr in dt.Rows)
-            {
-                Book book = new Book();
-                book.Title = (String)dr["Title"];
-                book.Price = (decimal)dr["Price"];
-                book.BookImage = dr["BookImage"] != DBNull.Value ? (byte[])dr["BookImage"] : new byte[100];
-                books.Add(book);
-            }
-            return books;
         }
     }
 }

@@ -25,6 +25,15 @@ namespace JaminBooks.Model
         public int Quantity;
         public bool IsDeleted = false;
         public byte[] BookImage;
+        public int Rating;
+
+        public string ImageBase64
+        {
+            get
+            {
+                return String.Format("data:image/png;base64,{0}", Convert.ToBase64String(BookImage));
+            }
+        }
 
         public List<Category> Categories
         {
@@ -39,6 +48,14 @@ namespace JaminBooks.Model
             get
             {
                 return Author.GetAuthors(this.BookID);
+            }
+        }
+
+        public Publisher Publisher
+        {
+            get
+            {
+                return new Publisher(PublisherID);
             }
         }
 
@@ -62,6 +79,8 @@ namespace JaminBooks.Model
                 this.Quantity = (int)dt.Rows[0]["Quantity"];
                 this.IsDeleted = (bool)dt.Rows[0]["IsDeleted"];
                 this.BookImage = dt.Rows[0]["BookImage"] == DBNull.Value ? null : (byte[])dt.Rows[0]["BookImage"];
+                var rating = SQL.Execute("uspGetAverageRating", new Param("BookID", BookID)).Rows[0]["Rating"];
+                this.Rating = rating != DBNull.Value ? Convert.ToInt32(rating) : 0;
             }
             else
             {
@@ -86,7 +105,8 @@ namespace JaminBooks.Model
             this.Quantity = Quantity;
             this.IsDeleted = IsDeleted;
             this.BookImage = BookImage;
-
+            var rating = SQL.Execute("uspGetAverageRating", new Param("BookID", BookID)).Rows[0]["Rating"];
+            this.Rating = rating != DBNull.Value ? Convert.ToInt32(rating) : 0;
         }
 
         public void Save()
@@ -149,7 +169,28 @@ namespace JaminBooks.Model
                     (decimal)dr["Cost"],
                     (int)dr["Quantity"],
                     (bool)dr["IsDeleted"],
-                    (byte[])dr["BookImage"]));
+                    (dr["BookImage"] != DBNull.Value ? (byte[])dr["BookImage"] : new byte[1])));
+            return books;
+        }
+
+        public static List<Book> GetBooks(DataTable dt)
+        {
+            List<Book> books = new List<Book>();
+            foreach (DataRow dr in dt.Rows)
+                books.Add(new Book(
+                    (int)dr["BookID"],
+                    (string)dr["Title"],
+                    (DateTime)dr["PublicationDate"],
+                    (int)dr["PublisherID"],
+                    (String)dr["ISBN10"],
+                    (String)dr["ISBN13"],
+                    (String)dr["Description"],
+                    (DateTime)dr["CopyrightDate"],
+                    (decimal)dr["Price"],
+                    (decimal)dr["Cost"],
+                    (int)dr["Quantity"],
+                    (bool)dr["IsDeleted"],
+                    (dr["BookImage"] != DBNull.Value ? (byte[]) dr["BookImage"] : new byte[1])));
             return books;
         }
     }
