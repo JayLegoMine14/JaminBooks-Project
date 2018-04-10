@@ -150,6 +150,48 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/DeleteRating")]
+        public IActionResult DeleteRating()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Rating r = new Rating(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == r.UserID || currentUser.IsAdmin)
+            {
+                r.Delete();
+            }
+
+            return new JsonResult("");
+        }
+
+        [Route("Model/SaveRating")]
+        public IActionResult SaveRating()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = Authentication.GetCurrentUser(HttpContext);
+
+            if (user != null)
+            {
+                int id = Convert.ToInt32(fields["ID"]);
+
+                Rating r = id != -1 ? new Rating(id) : new Rating();
+
+                if(id == -1)
+                {
+                    r.UserID = user.UserID;
+                    r.BookID = Convert.ToInt32(fields["BookID"]);
+                }
+
+                r.RatingValue = Convert.ToInt32(fields["Rating"]);
+                r.Comment = fields["Comment"];
+                r.Save();
+
+                return new JsonResult(JsonConvert.SerializeObject(r));
+            }
+            return new JsonResult(JsonConvert.SerializeObject(null));
+        }
+
         [Route("Model/SaveAddress")]
         public IActionResult SaveAddress()
         {
@@ -241,6 +283,23 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/AddToCart")]
+        public IActionResult AddToCart()
+        {
+            User u = Authentication.GetCurrentUser(HttpContext);
+
+            if(u == null)
+            {
+                return new JsonResult(JsonConvert.SerializeObject(false));
+            }
+            else
+            {
+                Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
+                int BookID = Convert.ToInt32(fields["BookID"]);
+                return new JsonResult(JsonConvert.SerializeObject(true));
+            }
+        }
+
         [Route("Model/GetRatings")]
         public IActionResult GetRatings()
         {
@@ -292,24 +351,37 @@ namespace JaminBooks.Pages
             switch (sorttype)
             {
                 case 1:
-                    books.Sort((b1, b2) => 1.CompareTo(1));
+                    books.Sort((b1, b2) => b1.Categories.Where(c => categories.Contains(c.CategoryID)).Count().CompareTo(
+                        b2.Categories.Where(c => categories.Contains(c.CategoryID)).Count()));
                     break;
                 case 2:
-                    books.Sort((b1, b2) => b1.Price.CompareTo(b2.Price));
+                    books.Sort((b1, b2) => b2.Rating.CompareTo(b1.Rating));
                     break;
                 case 3:
-                    books.Sort((b1, b2) => b2.Price.CompareTo(b1.Price));
+                    books.Sort((b1, b2) => b1.Price.CompareTo(b2.Price));
                     break;
                 case 4:
-                    books.Sort((b1, b2) => b1.PublicationDate.CompareTo(b2.PublicationDate));
+                    books.Sort((b1, b2) => b2.Price.CompareTo(b1.Price));
                     break;
                 case 5:
                     books.Sort((b1, b2) => b2.PublicationDate.CompareTo(b1.PublicationDate));
+                    break;
+                case 6:
+                    books.Sort((b1, b2) => b1.PublicationDate.CompareTo(b2.PublicationDate));
                     break;
             }
 
             count = books.Count - index < count ? books.Count - index : count;
             books = books.GetRange(index, count);
+
+            foreach(Book book in books)
+            {
+                book.Publisher.Address = null;
+                book.Publisher.ContactFirstName = "";
+                book.Publisher.ContactLastName = "";
+                book.Publisher.Phone = null;
+                book.Cost = 0;
+            }
 
             return new JsonResult(JsonConvert.SerializeObject(new object[] { count, books }));
         }

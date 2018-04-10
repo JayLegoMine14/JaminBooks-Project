@@ -11,21 +11,13 @@ namespace JaminBooks.Pages
 {
     public class BooksModel : PageModel
     {
-        public string Message { get; set; }
+        public string Title { get; set; } = "";
         public User CurrentUser;
 
-        public void OnGet()
+        public void OnGet(string title)
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
-
-            if (CurrentUser != null && CurrentUser.IsAdmin)
-            {
-                Message = "Welcome Admin to your application description page.";
-            }
-            else
-            {
-                Message = "Your application description page.";
-            }
+            if (title != null) Title = title;
         }
     }
 }
