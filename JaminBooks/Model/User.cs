@@ -128,6 +128,41 @@ namespace JaminBooks.Model
             p.AddUser(this.UserID);
         }
 
+        public Dictionary<Book, int> GetCart()
+        {
+            DataTable bookresults = SQL.Execute("uspGetCart", new Param("UserID", UserID));
+            List<Book> books = Book.GetBooks(bookresults);
+
+            Dictionary<Book, int> cartItems = new Dictionary<Book, int>();
+            int i = 0;
+            foreach (Book book in books)
+            {
+                book.Publisher.Address = null;
+                book.Publisher.ContactFirstName = "";
+                book.Publisher.ContactLastName = "";
+                book.Publisher.Phone = null;
+                book.Cost = 0;
+                cartItems.Add(book, Convert.ToInt32(bookresults.Rows[i]["QuantityInCart"]));
+            }
+
+            return cartItems;
+        }
+
+        public void AddBookToCart(int BookID)
+        {
+            SQL.Execute("uspAddToCart", new Param("UserID", UserID), new Param("BookID", BookID));
+        }
+
+        public void RemoveBookFromCart(int BookID)
+        {
+            SQL.Execute("uspRemoveFromCart", new Param("UserID", UserID), new Param("BookID", BookID));
+        }
+
+        public void UpdateQuantityInCart(int BookID, int Quantity)
+        {
+            SQL.Execute("uspUpdateQuantityInCart", new Param("UserID", UserID), new Param("BookID", BookID), new Param("Quantity", Quantity));
+        }
+
         public static List<User> GetUsers()
         {
             DataTable dt = SQL.Execute("uspGetUsers");

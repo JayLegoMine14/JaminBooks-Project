@@ -163,7 +163,7 @@
 
 <div id="BookView" style="display:none">
     <div id="BookViewBody" class="pb-5">
-        <img id="BookImage" src="/images/love elliot.png"/>
+        <img id="BookImage" src=""/>
         <div class="container" style="overflow:auto;">
             <div class="row mt-3">
                 <div class="col-3">
@@ -558,7 +558,7 @@
                     bookcard += 'data-publication="' + book.PublicationDate + '"'
                     bookcard += 'data-publisher="' + book.Publisher.PublisherName + '"'
                     bookcard += '> '
-                    bookcard += '<img class="card-img" src="/images/love elliot.png">'
+                    bookcard += '<img class="card-img" src="' + book.ImageBase64 + '">'
                     bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
                     if (book.Quantity == 0) bookcard += '<h5 class="card-title"><span class="badge badge-danger">Out Of Stock</span></h5>'
                     bookcard += '<h5 class="card-title">' + book.Title + '</h5>'
@@ -596,6 +596,7 @@
 
     function showBookView(book) {
         book = $(book);
+        $("#BookImage").attr("src", book.find("img").attr("src"))
         $("#BookID").text(book.data("id"));
         $("#BookTitle").text(book.data("title"));
         $("#BookPrice").text(book.data("price"));
@@ -754,7 +755,7 @@
         ratingmessage += '</div>'
         ratingmessage += '<h5 class="userName">' + rating.NameAndImage[0] + '</h5>'
 
-        if ($("#UserID").text() == rating.UserID || $("UserIsAdmin").text() == "True") {
+        if ($("#UserID").text() == rating.UserID || $("#UserIsAdmin").text() == "True") {
             ratingmessage += '<div class="float-right mt-1">'
             ratingmessage += '<button class="btn btn-danger btn-sm mr-2" onclick="deleteRating(this)"><i class="fas fa-trash"></i></button>'
             ratingmessage += '<button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>'

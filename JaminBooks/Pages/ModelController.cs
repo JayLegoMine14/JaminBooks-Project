@@ -277,6 +277,12 @@ namespace JaminBooks.Pages
             {
                 byte[] blob = Convert.FromBase64String(fields["Icon"]);
 
+                foreach(Book book in Book.GetBooks())
+                {
+                    book.BookImage = blob;
+                    book.Save();
+                }
+                    
                 user.Icon = blob;
                 user.Save();
             }
