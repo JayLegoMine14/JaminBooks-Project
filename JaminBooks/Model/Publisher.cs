@@ -12,8 +12,8 @@ namespace JaminBooks.Model
     {
         public int PublisherID { private set; get; } = -1;
         public string PublisherName;
-        public int AddressID;
-        public int PhoneID;       
+        public Address Address;
+        public Phone Phone;       
         public string ContactFirstName;
         public string ContactLastName;
         public bool IsDeleted;
@@ -28,8 +28,8 @@ namespace JaminBooks.Model
             {
                 this.PublisherID = PublisherID;
                 this.PublisherName = (String)dt.Rows[0]["PublisherName"];
-                this.AddressID = (int)dt.Rows[0]["AddressID"];
-                this.PhoneID = (int)dt.Rows[0]["PhoneID"];
+                this.Address = new Address((int)dt.Rows[0]["AddressID"]);
+                this.Phone = new Phone((int)dt.Rows[0]["PhoneID"]);
                 this.ContactFirstName = (String)dt.Rows[0]["ContactFirstName"];
                 this.ContactLastName = (String)dt.Rows[0]["ContactLastName"];
                 this.IsDeleted = (bool)dt.Rows[0]["IsDeleted"];
@@ -45,8 +45,8 @@ namespace JaminBooks.Model
         {
             this.PublisherID = PublisherID;
             this.PublisherName = PublisherName;
-            this.AddressID = AddressID;
-            this.PhoneID = PhoneID;
+            this.Address = new Address (AddressID);
+            this.Phone = new Phone (PhoneID);
             this.ContactFirstName = ContactFirstName;
             this.ContactLastName = ContactLastName;
             this.IsDeleted = IsDeleted;
@@ -57,8 +57,8 @@ namespace JaminBooks.Model
             DataTable dt = SQL.Execute("uspSavePublisher",
                new Param("PublisherID", PublisherID),
                new Param("PublisherName", PublisherName),
-               new Param("AddressID", AddressID),
-               new Param("PhoneID", PhoneID),
+               new Param("AddressID", Address.AddressID),
+               new Param("PhoneID", Phone.PhoneID),
                new Param("ContactFirstName", ContactFirstName),
                new Param("ContactFirstName", ContactFirstName),
                new Param("IsDeleted", IsDeleted));
@@ -81,18 +81,6 @@ namespace JaminBooks.Model
                 new Param("PublisherID", PublisherID));
             return (int)dt.Rows[0]["PublisherID"];
         }
-
-        //These two need to be looked at
-        public void AddAddress(Address a)
-        {
-            a.AddUser(this.PublisherID);
-        }
-        
-        public void AddPhone(Phone p)
-        {
-            p.AddUser(this.PublisherID);
-        }
-        //these two need to be looked at
 
 
         public void AddPublisher(int BookID)

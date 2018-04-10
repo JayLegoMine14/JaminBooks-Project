@@ -1,0 +1,12 @@
+﻿@page
+@model JaminBooks.Pages.Admin.BookCreateModel
+@{
+    ViewData["Title"] = "Create Book";
+}
+
+<h2>Create a Book</h2>
+<form method="post">
+    <input type="hidden" name="BookID" value="@Model.Book.BookID" />
+    <input type="text" required maxlength="100" name="Title" value="@Model.Book.Title"/>
+    <input type="submit" class="btn btn-primary"/>
+</form>

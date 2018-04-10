@@ -68,6 +68,7 @@ namespace JaminBooks.Model
             if (dt.Rows.Count > 0)
             {
                 this.BookID = BookID;
+                this.Title = (string)dt.Rows[0]["Title"];
                 this.PublicationDate = (DateTime)dt.Rows[0]["PublicationDate"];
                 this.PublisherID = (int)dt.Rows[0]["PublisherID"];
                 this.ISBN10 = (string)dt.Rows[0]["ISBN10"];
