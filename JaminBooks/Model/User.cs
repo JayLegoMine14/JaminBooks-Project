@@ -1,7 +1,9 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static JaminBooks.Model.SQL;
@@ -21,12 +23,45 @@ namespace JaminBooks.Model
         public bool IsConfirmed = false;
         public string ConfirmationCode;
         public string Password;
-        public byte[] Icon;
+        public byte[] Icon { private get; set; }
+
+        public string LoadImage
+        {
+            get
+            {
+                if (Icon == null) return "/images/user.png";
+                var filename = Authentication.Hash(Convert.ToBase64String(Icon)) + ".png";
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "temp");
+                Directory.CreateDirectory(path);
+                path = Path.Combine(path, filename);
+                if (!File.Exists(path))
+                {
+                    using (MemoryStream ms = new MemoryStream(Icon))
+                    {
+                        using (FileStream fs = new FileStream(path, FileMode.Create, System.IO.FileAccess.Write))
+                        {
+                            ms.CopyTo(fs);
+                            fs.Flush();
+                        }
+                    }
+                }
+
+                return "/images/temp/" + filename;
+            }
+        }
 
         public List<Address> Addresses {
             get
             {
                 return Address.GetAddresses(this.UserID);
+            }
+        }
+
+        public List<Address> AllAddresses
+        {
+            get
+            {
+                return Address.GetAddressesIncludingCards(this.UserID);
             }
         }
 
@@ -126,6 +161,13 @@ namespace JaminBooks.Model
         public void AddPhone(Phone p)
         {
             p.AddUser(this.UserID);
+        }
+
+        public bool CartContains(int BookID)
+        {
+            DataTable bookresults = SQL.Execute("uspGetCart", new Param("UserID", UserID));
+            List<Book> books = Book.GetBooks(bookresults);
+            return books.Any(b => b.BookID == BookID);
         }
 
         public Dictionary<Book, int> GetCart()

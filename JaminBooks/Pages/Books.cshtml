@@ -4,6 +4,7 @@
     ViewData["Title"] = "Books";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
 }
 
 <script>$("a.books").addClass("active")</script>
@@ -131,8 +132,8 @@
                         <div class="row">
                             <div class="col-12">
                                 <select id="SortType" class="form-control">
-                                    <option value="1">Relavence</option>
-                                    <option value="2">Popularity</option>
+                                    <option value="1">Popularity</option>
+                                    <option value="2">Relavence</option>
                                     <option value="3">Price: Low to High</option>
                                     <option value="4">Price: High to Low</option>
                                     <option value="5">New to Old</option>
@@ -358,8 +359,8 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-                    var added = JSON.parse(response);
-                    if (added) {
+                    var code = JSON.parse(response);
+                    if (code == 1) {
                         $.confirm({
                             title: $("#BookTitle").text() + ' added to cart.',
                             content: 'Would you like to view your cart?',
@@ -368,6 +369,24 @@
                                 yes: {
                                     text: 'View Cart',
                                     btnClass: 'btn-green',
+                                    action: function () {
+                                        location.href = "/Cart";
+                                    }
+                                },
+                                no: {
+                                    text: 'No Thanks'
+                                }
+                            }
+                        });
+                    } else if (code == 2)  {
+                        $.confirm({
+                            title: $("#BookTitle").text() + ' In Cart.',
+                            content: $("#BookTitle").text() + ' is already in your cart. Would you like to view your cart?',
+                            type: 'blue',
+                            buttons: {
+                                yes: {
+                                    text: 'View Cart',
+                                    btnClass: 'btn-blue',
                                     action: function () {
                                         location.href = "/Cart";
                                     }
@@ -469,8 +488,8 @@
                 loadBooks(false);
             }
         });
-
-        $("#Search").val("@Model.Title");
+        var prefix = ("@Model.Title" != "" ? "$" : "");
+        $("#Search").val(prefix + "@Model.Title");
         if ($("#Search").val() != "")
             $("#Search").data("auto-open", true);
         loadBooks();
@@ -558,7 +577,7 @@
                     bookcard += 'data-publication="' + book.PublicationDate + '"'
                     bookcard += 'data-publisher="' + book.Publisher.PublisherName + '"'
                     bookcard += '> '
-                    bookcard += '<img class="card-img" src="' + book.ImageBase64 + '">'
+                    bookcard += '<img class="card-img" src="' + book.LoadImage + '">'
                     bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
                     if (book.Quantity == 0) bookcard += '<h5 class="card-title"><span class="badge badge-danger">Out Of Stock</span></h5>'
                     bookcard += '<h5 class="card-title">' + book.Title + '</h5>'

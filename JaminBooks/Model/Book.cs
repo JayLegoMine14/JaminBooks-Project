@@ -5,6 +5,9 @@ using System.Data.SqlTypes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using System.Drawing;
+using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -24,14 +27,34 @@ namespace JaminBooks.Model
         public decimal Cost;
         public int Quantity;
         public bool IsDeleted = false;
-        public byte[] BookImage;
+        public byte[] BookImage { set; private get; }
         public int Rating;
 
-        public string ImageBase64
+        public bool LoadPublisher = true;
+
+        public string LoadImage
         {
             get
             {
-                return String.Format("data:image/png;base64,{0}", Convert.ToBase64String(BookImage));
+                using (MemoryStream ms = new MemoryStream(BookImage))
+                {
+                    var filename = Authentication.Hash(Convert.ToBase64String(BookImage)) + ".png";
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "temp");
+                    Directory.CreateDirectory(path);
+
+                    path = Path.Combine(path, filename);
+
+                    if (!File.Exists(path))
+                    {
+                        using (FileStream fs = new FileStream(path, FileMode.Create, System.IO.FileAccess.Write))
+                        {
+                            ms.CopyTo(fs);
+                            fs.Flush();
+                        }
+                    }
+
+                    return "/images/temp/" + filename;               
+                }
             }
         }
 
@@ -55,7 +78,14 @@ namespace JaminBooks.Model
         {
             get
             {
-                return new Publisher(PublisherID);
+                if(LoadPublisher)
+                    return new Publisher(PublisherID);
+                else
+                {
+                    Publisher p = new Publisher();
+                    p.PublisherName = new Publisher(PublisherID).PublisherName;
+                    return p;
+                }
             }
         }
 

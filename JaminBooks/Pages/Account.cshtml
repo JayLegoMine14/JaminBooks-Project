@@ -5,13 +5,11 @@
     Layout = "~/Pages/_Layout.cshtml";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
     var userIcon = "";
 
-    if (Model.DisplayUser != null)
-    {
-        userIcon = Model.DisplayUser.Icon != null ?
-        String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.DisplayUser.Icon)) :
-        "/images/user.png";
+    @if (Model.DisplayUser != null) {
+        userIcon = Model.DisplayUser.LoadImage;
     }
 }
 

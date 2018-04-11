@@ -22,10 +22,7 @@ namespace JaminBooks.Model
             {
                 User u = new User(UserID);
                 var username = u.FirstName + " " + u.LastName;
-                var image = u.Icon != null ?
-                String.Format("data:image/png;base64,{0}", Convert.ToBase64String(u.Icon)) :
-                "/images/user.png";
-                return new string[] { username, image };
+                return new string[] { username, u.LoadImage };
             }
         }
 

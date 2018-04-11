@@ -117,6 +117,54 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/GetTotal")]
+        public IActionResult GetTotal()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = new User(Convert.ToInt32(fields["UserID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                JArray books = JArray.Parse(fields["Books"]);
+
+                decimal BookTotal = 0;
+                int Discount = 0;
+                decimal OrderTotal = 0;
+
+                foreach (JArray book in books.Children<JArray>())
+                {
+                    int BookID = (int) book[0];
+                    int Quantity = (int)book[1];
+                    user.UpdateQuantityInCart(BookID, Quantity);
+                    BookTotal += new Book(BookID).Price * Quantity;
+                }
+
+                if (BookTotal > 75.00m) Discount = 10;
+                OrderTotal = BookTotal - (BookTotal * (Discount / 100m));
+
+                return new JsonResult(new object[] { BookTotal.ToString("0.00"),
+                                                     Discount == 0 ? "0" : Discount + "%",
+                                                    OrderTotal.ToString("0.00") });
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/RemoveBook")]
+        public IActionResult RemoveBook()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = new User(Convert.ToInt32(fields["UserID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                user.RemoveBookFromCart(Convert.ToInt32(fields["BookID"]));
+            }
+
+            return new JsonResult("");
+        }
+
         [Route("Model/SaveCard")]
         public IActionResult SaveCard()
         {
@@ -134,7 +182,7 @@ namespace JaminBooks.Pages
                 if (fields["Line2"] != "") a.Line2 = fields["Line2"];
                 a.City = fields["City"];
                 a.Country = fields["Country"];
-                if(a.Country == "US") a.State = fields["State"];
+                if (a.Country == "US") a.State = fields["State"];
                 a.ZIP = fields["ZIP"];
                 c.Address = a;
 
@@ -148,6 +196,23 @@ namespace JaminBooks.Pages
                 return new JsonResult(new object[] { id, c.CardID });
             }
             return new JsonResult("");
+        }
+
+        [Route("Model/CreateOrder")]
+        public IActionResult CreateOrder()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+
+            Card c = new Card(Convert.ToInt32(fields["CardID"]));
+            Address a = new Address(Convert.ToInt32(fields["AddressID"]));
+
+            if (c.User.UserID != currentUser.UserID) return new JsonResult("");
+            if (!c.DecryptNumber(fields["CCV"])) return new JsonResult("");
+            c.CCV = fields["CCV"];
+
+            return new JsonResult(1);
+
         }
 
         [Route("Model/DeleteRating")]
@@ -296,13 +361,21 @@ namespace JaminBooks.Pages
 
             if(u == null)
             {
-                return new JsonResult(JsonConvert.SerializeObject(false));
+                return new JsonResult(JsonConvert.SerializeObject(0));
             }
             else
             {
                 Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
                 int BookID = Convert.ToInt32(fields["BookID"]);
-                return new JsonResult(JsonConvert.SerializeObject(true));
+                if (u.CartContains(BookID))
+                {
+                    return new JsonResult(JsonConvert.SerializeObject(2));
+                }
+                else
+                {
+                    u.AddBookToCart(BookID);
+                    return new JsonResult(JsonConvert.SerializeObject(1));
+                }
             }
         }
 
@@ -346,7 +419,11 @@ namespace JaminBooks.Pages
                     break;
             }
 
-            search = "%" + search.Trim().Replace(" ", "%") + "%";
+            if (search.StartsWith("$"))
+                search = search.Replace("$", "");
+            else
+                search = "%" + search.Trim().Replace(" ", "%") + "%";
+
             DataTable bookresults = SQL.Execute(searchProcedure, new Param("@Search", search));
             List<Book> books = Book.GetBooks(bookresults);
 
@@ -356,11 +433,11 @@ namespace JaminBooks.Pages
 
             switch (sorttype)
             {
-                case 1:
+                case 2:
                     books.Sort((b1, b2) => b1.Categories.Where(c => categories.Contains(c.CategoryID)).Count().CompareTo(
                         b2.Categories.Where(c => categories.Contains(c.CategoryID)).Count()));
                     break;
-                case 2:
+                case 1:
                     books.Sort((b1, b2) => b2.Rating.CompareTo(b1.Rating));
                     break;
                 case 3:
@@ -380,12 +457,9 @@ namespace JaminBooks.Pages
             count = books.Count - index < count ? books.Count - index : count;
             books = books.GetRange(index, count);
 
-            foreach(Book book in books)
+            foreach (Book book in books)
             {
-                book.Publisher.Address = null;
-                book.Publisher.ContactFirstName = "";
-                book.Publisher.ContactLastName = "";
-                book.Publisher.Phone = null;
+                book.LoadPublisher = false;
                 book.Cost = 0;
             }
 

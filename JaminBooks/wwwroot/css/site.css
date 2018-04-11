@@ -193,6 +193,14 @@ body {
     color: white !important;
 }
 
+.fa-layers-counter {
+    padding: 0.09em;
+    right: -10px;
+    top: -10px;
+    font-size: 2.0em;
+    background-color: #650d1b;
+}
+
 footer {
     background: #650d1b !important;
     padding: 20px 0;

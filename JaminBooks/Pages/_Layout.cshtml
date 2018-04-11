@@ -11,11 +11,15 @@
         <link rel="stylesheet" href="~/css/jquery-confirm.css" />
         <link rel="stylesheet" href="~/css/tooltipster.bundle.min.css" />
         <link rel="stylesheet" href="~/css/tooltipster-sideTip-light.min.css" />
+        <link rel="stylesheet" href="~/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="~/css/owl.theme.default.min.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="~/css/jquery-confirm.css" />
         <link rel="stylesheet" href="~/css/tooltipster.bundle.min.css" />
         <link rel="stylesheet" href="~/css/tooltipster-sideTip-light.min.css" />
+        <link rel="stylesheet" href="~/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="~/css/owl.theme.default.min.css" />
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
@@ -30,11 +34,13 @@
     <script src="~/js/jquery-confirm.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/js/tooltipster.bundle.min.js"></script>
+    <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </environment>
 <environment exclude="Development">
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
     <script src="~/js/tooltipster.bundle.min.js"></script>
+    <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/sha256.min.js" asp-append-version="true"></script>
     <script src="~/js/jquery-confirm.js" asp-append-version="true"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -83,7 +89,14 @@
                     </div>
                 </li>
                 <li class="nav-item ml-4">
-                    <a href="#" class="cart-icon"><i class="fas fa-shopping-cart line-height-0"></i></a>
+                    <a href="\Cart" class="cart-icon">
+                        <span class="fa-layers fa-fw">
+                            <i class="fas fa-shopping-cart line-height-0"></i>
+                            @if (Convert.ToInt32(ViewData["CartCount"]) > 0) {
+                                <span class="fa-layers-counter text-white">@ViewData["CartCount"]</span>
+                            }
+                        </span>
+                    </a>
                 </li>
     }
     else
