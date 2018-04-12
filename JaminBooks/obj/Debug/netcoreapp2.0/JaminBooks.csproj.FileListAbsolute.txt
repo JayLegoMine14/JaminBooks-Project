@@ -9,3 +9,14 @@ C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.
 C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
 C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
 C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.deps.json
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.json
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.runtimeconfig.dev.json
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.dll
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.pdb
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csprojResolveAssemblyReference.cache
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.csproj.CoreCompileInputs.cache
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfoInputs.cache
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
+C:\Users\Flame\Documents\JaminBooks-Project\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
