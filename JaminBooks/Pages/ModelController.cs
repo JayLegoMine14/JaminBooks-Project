@@ -117,6 +117,53 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/ClearReservations")]
+        public IActionResult ClearReservations()
+        {
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            foreach (KeyValuePair<Book, int> item in currentUser.GetCart().AsEnumerable())
+            {
+                item.Key.Quantity += item.Value;
+                item.Key.Save();
+            }
+            return null;
+        }
+
+        [Route("Model/ValidateCart")]
+        public IActionResult ValidateCart()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = new User(Convert.ToInt32(fields["UserID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                JArray books = JArray.Parse(fields["Books"]);
+
+                bool incorrectQuantity = false;
+                foreach (JArray book in books.Children<JArray>())
+                {
+                    int BookID = (int)book[0];
+                    int? Quantity = (int?)book[1];
+                    if (!Quantity.HasValue) Quantity = 1;
+
+                    Book b = new Book(BookID);
+                    if (b.Quantity < Quantity)
+                    {
+                        book[1] = b.Quantity;
+                        user.UpdateQuantityInCart(BookID, b.Quantity);
+                        incorrectQuantity = true;
+                    }
+                }
+
+                if (incorrectQuantity)
+                    return new JsonResult(new object[] { false, books });
+                else
+                    return new JsonResult(new object[] { true });
+            }
+            return new JsonResult("");
+        }
+
         [Route("Model/GetTotal")]
         public IActionResult GetTotal()
         {
@@ -135,9 +182,11 @@ namespace JaminBooks.Pages
                 foreach (JArray book in books.Children<JArray>())
                 {
                     int BookID = (int) book[0];
-                    int Quantity = (int)book[1];
-                    user.UpdateQuantityInCart(BookID, Quantity);
-                    BookTotal += new Book(BookID).Price * Quantity;
+                    int? Quantity = (int?)book[1];
+                    if (!Quantity.HasValue) Quantity = 0;
+
+                    user.UpdateQuantityInCart(BookID, Quantity.Value);
+                    BookTotal += new Book(BookID).Price * Quantity.Value;
                 }
 
                 if (BookTotal > 75.00m) Discount = 10;
@@ -211,8 +260,31 @@ namespace JaminBooks.Pages
             if (!c.DecryptNumber(fields["CCV"])) return new JsonResult("");
             c.CCV = fields["CCV"];
 
-            return new JsonResult(1);
+            //At this point send the Card data to the bank
 
+            Order order = new Order();
+            order.Card = c;
+            order.Address = a;
+            order.PercentDiscount = 0;
+
+            decimal BookTotal = 0;
+            int Discount = 0;
+
+            foreach (KeyValuePair<Book, int> item in currentUser.GetCart().AsEnumerable())
+            {
+                order.Books.Add(item.Key, new { Price = item.Key.Price, Quantity = item.Value });
+                BookTotal += item.Key.Price * item.Value;
+            }
+
+            if (BookTotal > 75.00m) Discount = 10;
+            order.PercentDiscount = Discount;
+
+            order.Save();
+            currentUser.EmptyCart();
+
+            Receipt.SendReceipt(order, BookTotal - (BookTotal * (Discount / 100m)));
+
+            return new JsonResult(order.OrderID);
         }
 
         [Route("Model/DeleteRating")]

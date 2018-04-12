@@ -184,7 +184,7 @@ namespace JaminBooks.Model
                 book.Publisher.ContactLastName = "";
                 book.Publisher.Phone = null;
                 book.Cost = 0;
-                cartItems.Add(book, Convert.ToInt32(bookresults.Rows[i]["QuantityInCart"]));
+                cartItems.Add(book, Convert.ToInt32(bookresults.Rows[i++]["QuantityInCart"]));
             }
 
             return cartItems;
@@ -198,6 +198,11 @@ namespace JaminBooks.Model
         public void RemoveBookFromCart(int BookID)
         {
             SQL.Execute("uspRemoveFromCart", new Param("UserID", UserID), new Param("BookID", BookID));
+        }
+
+        public void EmptyCart()
+        {
+            SQL.Execute("uspEmptyCart", new Param("UserID", UserID));
         }
 
         public void UpdateQuantityInCart(int BookID, int Quantity)

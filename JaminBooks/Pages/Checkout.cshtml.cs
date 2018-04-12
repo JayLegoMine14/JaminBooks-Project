@@ -19,7 +19,7 @@ namespace JaminBooks.Pages
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
-            if (CurrentUser == null || CurrentUser.GetCart().Count == 0)
+            if (CurrentUser == null || CurrentUser.GetCart().Count == 0 || !CurrentUser.IsConfirmed)
             {
                 Response.Redirect("Index");
             }
@@ -30,7 +30,11 @@ namespace JaminBooks.Pages
                 decimal OrderTotal = 0;
 
                 foreach (KeyValuePair<Book, int> item in CurrentUser.GetCart().AsEnumerable())
+                {
+                    item.Key.Quantity -= item.Value;
+                    item.Key.Save();
                     BookTotal += item.Key.Price * item.Value;
+                }
 
                 if (BookTotal > 75.00m) Discount = 10;
                 OrderTotal = BookTotal - (BookTotal * (Discount / 100m));

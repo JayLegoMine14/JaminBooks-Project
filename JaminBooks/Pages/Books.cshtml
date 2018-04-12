@@ -5,6 +5,15 @@
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
     ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
 }
 
 <script>$("a.books").addClass("active")</script>
@@ -14,6 +23,7 @@
         background-color: rgba(0, 0, 0, .5);
         text-align: center;
     }
+
     #Books {
         min-height: 30vh;
         padding: 20px;
@@ -22,9 +32,11 @@
         justify-content: flex-start;
         flex-wrap: wrap;
     }
+
     .book {
         margin: 25px;
     }
+
     #BookView {
         position: fixed;
         top: 0;
@@ -42,46 +54,19 @@
             background-color: rgba(0, 0, 0, .4);
         }
 
-        #BookViewBody {
-            width: 75%;
-            margin: auto;
-            background-color: white;
-            margin-top: 180px;
-            position: relative;
-        }
+    #BookViewBody {
+        width: 75%;
+        margin: auto;
+        background-color: white;
+        margin-top: 180px;
+        position: relative;
+    }
 
     #BookImage {
         height: 350px;
         position: absolute;
         top: -50px;
         left: -50px;
-    }
-
-    .star-overlay {
-        position: absolute;
-        width: 20px;
-        height: 21px;
-    }
-
-    .rating .userName {
-        line-height: 50px;
-        margin-left: 10px;
-        display: inline-block;
-        position: absolute;
-    }
-
-    .rating {
-        margin-bottom: 30px;
-        width: 100%;
-        padding: 8px;
-    }
-
-    .icon-div {
-        width: 50px;
-        height: 50px;
-        overflow: hidden;
-        border-radius: 100px;
-        display: inline-block;
     }
 </style>
 
@@ -164,7 +149,7 @@
 
 <div id="BookView" style="display:none">
     <div id="BookViewBody" class="pb-5">
-        <img id="BookImage" src=""/>
+        <img id="BookImage" src="" />
         <div class="container" style="overflow:auto;">
             <div class="row mt-3">
                 <div class="col-3">
@@ -187,6 +172,7 @@
                             <i class="far fa-star"></i>
                         </span>
                     </div>
+                    <div id="Categories" class="mt-2"></div>
                     <div id="Description" class="mt-3"></div>
                     <hr />
                     <div id="Details" class="mt-3">
@@ -324,17 +310,6 @@
             }
         });
 
-        $("#RatingStars .star-overlay, #EditRatingStars .star-overlay").click(function () {
-            var star = $(this).next("svg");
-
-            if (star.attr("data-prefix") == "far") {
-                star.attr("data-prefix", "fas");
-                star.prevAll("svg").attr("data-prefix", "fas");
-            } else {
-                $(this).next().nextAll("svg").attr("data-prefix", "far");
-            }
-        });
-
         $("#BookCat").change(function () {
             var id = $("#BookCat").val();
             var name = $("#BookCat option:selected").text();
@@ -397,76 +372,8 @@
                             }
                         });
                     } else {
-                        $("body").append("<span id='LoginRedirectLocation'>\Books?title=" + $("#BookTitle").text() + "</span>")
+                        $("body").append("<span id='LoginRedirectLocation'>\Book?id=" + $("#BookID").text() + "</span>")
                         $("#ShowLogin").click();
-                    }
-                },
-                failure: function (response) {
-                    alert(response);
-                }
-            });
-        });
-
-        $("#SubmitRating").click(function () {
-            var data = {
-                ID: -1,
-                BookID: $("#BookID").text(),
-                Rating: $("#RatingStars svg[data-prefix='fas']").length,
-                Comment: $("#Comment").val()
-            }
-            $.ajax({
-                type: "POST",
-                url: "Model/SaveRating",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("XSRF-TOKEN",
-                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                },
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    response = JSON.parse(response);
-                    if (response != undefined) {
-                        createRating(response);
-                    } else {
-                        $("#ShowLogin").click();
-                    }
-                },
-                failure: function (response) {
-                    alert(response);
-                }
-            });
-        });
-
-        $("#SaveRating").click(function () {
-            var data = {
-                ID: $("#RatingModal").data("id"),
-                BookID: $("#BookID").text(),
-                Rating: $("#EditRatingStars svg[data-prefix='fas']").length,
-                Comment: $("#EditComment").val()
-            }
-            $.ajax({
-                type: "POST",
-                url: "Model/SaveRating",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("XSRF-TOKEN",
-                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                },
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    response = JSON.parse(response);
-                    if (response != undefined) {
-                        var rating = $(".rating[data-id='" + response.RatingID + "']");
-                        rating.data("rating", response.RatingValue);
-                        rating.data("comment", response.Comment);
-                        rating.find(".stars svg").each(function (i) {
-                            if (i < response.RatingValue) $(this).attr("data-prefix", "fas");
-                            else $(this).attr("data-prefix", "far");
-                        })
-                        rating.find(".comment").text(response.Comment);
-                        $("#RatingModal").modal("hide");
                     }
                 },
                 failure: function (response) {
@@ -641,6 +548,12 @@
         $("#Publisher").val(book.data("publisher"));
         $("#RatingMessages").empty();
 
+        $("#Categories").empty();
+        var cats = book.data("categories");
+        cats.forEach(function (cat) {
+            $("#Categories").append('<span class="badge badge-primary m-1">' + cat.CategoryName + '</span>');
+        });
+
         $("#Comment").val("");
         $("#RatingStars svg").attr("data-prefix", "far");
 
@@ -650,7 +563,7 @@
         $("#BookAuthor").text(authorstring.slice(0, -2));
 
         var rating = book.data("rating");
-        $("#Rating svg").each(function (i) { 
+        $("#Rating svg").each(function (i) {
             if (i < rating) $(this).attr("data-prefix", "fas");
             else $(this).attr("data-prefix", "far");
         })
@@ -659,7 +572,7 @@
         $("body").css("margin-right", getScrollBarWidth());
         $("nav").css("margin-right", getScrollBarWidth());
 
-        $("#BookView").fadeIn(function () { 
+        $("#BookView").fadeIn(function () {
             $("#BookViewBody").hover(function (event) {
                 $("#BookView").removeClass("hovered");
             }, function () {
@@ -674,119 +587,7 @@
             $("#BookView").removeClass("hovered");
         });
 
-        $("#RatingLoadIcon").show();
-        $.ajax({
-            type: "POST",
-            url: "Model/GetRatings",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("XSRF-TOKEN",
-                    $('input:hidden[name="__RequestVerificationToken"]').val());
-            },
-            data: JSON.stringify({ BookID: book.data("id") }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                response = JSON.parse(response);
-                $("#RatingLoadIcon").hide();
-                response.forEach(function (rating) {
-                    createRating(rating);
-                });
-
-                var image = new Image();
-                $(".userIcon").each(function () {
-                    image.src = $(this).attr("src");
-                    $(this).removeAttr("style");
-                    $(this).css(image.width > image.height ? "height" : "width", "50px");
-                })
-            },
-            failure: function (response) {
-                alert(response);
-            }
-        });
-
-    }
-
-    function editRating(button) {
-        var rating = $(button).parents(".rating");
-        $("#RatingModal").data("id", rating.data("id"));
-        $("#EditRatingStars svg").each(function (i) {
-            if (i < rating.data("rating")) $(this).attr("data-prefix", "fas");
-            else $(this).attr("data-prefix", "far");
-        })
-        $("#EditComment").val(rating.data("comment"));
-        $("#RatingModal").modal("show");
-    }
-
-    function deleteRating(button) {
-        var rating = $(button).parents(".rating");
-        $.confirm({
-            title: 'Delete Review',
-            content: 'Are you sure you want to delete this review?',
-            type: 'red',
-            buttons: {
-                yes: function () {
-                    $.ajax({
-                        type: "POST",
-                        url: "Model/DeleteRating",
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("XSRF-TOKEN",
-                                $('input:hidden[name="__RequestVerificationToken"]').val());
-                        },
-                        data: JSON.stringify({
-                            ID: rating.data("id")
-                        }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function () {
-                            rating.fadeOut(function () {
-                                rating.remove();
-                            });
-                        },
-                        failure: function (response) {
-                            alert(response);
-                        }
-                    });
-                },
-                no: function () { }
-            }
-        });
-    }
-
-    function createRating(rating) {
-        var ratingmessage = "";
-        var ratingstars = "<span class='stars'>";
-        var count = 5;
-        for (var i = 0; i < rating.RatingValue; i++ , count--)
-            ratingstars += '<i class="fas fa-star"></i>'
-        for (var i = count; i > 0; i--)
-            ratingstars += '<i class="far fa-star"></i>'
-
-        ratingstars += "</span>";
-
-        ratingmessage += '<div class="rating card"'
-        ratingmessage += 'data-id="' + rating.RatingID + '"'
-        ratingmessage += 'data-rating="' + rating.RatingValue + '"'
-        ratingmessage += 'data-comment="' + rating.Comment + '"'
-        ratingmessage += '> '
-        ratingmessage += '<div>'
-        ratingmessage += '<div class="icon-div">'
-        ratingmessage += '<img class="userIcon" src="' + rating.NameAndImage[1] + '" />'
-        ratingmessage += '</div>'
-        ratingmessage += '<h5 class="userName">' + rating.NameAndImage[0] + '</h5>'
-
-        if ($("#UserID").text() == rating.UserID || $("#UserIsAdmin").text() == "True") {
-            ratingmessage += '<div class="float-right mt-1">'
-            ratingmessage += '<button class="btn btn-danger btn-sm mr-2" onclick="deleteRating(this)"><i class="fas fa-trash"></i></button>'
-            ratingmessage += '<button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>'
-            ratingmessage += '</div>'
-        }
-
-        ratingmessage += '</div>'
-        ratingmessage += '<h5>' + ratingstars + '</h5>'
-        ratingmessage += '<h6 class="comment">' + rating.Comment + '</h5>'
-        ratingmessage += '</div>'
-
-        $("#RatingMessages").prepend(ratingmessage);
+        loadRatings();
     }
 
     function getScrollBarWidth() {
@@ -806,4 +607,5 @@
 
 </script>
 
+@await Html.PartialAsync("_Ratings")
 @await Html.PartialAsync("_Authentication")

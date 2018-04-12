@@ -2,11 +2,19 @@
 @model JaminBooks.Pages.CartModel
 @{
     ViewData["Title"] = "Cart";
-    Layout = "~/Pages/_Layout.cshtml";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
     ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
     var Cart = Model.DisplayUser.GetCart();
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
 }
 
 @if (Model.DisplayUser != null)
@@ -50,7 +58,7 @@
                 <div id="Books" class="mt-2">
                     @foreach (Model.Book book in Cart.Keys)
                     {
-                        <div class="book card w-100 p-1" data-id="@book.BookID">
+                        <div class="book card w-100 p-1" data-id="@book.BookID" data-out="@(book.Quantity == 0)">
                             <div class="row">
                                 <div class="col-2">
                                     <img class="book-icon" src="@book.LoadImage">
@@ -59,10 +67,17 @@
                                     <h4 class="title">@book.Title</h4>
                                 </div>
                                 <div class="col-2 mt-4">
-                                    <h5 class="title">$@book.Price.ToString("0.##")</h5>
+                                    <h5 class="price">$@book.Price.ToString("0.##")</h5>
                                 </div>
                                 <div class="col-2 mt-4">
-                                    <input type="number" value="@Cart[book]" class="quantity form-control input-sm" min=1 max=@book.Quantity onkeydown="javascript: return event.keyCode == 69 ? false : true">
+                                    @if(@book.Quantity == 0)
+                                    {
+                                        <h5><span class="badge badge-danger">Out Of Stock</span></h5>
+                                    }
+                                    else
+                                    {
+                                        <input type="number" value="@Cart[book]" class="quantity form-control input-sm" min=1 max=@book.Quantity onkeydown="javascript: return event.keyCode == 69 ? false : true">
+                                    }
                                 </div>
                                 <div class="col-2 mt-4">
                                     <button class="btn btn-danger remove-book"><i class="fas fa-times"></i></button>
@@ -104,7 +119,15 @@
                 </div>
                 <div class="row mb-5">
                     <div class="col-12">
-                        <a href="\Checkout" class="btn btn-dark-red text-white btn-lg btn-block">Checkout</a>
+                        @if (Model.DisplayUser.IsConfirmed)
+                        {
+                            <button id="Checkout" class="btn btn-dark-red text-white btn-lg btn-block">Checkout</button>
+                        }
+                        else
+                        {
+                            <h5 class="text-danger font-weight-bold">Please verify email address</h5>
+                            <button class="btn btn-dark-red text-white btn-lg btn-block disabled">Checkout</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -116,8 +139,93 @@
     $(document).ready(function () {
         getTotal();
 
-        $(".quantity").change(function () {
+        $(".quantity").on("input", function () {
             getTotal();
+        });
+
+        $("#Checkout").click(function () {
+
+            var books = [];
+            $(".book").each(function () {
+                books.push([$(this).data("id"), $(this).find(".quantity").val()]);
+            });
+
+            var data = {
+                UserID: $("#UserID").text(),
+                Books: JSON.stringify(books)
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "Model/ValidateCart",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (reply) {
+                    if (reply[0]) {
+                        location.href = "\Checkout";
+                    } else {
+                        var books = reply[1];
+                        var content = 'The available quantity of the following books has reduced. Your cart will be updated to reflect the change.<ul>';
+                        books.forEach(function (bookdata) {
+                            var book = $(".book[data-id='" + bookdata[0] + "']");
+                            if (book.find(".quantity").val() > bookdata[1] && bookdata[1] != 0) {
+                                content += "<li>" + book.find(".title").text() + "</li>"
+                            }
+                        });
+                        content += "</ul>"
+
+                        $.confirm({
+                            title: 'Book Quantity Not Available',
+                            content: content,
+                            type: 'red',
+                            buttons: {
+                                ok: function () {
+
+                                    books.forEach(function (bookdata) {
+                                        var book = $(".book[data-id='" + bookdata[0] + "']");
+                                        book.find(".quantity").val(bookdata[1]);
+                                    });
+
+                                    var booksOutOfStock = 0;
+                                    content = 'The following books are out of stock. Would you like to remove them from your cart to checkout?<ul>';
+                                    books.forEach(function (bookdata) {
+                                        var book = $(".book[data-id='" + bookdata[0] + "']");
+                                        if (bookdata[1] == 0) {
+                                            content += "<li>" + book.find(".title").text() + "</li>";
+                                            booksOutOfStock++;
+                                        }
+                                    });
+                                    content += "</ul>"
+
+                                    if (booksOutOfStock > 0) {
+                                        $.confirm({
+                                            title: 'Book Out Of Stock',
+                                            content: content,
+                                            type: 'red',
+                                            buttons: {
+                                                yes: function () {
+                                                    $(".book[data-out='True']").each(function () { removeBook($(this)) });
+                                                },
+                                                no: function () { }
+                                            }
+                                        });
+                                    } else {
+                                        getTotal();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
         });
 
         $(".remove-book").click(function () {
@@ -128,41 +236,45 @@
                 type: 'red',
                 buttons: {
                     yes: function () {
-                        $.ajax({
-                            type: "POST",
-                            url: "Model/RemoveBook",
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader("XSRF-TOKEN",
-                                    $('input:hidden[name="__RequestVerificationToken"]').val());
-                            },
-                            data: JSON.stringify({
-                                UserID: $("#UserID").text(),
-                                BookID: book.data("id")
-                            }),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function () {
-                                    if ($(".book").length == 1) {
-                                        $("#ActiveCart").fadeOut(function () {
-                                            $("#EmptyCart").fadeIn();
-                                        });
-                                    } else {
-                                        book.fadeOut(function () {
-                                            book.remove();
-                                            getTotal();
-                                        });
-                                    }
-                            },
-                            failure: function (response) {
-                                alert(response);
-                            }
-                        });
+                        removeBook(book);
                     },
                     no: function () { }
                 }
             });
         });
     });
+
+    function removeBook (book) {
+        $.ajax({
+            type: "POST",
+            url: "Model/RemoveBook",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify({
+                UserID: $("#UserID").text(),
+                BookID: book.data("id")
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function () {
+                if ($(".book").length == 1) {
+                    $("#ActiveCart").fadeOut(function () {
+                        $("#EmptyCart").fadeIn();
+                    });
+                } else {
+                    book.fadeOut(function () {
+                        book.remove();
+                        getTotal();
+                    });
+                }
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
 
     function getTotal() {
 

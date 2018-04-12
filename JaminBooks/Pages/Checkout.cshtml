@@ -2,10 +2,18 @@
 @model JaminBooks.Pages.CheckoutModel
 @{
     ViewData["Title"] = "Checkout";
-    Layout = "~/Pages/_Layout.cshtml";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
     ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
 }
 
 @if (Model.CurrentUser != null)
@@ -332,12 +340,21 @@
                                 form.attr("action", "\Order");
 
                                 var field = $('<input></input>');
-
                                 field.attr("type", "hidden");
                                 field.attr("name", "id");
                                 field.attr("value", orderid);
 
                                 form.append(field);
+
+                                var thanks = $('<input></input>');
+                                thanks.attr("type", "hidden");
+                                thanks.attr("name", "thanks");
+                                thanks.attr("value", "true");
+
+                                form.append(thanks);
+
+                                var af = $('@Html.AntiForgeryToken()');
+                                form.append(af);
 
                                 $(document.body).append(form);
                                 form.submit();
@@ -349,6 +366,20 @@
                     });
                 }
             })
+
+            $(window).unload(function () {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "Model/ClearReservations",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+            });
         });
     </script>
 }
