@@ -36,6 +36,7 @@ namespace JaminBooks
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
                 options.Cookie.HttpOnly = true;
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

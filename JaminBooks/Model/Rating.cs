@@ -9,7 +9,7 @@ namespace JaminBooks.Model
 {
     public class Rating
     {
-        public int RatingID { private get; set; } = -1;
+        public int RatingID { get; private set; } = -1;
 
         public int RatingValue;
         public string Comment;
@@ -22,10 +22,7 @@ namespace JaminBooks.Model
             {
                 User u = new User(UserID);
                 var username = u.FirstName + " " + u.LastName;
-                var image = u.Icon != null ?
-                String.Format("data:image/png;base64,{0}", Convert.ToBase64String(u.Icon)) :
-                "/images/user.png";
-                return new string[] { username, image };
+                return new string[] { username, u.LoadImage };
             }
         }
 
@@ -39,7 +36,7 @@ namespace JaminBooks.Model
             {
                 this.RatingID = RatingID;
                 this.RatingValue = (int)dt.Rows[0]["Rating"];
-                this.Comment = (String)dt.Rows[0]["Comment"];
+                this.Comment = dt.Rows[0]["Comment"] != DBNull.Value ? (String)dt.Rows[0]["Comment"] : "";
                 this.BookID = (int)dt.Rows[0]["BookID"];
                 this.UserID = (int)dt.Rows[0]["UserID"];
             }
@@ -62,12 +59,15 @@ namespace JaminBooks.Model
         public void Save()
         {
             DataTable dt = SQL.Execute("uspSaveRating",
-                new Param("AuthorID", RatingID),
-                new Param("FirstName", RatingValue),
-                new Param("LastName", Comment),
-                new Param("IsDeleted", BookID),
-                new Param("IsDeleted", UserID)
+                new Param("RatingID", RatingID),
+                new Param("Rating", RatingValue),
+                new Param("Comment", Comment),
+                new Param("BookID", BookID),
+                new Param("UserID", UserID)
                 );
+
+            if (dt.Rows.Count > 0)
+                RatingID = Convert.ToInt32(dt.Rows[0]["RatingID"]);
         }
 
         public void Delete()

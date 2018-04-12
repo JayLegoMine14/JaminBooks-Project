@@ -188,7 +188,10 @@
                 success: function (response) {
                     var loggedin = JSON.parse(response);
                     if (loggedin) {
-                        location.reload();
+                        var redirectLocation = $("#LoginRedirectLocation");
+                        if (redirectLocation != undefined || redirectLocation.text() == "")
+                            location.href = redirectLocation.text();
+                        else location.reload();
                     } else {
                         $("#loginErrorMsg").show();
                         $("#Email").css("border-color", "red");

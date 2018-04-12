@@ -127,7 +127,7 @@ namespace JaminBooks.Model
 
         public bool DecryptNumber(string CCV)
         {
-            if (Authentication.Hash(CCV) == this._CCV && IsEncrypted == true)
+            if (Authentication.Hash(CCV) == this._CCV.Trim() && IsEncrypted == true)
             {
                 Number = Encryption.Decrypt(Number, CCV);
                 IsEncrypted = false;

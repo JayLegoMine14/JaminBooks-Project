@@ -4,6 +4,16 @@
     ViewData["Title"] = "Books";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
 }
 
 <script>$("a.books").addClass("active")</script>
@@ -13,6 +23,7 @@
         background-color: rgba(0, 0, 0, .5);
         text-align: center;
     }
+
     #Books {
         min-height: 30vh;
         padding: 20px;
@@ -21,16 +32,18 @@
         justify-content: flex-start;
         flex-wrap: wrap;
     }
+
     .book {
         margin: 25px;
     }
+
     #BookView {
         position: fixed;
         top: 0;
         right: 0;
         bottom: 0;
         left: 0;
-        z-index: 1050;
+        z-index: 1030;
         overflow-x: hidden;
         overflow-y: auto;
         background-color: rgba(0, 0, 0, .8);
@@ -41,13 +54,13 @@
             background-color: rgba(0, 0, 0, .4);
         }
 
-        #BookViewBody {
-            width: 75%;
-            margin: auto;
-            background-color: white;
-            margin-top: 180px;
-            position: relative;
-        }
+    #BookViewBody {
+        width: 75%;
+        margin: auto;
+        background-color: white;
+        margin-top: 180px;
+        position: relative;
+    }
 
     #BookImage {
         height: 350px;
@@ -55,21 +68,10 @@
         top: -50px;
         left: -50px;
     }
-
-    .star-overlay {
-        position: absolute;
-        width: 20px;
-        height: 21px;
-    }
-
-    .icon-div {
-        width: 100px;
-        height: 100px;
-        overflow: hidden;
-        border-radius: 100px;
-    }
 </style>
 
+<span class="d-none" id="UserID">@(Model.CurrentUser == null ? -1 : Model.CurrentUser.UserID)</span>
+<span class="d-none" id="UserIsAdmin">@(Model.CurrentUser == null ? false : Model.CurrentUser.IsAdmin)</span>
 <div id="SearchBar" class="row">
     <div class="col-6 offset-4">
         <div class="form-group">
@@ -108,27 +110,6 @@
                     </div>
                 </div>
             </div>
-            @*<div class="row">
-                <div class="col-12">
-                    <h3>Price</h3>
-                    <div class="form-group">
-                        <div class="row">
-                            <label for="last_name" class="col-sm-3 col-form-label">Min: </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label for="last_name" class="col-sm-3 col-form-label">Max: </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>*@
             <div class="row">
                 <div class="col-12">
                     <h4>Sort By</h4>
@@ -136,11 +117,12 @@
                         <div class="row">
                             <div class="col-12">
                                 <select id="SortType" class="form-control">
-                                    <option value="1">Relavence</option>
-                                    <option value="2">Price: Low to High</option>
-                                    <option value="3">Price: High to Low</option>
-                                    <option value="4">New to Old</option>
-                                    <option value="5">Old to New</option>
+                                    <option value="1">Popularity</option>
+                                    <option value="2">Relavence</option>
+                                    <option value="3">Price: Low to High</option>
+                                    <option value="4">Price: High to Low</option>
+                                    <option value="5">New to Old</option>
+                                    <option value="6">Old to New</option>
                                 </select>
                             </div>
                         </div>
@@ -167,12 +149,13 @@
 
 <div id="BookView" style="display:none">
     <div id="BookViewBody" class="pb-5">
-        <img id="BookImage" src="/images/love elliot.png"/>
+        <img id="BookImage" src="" />
         <div class="container" style="overflow:auto;">
             <div class="row mt-3">
                 <div class="col-3">
                     <div style="margin-top: 320px">
-                        <button class="btn btn-primary btn-lg ml-4">Add to Cart</button>
+                        <h5 class="w-75 ml-4 text-center"><span id="BookQuantity">0</span></h5>
+                        <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mt-2 w-75">Add to Cart</button>
                     </div>
                 </div>
                 <div class="col-8">
@@ -189,6 +172,7 @@
                             <i class="far fa-star"></i>
                         </span>
                     </div>
+                    <div id="Categories" class="mt-2"></div>
                     <div id="Description" class="mt-3"></div>
                     <hr />
                     <div id="Details" class="mt-3">
@@ -245,9 +229,54 @@
                                 <span class="star-overlay"></span>
                                 <i class="far fa-star"></i>
                             </span>
-                            <textarea class="w-100 mt-3" placeholder="What did you think?..."></textarea>
+                            <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                            <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
                         </div>
-                        <div id="RatingMessages"></div>
+                        <div id="RatingMessages" class="mt-3"></div>
+                        <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
+                            <div class="col-12">
+                                <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="RatingModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <span id="EditRatingStars">
+                                <span class="star-overlay"></span>
+                                <i class="fas fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                                <span class="star-overlay"></span>
+                                <i class="far fa-star"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <textarea id="EditComment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 offset-3 text-center">
+                        <input id="SaveRating" type="submit" value="Save" class="btn btn-success btn-block">
                     </div>
                 </div>
             </div>
@@ -277,24 +306,7 @@
 
         $("#BookView").click(function (e) {
             if (e.target === this) {
-                $("#BookView").fadeOut(function () { 
-                    $("body").removeAttr("style");
-                    $("nav").removeAttr("style");
-                });
-                $("#BookView").unbind("hover");
-                $("#BookViewBody").unbind("hover");
-                $("#BookView").removeClass("hovered");
-            }
-        });
-
-        $("#RatingStars .star-overlay").click(function () {
-            var star = $(this).next("svg");
-
-            if (star.attr("data-prefix") == "far") {
-                star.attr("data-prefix", "fas");
-                star.prevAll("svg").attr("data-prefix", "fas");
-            } else {
-                $(this).next().nextAll("svg").attr("data-prefix", "far");
+                closeBookView();
             }
         });
 
@@ -310,6 +322,66 @@
             $("#BookCat").val(-1);
         });
 
+        $("#AddToCart").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "Model/AddToCart",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: JSON.stringify({BookID: $("#BookID").text()}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var code = JSON.parse(response);
+                    if (code == 1) {
+                        $.confirm({
+                            title: $("#BookTitle").text() + ' added to cart.',
+                            content: 'Would you like to view your cart?',
+                            type: 'green',
+                            buttons: {
+                                yes: {
+                                    text: 'View Cart',
+                                    btnClass: 'btn-green',
+                                    action: function () {
+                                        location.href = "/Cart";
+                                    }
+                                },
+                                no: {
+                                    text: 'No Thanks'
+                                }
+                            }
+                        });
+                    } else if (code == 2)  {
+                        $.confirm({
+                            title: $("#BookTitle").text() + ' In Cart.',
+                            content: $("#BookTitle").text() + ' is already in your cart. Would you like to view your cart?',
+                            type: 'blue',
+                            buttons: {
+                                yes: {
+                                    text: 'View Cart',
+                                    btnClass: 'btn-blue',
+                                    action: function () {
+                                        location.href = "/Cart";
+                                    }
+                                },
+                                no: {
+                                    text: 'No Thanks'
+                                }
+                            }
+                        });
+                    } else {
+                        $("body").append("<span id='LoginRedirectLocation'>\Book?id=" + $("#BookID").text() + "</span>")
+                        $("#ShowLogin").click();
+                    }
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        });
+
         $("#BookCat, #SearchType, #SortType").change(function () {
             loadBooks(true);
         });
@@ -323,9 +395,22 @@
                 loadBooks(false);
             }
         });
-
+        var prefix = ("@Model.Title" != "" ? "$" : "");
+        $("#Search").val(prefix + "@Model.Title");
+        if ($("#Search").val() != "")
+            $("#Search").data("auto-open", true);
         loadBooks();
     });
+
+    function closeBookView() {
+        $("#BookView").fadeOut(function () {
+            $("body").removeAttr("style");
+            $("nav").removeAttr("style");
+        });
+        $("#BookView").unbind("hover");
+        $("#BookViewBody").unbind("hover");
+        $("#BookView").removeClass("hovered");
+    }
 
     function removeCat(button) {
         var cat = $(button).parent();
@@ -387,6 +472,7 @@
                     bookcard += '<div class="card text-white book" onclick="showBookView(this)" style="width: 200px" '
                     bookcard += 'data-id="' + book.BookID + '"'
                     bookcard += 'data-title="' + book.Title + '"'
+                    bookcard += 'data-quantity="' + book.Quantity + '"'
                     bookcard += 'data-price="' + book.Price + '"'
                     bookcard += 'data-description="' + book.Description + '"'
                     bookcard += 'data-authors=\'' + JSON.stringify(book.Authors) + '\''
@@ -398,8 +484,9 @@
                     bookcard += 'data-publication="' + book.PublicationDate + '"'
                     bookcard += 'data-publisher="' + book.Publisher.PublisherName + '"'
                     bookcard += '> '
-                    bookcard += '<img class="card-img" src="/images/love elliot.png">'
+                    bookcard += '<img class="card-img" src="' + book.LoadImage + '">'
                     bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
+                    if (book.Quantity == 0) bookcard += '<h5 class="card-title"><span class="badge badge-danger">Out Of Stock</span></h5>'
                     bookcard += '<h5 class="card-title">' + book.Title + '</h5>'
                     bookcard += '<h5 class="card-text mt-4">$' + book.Price + '</h5>'
                     bookcard += '<h5 class="card-text mt-4">' + bookrating + '</h5>'
@@ -421,6 +508,11 @@
                 index += response[0];
                 loading = false;
                 $("#LoadIcon").hide();
+
+                if ($("#Search").data("auto-open")) {
+                    $(".book").first().click();
+                    $("#Search").data("auto-open", false);
+                }
             },
             failure: function (response) {
                 alert(response);
@@ -430,16 +522,40 @@
 
     function showBookView(book) {
         book = $(book);
+        $("#BookImage").attr("src", book.find("img").attr("src"))
+        $("#BookID").text(book.data("id"));
         $("#BookTitle").text(book.data("title"));
         $("#BookPrice").text(book.data("price"));
         $("#Description").text(book.data("description"));
 
         $("#ISBN10").val(book.data("isbn10"));
         $("#ISBN13").val(book.data("isbn13"));
-        $("#CopyrightDate").val(book.data("copyright"));
-        $("#PublicationDate").val(book.data("publication"));
+
+        var count = book.data("quantity");
+
+        $("#BookQuantity").text(count == 0 ? "Out Of Stock" : (count <= 5 ? "Only " : "") + count + " In Stock");
+        if (count <= 5) $("#BookQuantity").addClass("text-danger");
+        else $("#BookQuantity").removeClass("text-danger");
+
+        if (count == 0) $("#AddToCart").attr("disabled", "disabled");
+        else $("#AddToCart").removeAttr("disabled")
+
+        var cd = new Date(book.data("copyright"));
+        var pd = new Date(book.data("publication"));
+
+        $("#CopyrightDate").val((cd.getMonth() + 1) + "/" + cd.getDate() + "/" + cd.getFullYear());
+        $("#PublicationDate").val((pd.getMonth() + 1) + "/" + pd.getDate() + "/" + pd.getFullYear());
         $("#Publisher").val(book.data("publisher"));
         $("#RatingMessages").empty();
+
+        $("#Categories").empty();
+        var cats = book.data("categories");
+        cats.forEach(function (cat) {
+            $("#Categories").append('<span class="badge badge-primary m-1">' + cat.CategoryName + '</span>');
+        });
+
+        $("#Comment").val("");
+        $("#RatingStars svg").attr("data-prefix", "far");
 
         var authors = book.data("authors");
         var authorstring = "";
@@ -447,7 +563,7 @@
         $("#BookAuthor").text(authorstring.slice(0, -2));
 
         var rating = book.data("rating");
-        $("#Rating svg").each(function (i) { 
+        $("#Rating svg").each(function (i) {
             if (i < rating) $(this).attr("data-prefix", "fas");
             else $(this).attr("data-prefix", "far");
         })
@@ -456,7 +572,7 @@
         $("body").css("margin-right", getScrollBarWidth());
         $("nav").css("margin-right", getScrollBarWidth());
 
-        $("#BookView").fadeIn(function () { 
+        $("#BookView").fadeIn(function () {
             $("#BookViewBody").hover(function (event) {
                 $("#BookView").removeClass("hovered");
             }, function () {
@@ -471,55 +587,7 @@
             $("#BookView").removeClass("hovered");
         });
 
-        $.ajax({
-            type: "POST",
-            url: "Model/GetRatings",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("XSRF-TOKEN",
-                    $('input:hidden[name="__RequestVerificationToken"]').val());
-            },
-            data: JSON.stringify({ BookID: book.data("id") }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                response = JSON.parse(response);
-
-                response.forEach(function (rating) {
-
-                    var ratingmessage = "";
-                    var ratingstars = "</span>";
-                    var count = 5;
-                    for (var i = 0; i < rating.RatingValue; i++ , count--)
-                        ratingstars += '<i class="fas fa-star"></i>'
-                    for (var i = count; i > 0; i--)
-                        ratingstars += '<i class="far fa-star"></i>'
-
-                    ratingmessage += '<div class="rating"'
-                    ratingmessage += 'data-id="' + rating.RatingID + '"'
-                    ratingmessage += '> '
-                    ratingmessage += '<div class="icon-div">'
-                    ratingmessage += '<img class="userIcon" src="' + rating.NameAndImage[1] + '" />'
-                    ratingmessage += '</div>'
-                    ratingmessage += '<h5 class="d-inline">' + rating.NameAndImage[0] + '</h5>'
-                    ratingmessage += '<h5>' + ratingstars + '</h5>'
-                    ratingmessage += '<h5>' + rating.Comment + '</h5>'
-                    ratingmessage += '</div>'
-
-                    $("#RatingMessages").append(ratingmessage);
-                });
-
-                var image = new Image();
-                $(".userIcon").each(function () {
-                    image.src = $(this).attr("src");
-                    $(this).removeAttr("style");
-                    $(this).css(image.width > image.height ? "height" : "width", "100px");
-                })
-            },
-            failure: function (response) {
-                alert(response);
-            }
-        });
-
+        loadRatings();
     }
 
     function getScrollBarWidth() {
@@ -539,4 +607,5 @@
 
 </script>
 
+@await Html.PartialAsync("_Ratings")
 @await Html.PartialAsync("_Authentication")

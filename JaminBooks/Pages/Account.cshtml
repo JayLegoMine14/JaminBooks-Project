@@ -2,16 +2,22 @@
 @model JaminBooks.Pages.AccountModel
 @{
     ViewData["Title"] = "Account";
-    Layout = "~/Pages/_Layout.cshtml";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
     var userIcon = "";
 
-    if (Model.DisplayUser != null)
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
     {
-        userIcon = Model.DisplayUser.Icon != null ?
-        String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.DisplayUser.Icon)) :
-        "/images/user.png";
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
+
+    @if (Model.DisplayUser != null) {
+        userIcon = Model.DisplayUser.LoadImage;
     }
 }
 
@@ -76,7 +82,7 @@
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="form-group">
-                                <input type="text" id="FirstName" value="@Model.DisplayUser.FirstName" class="form-control input-sm" maxlength="50" placeholder="First Name">
+                                <input type="text" id="FirstName" value="@(Model.DisplayUser.FirstName)" class="form-control input-sm" maxlength="50" placeholder="First Name">
                             </div>
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
@@ -314,7 +320,7 @@
                     reader.onload = function (event) {
                         var img = new Image();
                         img.onload = function () {
-                            var size = 300;
+                            var size = 200;
                             if (img.height > img.width) {
                                 canvas.width = size;
                                 canvas.height = size * img.height / img.width;
