@@ -389,6 +389,88 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+                                case "IsFulfilled":
+                                    bool fullfilled = false;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled == fullfilled
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out fullfilled) ? false : !o.IsFulfilled
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out fullfilled) ? false : !o.IsFulfilled
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled != fullfilled
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled == fullfilled
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "IsRefunded":
+                                    bool refunded = false;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded == refunded
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out refunded) ? false : !o.IsRefunded
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out refunded) ? false : !o.IsRefunded
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded != refunded
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded == refunded
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
                             }
 
                             if (!itemLink.HasValue)

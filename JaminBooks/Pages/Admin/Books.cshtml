@@ -280,7 +280,7 @@
                 response[3].forEach(function (item) {
                     var row = "";
                     row += '<div class="card item w-100 mb-3">'
-                    row += '<div class="row" onclick="location.href =\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'">'
+                    row += '<div class="row" onmousedown="switch(event.which) { case 1: location.href =\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'; break; case 2: case 3: window.open(\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'); break;}">'
 
                     @if(Model.DisplayColumns.Count % 12 != 0)
                     {

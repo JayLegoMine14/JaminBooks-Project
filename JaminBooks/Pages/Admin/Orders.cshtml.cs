@@ -39,6 +39,8 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("Item", "Item ISBN");
             SearchColumns.Add("Total", "Total");
             SearchColumns.Add("PercentDiscount", "Dicount");
+            SearchColumns.Add("IsFulfilled", "Is Fulfilled");
+            SearchColumns.Add("IsRefunded", "Is Refunded");
         }
     }
 }

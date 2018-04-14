@@ -77,13 +77,23 @@
                             <div class="col-3 text-center">
                                 <h4>@o.OrderDate.ToString("M/d/yyyy")</h4>
                             </div>
-                            <div class="col-3 text-center">
+                            <div class="col-2 text-center">
                                 <h4>@o.Books.Count @(o.Books.Count == 1 ? "Item" : "Items" )</h4>
                             </div>
-                            <div class="col-3 text-center">
+                            <div class="col-2 text-center">
                                 <h4>$@o.Total.ToString("0.00")</h4>
                             </div>
-                            <div class="col-3 text-center">
+                            <div class="col-2 text-center">
+                                @if (!o.IsFulfilled)
+                                {
+                                    <h4><span class="badge badge-info">Processing...</span></h4>
+                                }
+                                else
+                                {
+                                    <h4><span class="badge badge-success">Shipped</span></h4>
+                                }
+                            </div>
+                            <div class="col-2 text-center">
                                 <a href="\Order?id=@o.OrderID" class="btn btn-primary">More Details</a>
                             </div>
                         </div>

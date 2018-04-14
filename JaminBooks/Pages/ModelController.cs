@@ -330,7 +330,7 @@ namespace JaminBooks.Pages
             order.Save();
             currentUser.EmptyCart();
 
-            var t = Task.Run(() => Receipt.SendReceipt(order, BookTotal - (BookTotal * (Discount / 100m))));
+            var t = Task.Run(() => Receipt.SendReceipt(order));
 
             return new JsonResult(order.OrderID);
         }
@@ -376,6 +376,56 @@ namespace JaminBooks.Pages
             }
             return new JsonResult(JsonConvert.SerializeObject(null));
         }
+
+        [Route("Model/FulfillOrder")]
+        public IActionResult FulfillOrder()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Order o = new Order(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                o.FulfilledDate = DateTime.Now;
+                o.Save();
+            }
+
+            return new JsonResult("");
+        }
+
+        [Route("Model/RefundOrder")]
+        public IActionResult RefundOrder()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Order o = new Order(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                Card c = o.Card;
+                String cardNumber = fields["CardNumber"];
+                if (cardNumber.Length == 16 && c.LastFourDigits == cardNumber.Substring(12))
+                {
+                    c.Number = cardNumber;
+
+                    //Send Card info with total to Bank;
+
+                    o.RefundDate = DateTime.Now;
+                    o.Save();
+
+                    var t = Task.Run(() => Receipt.SendRefundReceipt(o));
+
+                    return new JsonResult(true);
+                }
+                else
+                {
+                    return new JsonResult(false);
+                }
+            }
+
+            return new JsonResult("");
+        }
+
 
         [Route("Model/SaveAddress")]
         public IActionResult SaveAddress()
