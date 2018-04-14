@@ -29,7 +29,7 @@ namespace JaminBooks.Tools
 		                  <tr>
 			                <td colspan=""2"" style=""padding:30px 0;"">
 			                  <img src='cid:" + res.ContentId + @"'/>
-			                  <p style=""color:#1d2227;line-height:35px;font-size:25px;margin:12px 10px 20px 10px;font-weight:400;"">Jamin' Books Order Reciept</p>
+			                  <p style=""color:#1d2227;line-height:35px;font-size:25px;margin:12px 10px 20px 10px;font-weight:400;"">Jamin' Books Order Receipt</p>
 			                  <div>
 				                <div>
 					                <table style=""width:550px;text-align:center"">

@@ -1,0 +1,122 @@
+﻿@page
+@model JaminBooks.Pages.OrdersModel
+@using Microsoft.AspNetCore.Routing;
+@{
+    ViewData["Title"] = "Orders";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+    var userIcon = "";
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
+}
+
+@if (Model.DisplayUser != null)
+{
+    <style>
+        .book-icon {
+            height: 100px;
+            width: auto !important;
+        }
+
+        .book {
+            transition: .3s;
+        }
+
+            .book:hover {
+                transform: scale(1.05);
+            }
+
+        .truncate-ellipsis {
+            display: table;
+            table-layout: fixed;
+            width: 100%;
+            white-space: nowrap;
+        }
+
+            .truncate-ellipsis > * {
+                display: table-cell;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    </style>
+    <div class="container body-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 text-center mt-3">
+                            <h2>Past Orders</h2>
+                        </div>
+                    </div>
+                    @if(Model.DisplayUser.Orders.Count == 0)
+                    {
+                    <div class="col-12 text-center" style="height: 75vh">
+                        <h3 class="mt-5">Nothing Here Yet</h3>
+                        <div class="row mb-5">
+                            <div class="col-4 offset-4">
+                                <a href="\Books" class="btn btn-dark-red text-white btn-lg btn-block">Continue Shopping</a>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @{
+                        List<Model.Order> orders = Model.DisplayUser.Orders;
+                        orders.Reverse();
+                     }
+                    @foreach (Model.Order o in orders)
+                    {
+                        <div class="row mt-3 mb-4">
+                            <div class="col-3 text-center">
+                                <h4>@o.OrderDate.ToString("M/d/yyyy")</h4>
+                            </div>
+                            <div class="col-3 text-center">
+                                <h4>@o.Books.Count @(o.Books.Count == 1 ? "Item" : "Items" )</h4>
+                            </div>
+                            <div class="col-3 text-center">
+                                <h4>$@o.Total.ToString("0.00")</h4>
+                            </div>
+                            <div class="col-3 text-center">
+                                <a href="\Order?id=@o.OrderID" class="btn btn-primary">More Details</a>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-10 offset-1">
+                                <div class="container">
+                                    @foreach (KeyValuePair<Model.Book, dynamic> book in o.Books)
+                                    {
+                                        <div class="book card w-100 p-1" data-id="@book.Key.BookID" onclick="location.href='\Book?id=@book.Key.BookID'">
+                                            <div class="row">
+                                                <div class="col-2">
+                                                    <img class="book-icon" src="@book.Key.LoadImage">
+                                                </div>
+                                                <div class="col-5 mt-4 truncate-ellipsis">
+                                                    <h4 class="title">@book.Key.Title</h4>
+                                                </div>
+                                                <div class="col-3 mt-4">
+                                                    <h4 class="price">$@(((decimal)new RouteValueDictionary(book.Value)["Price"]).ToString("0.##"))</h4>
+                                                </div>
+                                                <div class="col-2 mt-4">
+                                                    <h4 class="quantity">x@(new RouteValueDictionary(book.Value)["Quantity"])</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mb-5 mt-5"/>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

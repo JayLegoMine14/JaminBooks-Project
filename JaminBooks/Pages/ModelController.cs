@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using JaminBooks.Model;
 using JaminBooks.Tools;
@@ -31,6 +32,38 @@ namespace JaminBooks.Pages
             return new JsonResult(JsonConvert.SerializeObject(cats));
         }
 
+        [Route("Model/DeleteBook")]
+        public IActionResult DeleteBook()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Book book = new Book(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                book.IsDeleted = true;
+                book.Quantity = 0;
+                book.Save();
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/UndeleteBook")]
+        public IActionResult UndeleteBook()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Book book = new Book(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                book.IsDeleted = false;
+                book.Quantity = 0;
+                book.Save();
+            }
+            return new JsonResult("");
+        }
+
         [Route("Model/DeleteAccount")]
         public IActionResult DeleteAccount()
         {
@@ -41,6 +74,21 @@ namespace JaminBooks.Pages
             if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
             {
                 user.Delete();
+            }
+            return new JsonResult(currentUser.UserID == user.UserID);
+        }
+
+        [Route("Model/UndeleteAccount")]
+        public IActionResult UndeleteAccount()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User user = new User(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
+            {
+                user.IsDeleted = false;
+                user.Save();
             }
             return new JsonResult(currentUser.UserID == user.UserID);
         }
@@ -236,7 +284,7 @@ namespace JaminBooks.Pages
                 c.Address = a;
 
                 c.Number = fields["Number"];
-                c.CCV = fields["CCV"];
+                c.CVC = fields["CVC"];
                 c.Name = fields["Name"];
                 c.ExpMonth = fields["ExpMonth"];
                 c.ExpYear = fields["ExpYear"];
@@ -257,8 +305,8 @@ namespace JaminBooks.Pages
             Address a = new Address(Convert.ToInt32(fields["AddressID"]));
 
             if (c.User.UserID != currentUser.UserID) return new JsonResult("");
-            if (!c.DecryptNumber(fields["CCV"])) return new JsonResult("");
-            c.CCV = fields["CCV"];
+            if (!c.DecryptNumber(fields["CVC"])) return new JsonResult("");
+            c.CVC = fields["CVC"];
 
             //At this point send the Card data to the bank
 
@@ -282,7 +330,7 @@ namespace JaminBooks.Pages
             order.Save();
             currentUser.EmptyCart();
 
-            Receipt.SendReceipt(order, BookTotal - (BookTotal * (Discount / 100m)));
+            var t = Task.Run(() => Receipt.SendReceipt(order, BookTotal - (BookTotal * (Discount / 100m))));
 
             return new JsonResult(order.OrderID);
         }
@@ -413,12 +461,6 @@ namespace JaminBooks.Pages
             if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
             {
                 byte[] blob = Convert.FromBase64String(fields["Icon"]);
-
-                foreach(Book book in Book.GetBooks())
-                {
-                    book.BookImage = blob;
-                    book.Save();
-                }
                     
                 user.Icon = blob;
                 user.Save();
@@ -535,7 +577,7 @@ namespace JaminBooks.Pages
                 book.Cost = 0;
             }
 
-            return new JsonResult(JsonConvert.SerializeObject(new object[] { count, books }));
+            return new JsonResult(JsonConvert.SerializeObject(new object[] { fields["CallID"], count, books }));
         }
     }
 }

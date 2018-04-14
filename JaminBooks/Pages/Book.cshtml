@@ -32,10 +32,117 @@
         top: -50px;
         left: -50px;
     }
+    #AdminOptions {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        width: 500px;
+    }
 </style>
 
 <span class="d-none" id="UserID">@(Model.CurrentUser == null ? -1 : Model.CurrentUser.UserID)</span>
 <span class="d-none" id="UserIsAdmin">@(Model.CurrentUser == null ? false : Model.CurrentUser.IsAdmin)</span>
+
+@if (Model.CurrentUser.IsAdmin)
+{
+    <div id="AdminOptions" class="float-right">
+        <div class="row">
+            <div class="col-6">
+                <a href="\Admin\BookCreate?id=@Model.Book.BookID" class="btn btn-success btn-block">Edit <i class="fas fa-edit ml-2"></i></a>
+            </div>
+            <div class="col-6">
+                @if (Model.Book.IsDeleted)
+                {
+                    <button class="btn btn-warning btn-block" onclick="undeleteBook(event, this)">Undelete <i class="fas fa-sign-in-alt ml-2"></i></button>
+                }
+                else
+                {
+                    <button class="btn btn-danger btn-block" onclick="deleteBook(event, this)">Delete <i class="fas fa-trash ml-2"></i></button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <script>
+            function undeleteBook(event, button) {
+                $.confirm({
+                    title: 'Undelete Book',
+                    content: 'Are you sure you want to undelete this book?',
+                    type: 'orange',
+                    buttons: {
+                        delete: {
+                            text: 'Undelete',
+                            btnClass: 'btn-orange',
+                            action: function () {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Model/UndeleteBook",
+                                    beforeSend: function (xhr) {
+                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                    },
+                                    data: JSON.stringify({
+                                        ID: @Model.Book.BookID
+                                    }),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (logout) {
+                                        location.reload();
+                                    },
+                                    failure: function (response) {
+                                        alert(response);
+                                    }
+                                });
+                            }
+                        },
+                        Cancel: function () { }
+                    }
+                });
+                event.stopPropagation();
+                return false;
+            }
+
+            function deleteBook(event, button) {
+                $.confirm({
+                    title: 'Delete Book',
+                    icon: 'fas fa-exclamation',
+                    content: 'Are you sure you want to delete this book? This will set the quantity in stock equal to zero.',
+                    type: 'red',
+                    buttons: {
+                        delete: {
+                            text: 'Delete',
+                            btnClass: 'btn-red',
+                            action: function () {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Model/DeleteBook",
+                                    beforeSend: function (xhr) {
+                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                    },
+                                    data: JSON.stringify({
+                                        ID: @Model.Book.BookID
+                                    }),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (logout) {
+                                        location.reload();
+                                    },
+                                    failure: function (response) {
+                                        alert(response);
+                                    }
+                                });
+                            }
+                        },
+                        Cancel: function () { }
+                    }
+                });
+                event.stopPropagation();
+                return false;
+            }
+    </script>
+}
+
 <div class="container">
     <div id="BookView">
         <div id="BookViewBody" class="pb-5">
@@ -70,7 +177,7 @@
                             </span>
                         </div>
                         <div id="Categories" class="mt-2">
-                            @foreach(Model.Category cat in Model.Book.Categories)
+                            @foreach (Model.Category cat in Model.Book.Categories)
                             {
                                 <span class="badge badge-primary m-1">@cat.CategoryName</span>
                             }
@@ -98,6 +205,35 @@
                                             <input id="CopyrightDate" type="text" readonly class="form-control-plaintext" value="@Model.Book.CopyrightDate.ToString("M/d/yyyy")">
                                         </div>
                                     </div>
+                                    @if (Model.CurrentUser.IsAdmin)
+                                    {
+                                        <div class="form-group row">
+                                            <label class="col-4 col-form-label font-weight-bold">Cost:</label>
+                                            <div class="col-8">
+                                                <input id="Cost" type="text" readonly class="form-control-plaintext" value="$@Model.Book.Cost.ToString("0.00")">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-12 col-form-label font-weight-bold">Publisher Address:</label>
+                                        </div>
+                                        <div class="form-group row ml-3">
+                                            <h6>@Model.Book.Publisher.Address.Line1</h6>
+
+                                            @if (Model.Book.Publisher.Address.Line2 != null)
+    {
+                                        <h6>@Model.Book.Publisher.Address.Line2</h6>
+}
+
+                                            @if (Model.Book.Publisher.Address.State != null)
+    {
+                                        <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.State @Model.Book.Publisher.Address.ZIP</h6>
+}
+else
+{
+                                        <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.Country @Model.Book.Publisher.Address.ZIP</h6>
+}
+                                        </div>
+                                    }
                                 </div>
                                 <div class="col-lg-6 col-md-12">
                                     <div class="form-group row">
@@ -112,6 +248,22 @@
                                             <input id="Publisher" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.PublisherName">
                                         </div>
                                     </div>
+                                    @if (Model.CurrentUser.IsAdmin)
+    {
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label font-weight-bold">Publisher Contact:</label>
+                                    <div class="col-8">
+                                        <input id="Publisher" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.FullName">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label font-weight-bold">Publisher Number:</label>
+                                    <div class="col-8">
+                                        <input id="Publisher" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.Phone.Number">
+                                    </div>
+                                </div>
+}
                                 </div>
                             </div>
                         </div>

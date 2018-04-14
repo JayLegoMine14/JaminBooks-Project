@@ -17,11 +17,11 @@ namespace JaminBooks.Pages.Admin
 
         public DateTime date1 = new DateTime(2000, 1, 1);
 
-        public void OnGet(int id)
+        public void OnGet(int? id)
         {
             User user = Authentication.GetCurrentUser(HttpContext);
             if (user == null || !user.IsAdmin) Response.Redirect("/");
-            Book = new Book(id);
+            Book = (id == null ? null : new Book(id.Value));
         }
 
         public void OnPost()

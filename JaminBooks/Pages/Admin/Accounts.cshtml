@@ -1,0 +1,619 @@
+﻿@page
+@model JaminBooks.Pages.Admin.AccountsModel
+@{
+    ViewData["Title"] = "Accounts";
+    Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+}
+
+<style>
+    /*Advanced Search Modal Styles*/
+    #ASModal {
+        position: absolute;
+        left: calc(50% - 350px);
+        width: 700px;
+        z-index: 999;
+        box-shadow: 4px 6px 70px -26px rgba(0,0,0,0.75);
+    }
+
+    #Items {
+        min-height: 50vh;
+    }
+
+    .icon-div {
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        border-radius: 100px;
+        display: inline-block;
+    }
+
+    .item {
+        transition: .3s;
+    }
+
+        .item:hover {
+            transform: scale(1.05);
+            background-color: #ddd;
+        }
+
+    #ButtonDiv {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        padding: 15px; /* Some padding */
+    }
+
+    .toggle {
+        width: 70px !important;
+    }
+
+    .toggle-on, .toggle-off {
+        padding: 7px 10px !important;
+    }
+
+    #ASModal hr {
+        border-width: 3px;
+        border-color: #ddd;
+        transition: all ease .4s;
+    }
+
+        #ASModal hr[data-group="top"] {
+            margin: 0;
+            margin-top: 20px;
+            padding-bottom: 10px;
+        }
+
+        #ASModal hr[data-group="bottom"] {
+            margin: 0;
+            margin-top: 10px;
+            padding-bottom: 20px;
+        }
+
+    input[type=checkbox].sleek-checkbox {
+        display: none !important;
+    }
+
+        input[type=checkbox].sleek-checkbox + label {
+            height: 30px;
+        }
+
+            input[type=checkbox].sleek-checkbox + label:before {
+                content: "";
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                border-radius: 5px;
+                margin-bottom: -7px;
+                background-color: #F5F5F5;
+                box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+            }
+
+        input[type=checkbox].sleek-checkbox:checked + label:before {
+            content: "✓";
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+            font-size: 22px;
+            color: black;
+            text-align: center;
+        }
+</style>
+
+<div id="SearchBar" class="row">
+    <div id="SearchBox" class="col-6 offset-1">
+        <div class="form-group">
+            <div class="input-group mt-3">
+                <input type="text" id="Search" class="form-control" placeholder="Search...">
+                <div class="input-group-append">
+                    <button class="btn btn-info" onclick="return showFilters(event);"><i class="fas fa-filter"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Advanced Search Options-->
+    <div id="AS" class="col-6 offset-1 input-group mt-3 mb-3" style="display:none">
+        <div class="btn-group col-12">
+            <!--Return Button-->
+            <button class="btn btn-default col-6" onclick="return hideFilters();"><i class="fas fa-reply"></i>&emsp;Return</button>
+            <!--Show Queries-->
+            <button class="btn btn-info col-6" onclick="return showFilters(event);"><i class="fas fa-filter"></i>&emsp;Show Query</button>
+        </div>
+    </div>
+
+    <div class="col-4 mt-3">
+        <div class="form-inline">
+            <h6 class="col-3 text-white">Sort By:</h6>
+            <select id="SortColumn" class="form-control col-5">
+                @foreach (String Column in Model.DisplayColumns)
+                {
+                    <option value="@(Model.DisplayColumns.IndexOf(Column) + 1)">@Column</option>
+                }
+            </select>
+            <select id="SortOrder" class="form-control col-4">
+                <option value="1">ASC</option>
+                <option value="-1">DESC</option>
+            </select>
+        </div>
+    </div>
+
+    <!--Advanced Search Modal-->
+    <div id="ASModal" class="card p-3" style="display:none">
+        <br />
+        <div class="row">
+            <div class="btn-group col-12">
+                <!--Add Button-->
+                <button id="AddBtn" class="btn btn-primary col-4"><i class="fas fa-plus"></i>&emsp;Add</button>
+                <!--Group Button-->
+                <button id="GroupBtn" class="btn btn-warning col-4"><i class="fas fa-link"></i>&emsp;Group</button>
+                <!--Remove Button-->
+                <button id="RemoveBtn" class="btn btn-danger col-4"><i class="fas fa-times"></i>&emsp;Remove</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12 text-center mt-3">
+                <span class="h6 mr-2">Results:</span><span class="badge badge-dark" id="ResultCount">0</span>
+            </div>
+            <div id="ItemHeader" class="col-10 offset-1 mt-3">
+                <div class="row">
+                    @if (Model.DisplayColumns.Count % 12 != 0)
+            {
+                <div class="col-@(6 - Model.DisplayColumns.Count)"></div>
+    }
+                    @foreach (String Column in Model.DisplayColumns)
+            {
+                <div class="col-2 text-center">
+                    <h5>@Column</h5>
+                </div>
+    }
+                </div>
+            </div>
+            <div id="Items" class="col-10 offset-1 mt-2">
+
+            </div>
+            <div class="col-12">
+                <div id="LoadIcon" class="row text-center mt-5 mb-5">
+                    <div class="col-12">
+                        <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var callID = 0;
+    var index = 0;
+    var loaded = false;
+    var loading = false;
+    var IDCounter = 0, ASModalClicked = false;
+
+    $(document).ready(function () {
+        $("#Search").on('input', function () {
+            loadItems(true);
+        });
+
+        $("#SortOrder, #SortColumn").change(function () {
+            loadItems(true);
+        });
+
+        $(window).scroll(function () {
+            if ($("#Items .item").last().isInViewport()) {
+                loadItems(false);
+            }
+        });
+        loadItems();
+    });
+
+    function loadItems(reset) {
+        if (reset) {
+            index = 0;
+            loaded = false;
+        }
+
+        if (loading || loaded) return;
+        $("#LoadIcon").show();
+        if (!reset) {
+            loading = true;
+        }
+        var count = 10;
+
+        var query = [];
+
+        if ($("#AS").is(":visible")) {
+            $("#ASModal .where").each(function () {
+                if (query.length == 0) {
+                    query.push([]);
+                } else {
+                    if ($(this).prev().is("[data-group='top']"))
+                        query.push([]);
+                }
+                var group = query[query.length - 1];
+
+                var column = $(this).find(".column").val()
+                var comp = $(this).find(".comp").val();
+                var val = $(this).find(".value").val();
+                var or = $(this).find(".toggle").css("visibility") == "hidden" ? undefined : $(this).find(".toggle").hasClass("off");
+
+                group.push({ Column: column, Comparison: comp, Value: val, Link: or });
+            });
+        }
+
+        var data = {
+            CallID: ++callID,
+            Index: index,
+            Count: count,
+            Search: $("#Search").val(),
+            DoAdvancedSearch: $("#AS").is(":visible"),
+            AdvancedSearch: JSON.stringify(query),
+            SortColumn: $("#SortColumn").val(),
+            SortOrder: $("#SortOrder").val()
+        }
+
+        if (reset) $("#Items").empty();
+
+        $.ajax({
+            type: "POST",
+            url: "/Search/Load@(ViewData["Title"])",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response[0] < callID) return;
+                if (reset) $("#Items").empty();
+
+                $("#ResultCount").text(response[2]);
+
+                response[3].forEach(function (item) {
+                    var row = "";
+                    row += '<div class="card item w-100 mb-3">'
+                    row += '<div class="row" onclick="location.href =\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'">'
+
+                    @if(Model.DisplayColumns.Count % 12 != 0)
+                    {
+                         @Html.Raw("row += '<div class=\"col-" + (6 - Model.DisplayColumns.Count) + "\"></div>';");
+                    }
+
+                    Object.keys(item).forEach(function (key) {
+                        if (key != "deleted") {
+                            var value = item[key];
+                            row += '    <div class="col-2 text-center h6 p-2">'
+                            row += '        <span>' + value + '</span>'
+                            row += '    </div>'
+                        }
+                    });
+
+                    row += '    <div class="col-2 text-center h6 p-2">'
+                    if (item.deleted)
+                        row += '        <button class="btn btn-warning undelete-btn" onclick="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>'
+                    else
+                        row += '        <button class="btn btn-danger delete-btn" onclick="deleteUser(event, this)"><i class="fas fa-trash"></i></button>'
+                    row += '    </div>'
+
+                    row += '</div>'
+                    row += '</div>'
+                    $("#Items").append(row);
+                });
+
+                var image = new Image();
+                $(".userIcon").each(function () {
+                    image.src = $(this).attr("src");
+                    $(this).removeAttr("style");
+                    $(this).css(image.width > image.height ? "height" : "width", "50px");
+                })
+
+                if (response[1] < count)
+                    loaded = true;
+
+                index += response[1];
+                loading = false;
+                $("#LoadIcon").hide();
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+
+    function undeleteUser(event, button) {
+        $.confirm({
+            title: 'Undelete User',
+            content: 'Are you sure you want to undelete this user?',
+            type: 'orange',
+            buttons: {
+                delete: {
+                    text: 'Undelete',
+                    btnClass: 'btn-orange',
+                    action: function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Model/UndeleteAccount",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            data: JSON.stringify({
+                                ID: $(button).parents(".row").first().find(".col-2").first().text()
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (logout) {
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onclick="deleteUser(event, this)"><i class="fas fa-trash"></i></button>');
+                            },
+                            failure: function (response) {
+                                alert(response);
+                            }
+                        });
+                    }
+                },
+                Cancel: function () { }
+            }
+        });
+        event.stopPropagation();
+        return false;
+    }
+
+    function deleteUser(event, button) {
+        $.confirm({
+            title: 'Delete Account',
+            icon: 'fas fa-exclamation',
+            content: 'Are you sure you want to delete this account?',
+            autoClose: 'Cancel|5000',
+            type: 'red',
+            buttons: {
+                delete: {
+                    text: 'Delete Account',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Model/DeleteAccount",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            data: JSON.stringify({
+                                ID: $(button).parents(".row").first().find(".col-2").first().text()
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (logout) {
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-warning undelete-btn" onclick="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
+                            },
+                            failure: function (response) {
+                                alert(response);
+                            }
+                        });
+                    }
+                },
+                Cancel: function () { }
+            }
+        });
+        event.stopPropagation();
+        return false;
+    }
+
+    //Show the advanced search options
+    function showFilters(event) {
+        $("#ASModal").slideDown();
+        $("#SearchBox").hide();
+        $("#AS").fadeIn();
+        if(event) event.stopPropagation();
+
+        if ($("#ASModal").children('.where').length == 0) {
+            addNewWhere("Change.ID", "eq", "", "AND");
+        }
+        loadItems(true);
+        return false;
+    }
+
+    //Hide the advanced search options
+    function hideFilters() {
+        $("#AS").hide();
+        $("#SearchBox").fadeIn();
+        loadItems(true);
+        return false;
+    }
+
+    //Add listeners to the horizontal rules
+    function addHRListeners() {
+        //Hover effects
+        $("#ASModal hr").hover(
+            function () {
+                if ($(this).data("group") === "top") {
+                    $(this).css("border-color", "#db2929");
+                    $(this).nextAll("hr").first().css("border-color", "#db2929");
+                } else {
+                    $(this).css("border-color", "#db2929");
+                    $(this).prevAll("hr").first().css("border-color", "#db2929");
+                }
+            },
+            function () {
+                if ($(this).data("group") == "top") {
+                    $(this).removeAttr("style");
+                    $(this).nextAll("hr").first().removeAttr("style");
+                } else {
+                    $(this).removeAttr("style");
+                    $(this).prevAll("hr").first().removeAttr("style");
+                }
+            }
+        );
+
+        //Remove the rules on click
+        $("#ASModal hr").click(function () {
+            if ($(this).data("group") === "top") {
+                $(this).nextAll("hr").first().remove();
+                $(this).remove();
+            } else {
+                $(this).prevAll("hr").first().remove();
+                $(this).remove();
+            }
+            loadItems(true);
+        });
+    }
+
+    //Add button click
+    $("#AddBtn").click(function(){
+        addNewWhere("Change.ID", "eq", "", "AND");
+        loadItems(true);
+        return false;
+    });
+
+    //Group Button click
+    $("#GroupBtn").click(function () {
+        var startWhere;
+        var endWhere;
+
+        //Find checked boxes and insert horizontal rules before and after
+        $(".where").each(function () {
+            if ($(this).find(".sleek-checkbox:checked").length > 0) {
+                if (startWhere == undefined) startWhere = $(this);
+                else endWhere = $(this);
+            } else if (startWhere != undefined) {
+                startWhere.before("<hr data-group='top'/>");
+
+                if (endWhere != undefined) endWhere.after("<hr data-group='bottom'/>");
+                else startWhere.after("<hr data-group='bottom'/>");
+
+                startWhere = undefined;
+                endWhere = undefined;
+            }
+        });
+
+        if (startWhere != undefined) {
+            startWhere.before("<hr data-group='top'/>");
+            if (endWhere != undefined) endWhere.after("<hr data-group='bottom'/>");
+            else startWhere.after("<hr data-group='bottom'/>");
+        }
+
+        $(".sleek-checkbox").attr('checked', false);
+
+        addHRListeners();
+        loadItems(true);
+        return false;
+    });
+
+    //Remove button click
+    $("#RemoveBtn").click(function () {
+        $(".sleek-checkbox:checked").parents(".where").remove();
+
+        $(".where").find(".toggle").css("visibility", "visible");
+        $(".where").last().find(".toggle").css("visibility", "hidden");
+
+        $("#ASModal hr").each(function () {
+            if ($(this).next().is("hr")) {
+                $(this).next().remove();
+                $(this).remove();
+            }
+        });
+        loadItems(true);
+        return false;
+    });
+
+    //Prevent the modal from closing is the modal itself is clicked
+    $("#ASModal").click(function (e) {
+        ASModalClicked = true;
+    });
+
+    //If something other than the modal is cicked, close the modal
+    $(document).click(function (e) {
+        if ($("#ASModal").is(":visible") && !ASModalClicked) $("#ASModal").slideUp();
+
+        if (ASModalClicked) ASModalClicked = false;
+    });
+
+    //Add a new row to the to advanced search modal
+    function addNewWhere(column, comp, value, join) {
+
+        //Build a new row
+        var where = '<div class="row where m-2">';
+        where += '<div class="form-inline">'
+        where += '<div class="col-1" style="min-width:80px">'
+        where += '<input id="CheckBox_' + IDCounter + '" type="checkbox" class="form-control sleek-checkbox"/>'
+        where += '<label for="CheckBox_' + IDCounter + '"></label>'
+        where += '</div>'
+        where += '<select id="Column_' + IDCounter + '" class="form-control col-3 column" onchange="$(this).siblings(\'.value\').val(\'\'); updateValueBox(this); search();">'
+                @foreach(KeyValuePair<string, string> Column in Model.SearchColumns.AsEnumerable())
+                {
+                    @Html.Raw("where += '<option value=\"" + @Column.Key + "\">" + @Column.Value + "</option>';");
+                }
+        where += '</select>'
+        where += '<select id="Comp_' + IDCounter + '" class="form-control col-2 comp" onchange="loadItems(true)">'
+        where += '<option value="eq"> = </option>'
+        where += '<option value="gt"> > </option>'
+        where += '<option value="lt"> < </option>'
+        where += '<option value="ge"> >= </option>'
+        where += '<option value="le"> <= </option>'
+        where += '<option value="nt"> != </option>'
+        where += '<option value="lk">LIKE</option>'
+        where += '</select>'
+
+        where += '<input id="Value_' + IDCounter + '" type="text" class="form-control col-3 value" placeholder="NULL" oninput="loadItems(true)" />'
+        where += '<div class="col-2">'
+        where += '<input id="Toggle_' + IDCounter + '" type="checkbox" onchange="loadItems(true)" style="width:50px" class="form-control join" checked="checked" data-toggle="toggle" data-on="AND" data-off="OR" data-onstyle="primary" data-offstyle="warning" />'
+        where += '</div>'
+        where += '</div>'
+        where += '</div>'
+
+        //If the modal is empty, add it to the beggining
+        if ($(".where, #ASModal hr").length == 0) {
+            $("#ASModal").prepend(where);
+            $("#Toggle_" + IDCounter).bootstrapToggle();
+            $(".where").last().find(".toggle").css("visibility", "hidden");
+
+            //If a checkbox is selected, insert the row at that location
+        } else if ($(".sleek-checkbox:checked").length > 0) {
+            $(".sleek-checkbox:checked").parents(".where").find(".toggle").css("visibility", "visible");
+
+            var lastrow = $(".sleek-checkbox:checked").parents(".where").next(".where").length == 0;
+
+            $(".sleek-checkbox:checked").parents(".where").after(where);
+            $("#Toggle_" + IDCounter).bootstrapToggle();
+            if (lastrow) $(".sleek-checkbox:checked").parents(".where").next(".where").find(".toggle").css("visibility", "hidden");
+
+            $(".sleek-checkbox").attr('checked', false);
+
+        } else {
+
+            $(".where").last().find(".toggle").css("visibility", "visible");
+            $(".where, #ASModal hr").last().after(where);
+
+            $("#Toggle_" + IDCounter).bootstrapToggle();
+            $(".where").last().find(".toggle").css("visibility", "hidden");
+        }
+
+        $("#Column_" + IDCounter + " option[value='" + column + "']").attr("selected", "selected");
+        $("#Comp_" + IDCounter + " option[value='" + comp + "']").attr("selected", "selected");
+
+        //Convert date value to correct format
+        if (column.indexOf("Date") != -1) {
+            var date = value.split("-");
+            value = date[1] + "/" + date[2] + "/" + date[0];
+        }
+        $("#Value_" + IDCounter).val(value);
+
+        if (join === "OR") $("#Toggle_" + IDCounter).bootstrapToggle('off');
+
+        IDCounter++;
+        return false;
+    }
+
+    $.fn.isInViewport = function () {
+        var elementTop = $(this).offset().top;
+        var elementBottom = elementTop + $(this).outerHeight();
+        var viewportTop = $(window).scrollTop();
+        var viewportBottom = viewportTop + $(window).height();
+        return elementBottom > viewportTop && elementTop < viewportBottom;
+    };
+</script>
+

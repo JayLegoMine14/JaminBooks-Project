@@ -217,9 +217,13 @@
             ratingmessage += '</div>'
         }
 
+        ratingmessage += '<div class="float-right mt-1">'
+        ratingmessage += '<h6 class="mr-3 mt-1">' + rating.FormatedDate + '</h6>'
+        ratingmessage += '</div>'
+
         ratingmessage += '</div>'
         ratingmessage += '<h5>' + ratingstars + '</h5>'
-        ratingmessage += '<h6 class="comment">' + rating.Comment + '</h5>'
+        ratingmessage += '<h6 class="comment">' + rating.Comment + '</h6>'
         ratingmessage += '</div>'
 
         $("#RatingMessages").prepend(ratingmessage);

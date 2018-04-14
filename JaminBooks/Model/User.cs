@@ -25,6 +25,30 @@ namespace JaminBooks.Model
         public string Password;
         public byte[] Icon { private get; set; }
 
+        public bool HasIcon
+        {
+            get
+            {
+                return Icon != null;
+            }
+        }
+
+        public string LastFirstName
+        {
+            get
+            {
+                return LastName + ", " + FirstName;
+            }
+        }
+
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
+
         public string LoadImage
         {
             get
@@ -47,6 +71,14 @@ namespace JaminBooks.Model
                 }
 
                 return "/images/temp/" + filename;
+            }
+        }
+
+        public List<Order> Orders
+        {
+            get
+            {
+                return Order.GetAllByUser(this.UserID);
             }
         }
 
@@ -226,7 +258,26 @@ namespace JaminBooks.Model
                     (Boolean)dr["IsAdmin"],
                     (Boolean)dr["IsConfirmed"],
                     (String)dr["ConfirmationCode"],
-                    (byte[])dr["Icon"]));
+                    dr["Icon"] == DBNull.Value ? null : (byte[])dr["Icon"]));
+            return users;
+        }
+
+        public static List<User> getUsers(DataTable dt)
+        {
+            List<User> users = new List<User>();
+            foreach (DataRow dr in dt.Rows)
+                users.Add(new User(
+                    (int)dr["UserID"],
+                    (String)dr["FirstName"],
+                    (String)dr["LastName"],
+                    (DateTime)dr["CreationDate"],
+                    (String)dr["Password"],
+                    (String)dr["Email"],
+                    (Boolean)dr["IsDeleted"],
+                    (Boolean)dr["IsAdmin"],
+                    (Boolean)dr["IsConfirmed"],
+                    (String)dr["ConfirmationCode"],
+                    dr["Icon"] == DBNull.Value ? null : (byte[])dr["Icon"]));
             return users;
         }
 

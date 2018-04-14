@@ -21,11 +21,11 @@ namespace JaminBooks.Model
         private bool IsEncrypted = true;
         private bool IsHashed = true;
 
-        public String CCV
+        public String CVC
         {
             set
             {
-                _CCV = value;
+                _CVC = value;
                 IsHashed = false;
             }
         }
@@ -36,7 +36,7 @@ namespace JaminBooks.Model
             {
                 _Number = value;
                 LastFourDigits = _Number.Substring(_Number.Length - 4);
-                _CCV = "";
+                _CVC = "";
                 IsHashed = false;
                 IsEncrypted = false;
             }
@@ -46,7 +46,7 @@ namespace JaminBooks.Model
             }
         }
 
-        private string _CCV;
+        private string _CVC;
         private string _Number;
 
         public User User {
@@ -73,7 +73,7 @@ namespace JaminBooks.Model
             {
                 this.CardID = CardID;
                 this.UserID = (int)dt.Rows[0]["UserID"];
-                this._CCV = (String)dt.Rows[0]["CCV"];
+                this._CVC = (String)dt.Rows[0]["CVC"];
                 this._Number = (String)dt.Rows[0]["Number"];
                 this.ExpMonth = (String)dt.Rows[0]["ExpMonth"];
                 this.ExpYear = (String)dt.Rows[0]["ExpYear"];
@@ -87,11 +87,11 @@ namespace JaminBooks.Model
             }
         }
 
-        private Card(int CardID, int UserID, string Number, string CCV, string ExpMonth, string ExpYear, string Name, int AddressID, string LastFourDigits)
+        private Card(int CardID, int UserID, string Number, string CVC, string ExpMonth, string ExpYear, string Name, int AddressID, string LastFourDigits)
         {
             this.CardID = CardID;
             this.UserID = UserID;
-            this._CCV = CCV;
+            this._CVC = CVC;
             this._Number = Number;
             this.ExpMonth = ExpMonth;
             this.ExpYear = ExpYear;
@@ -106,8 +106,8 @@ namespace JaminBooks.Model
             DataTable dt = SQL.Execute("uspSaveCard",
                new Param("CardID", CardID),
                new Param("UserID", UserID),
-               new Param("Number", IsEncrypted ? _Number : Encryption.Encrypt(_Number, _CCV)),
-               new Param("CCV", IsHashed ? _CCV : Authentication.Hash(_CCV)),
+               new Param("Number", IsEncrypted ? _Number : Encryption.Encrypt(_Number, _CVC)),
+               new Param("CVC", IsHashed ? _CVC : Authentication.Hash(_CVC)),
                new Param("ExpMonth", ExpMonth),
                new Param("ExpYear", ExpYear),
                new Param("Name", Name),
@@ -125,11 +125,11 @@ namespace JaminBooks.Model
             Address.Delete();
         }
 
-        public bool DecryptNumber(string CCV)
+        public bool DecryptNumber(string CVC)
         {
-            if (Authentication.Hash(CCV) == this._CCV.Trim() && IsEncrypted == true)
+            if (Authentication.Hash(CVC) == this._CVC.Trim() && IsEncrypted == true)
             {
-                Number = Encryption.Decrypt(Number, CCV);
+                Number = Encryption.Decrypt(Number, CVC);
                 IsEncrypted = false;
                 return true;
             }
@@ -145,7 +145,7 @@ namespace JaminBooks.Model
                     (int)dr["CardID"],
                     (int)dr["UserID"],
                     (String)dr["Number"],
-                    (String)dr["CCV"],
+                    (String)dr["CVC"],
                     (String)dr["ExpMonth"],
                     (String)dr["ExpYear"],
                     (String)dr["Name"],

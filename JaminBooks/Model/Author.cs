@@ -15,6 +15,14 @@ namespace JaminBooks.Model
         public string LastName;
         public bool IsDeleted;
 
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
+
         public Author() { }
 
         public Author(int AuthorID)

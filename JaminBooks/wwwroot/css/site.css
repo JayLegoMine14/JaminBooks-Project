@@ -48,6 +48,10 @@ body {
     width: 100%;
 }
 
+.sticky-top {
+    min-height: 100vh;
+}
+
 /* QR code generator */
 #qrCode {
     margin: 15px;

@@ -1,0 +1,152 @@
+﻿@page
+@model JaminBooks.Pages.RatingsModel
+@{
+    ViewData["Title"] = "Ratings";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+    var userIcon = "";
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
+}
+
+@if (Model.DisplayUser != null)
+{
+    <div class="container body-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-10 offset-1">
+                    <div class="row">
+                        <div class="col-12 text-center mt-3 mb-3">
+                            <h2>Book Reviews</h2>
+                        </div>
+                    </div>
+                    @if (Model.DisplayUser.Orders.Count == 0)
+                    {
+                        <div class="col-12 text-center" style="height: 75vh">
+                            <h3 class="mt-5">Nothing Here Yet</h3>
+                            <div class="row mb-5">
+                                <div class="col-4 offset-4">
+                                    <a href="\Books" class="btn btn-dark-red text-white btn-lg btn-block">Continue Shopping</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @{
+                        Model.User user = new Model.User(Model.Ratings[0].UserID);
+                        var image = user.LoadImage;
+                        var username = user.FullName;
+                    }
+                    @foreach (Model.Rating rating in Model.Ratings)
+                    {
+                        <div class="rating card" data-id="@rating.RatingID" data-rating="@rating.RatingValue" data-comment="@rating.Comment">
+                            <div class="icon-div">
+                                <img class="userIcon" src="@image" />
+                            </div>
+                            <h5 class="userName">@username</h5>
+                            <h5 class="book">for <a href="\Book?id=@rating.BookID">@(new Model.Book(rating.BookID).Title)</a></h5>
+                            <div class="options mt-1">
+                                <button class="btn btn-danger btn-sm mr-2" onclick="deleteRating(this)"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <div class="date mt-1">
+                                <h6>@rating.FormatedDate</h6>
+                            </div>
+                            <h5>
+                                <span class='stars'>
+                                    @for (int i = 0; i < rating.RatingValue; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    @for (int i = 0; i < 5 - rating.RatingValue; i++)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                </span>
+                            </h5>
+                            <h6 class="comment">@rating.Comment</h6>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="RatingModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <span id="EditRatingStars">
+                                    <span class="star-overlay"></span>
+                                    <i class="fas fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <textarea id="EditComment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 offset-3 text-center">
+                            <input id="SaveRating" type="submit" value="Save" class="btn btn-success btn-block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_Ratings")
+
+    <style>
+        .rating .userName {
+            line-height: 50px;
+            margin-left: 66px;
+            display: inline-block;
+            position: absolute;
+        }
+
+        .rating .options {
+            position: absolute;
+            right: 20px;
+        }
+
+        .rating .date {
+            position: absolute;
+            right: 20px;
+            top: 50px;
+        }
+
+        .rating .book {
+            line-height: 50px;
+            margin-left: 220px;
+            display: inline-block;
+            position: absolute;
+        }
+    </style>
+}
+
+
+

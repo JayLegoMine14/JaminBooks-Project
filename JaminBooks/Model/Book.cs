@@ -32,6 +32,14 @@ namespace JaminBooks.Model
 
         public bool LoadPublisher = true;
 
+        public bool HasIcon
+        {
+            get
+            {
+                return BookImage != null;
+            }
+        }
+
         public string LoadImage
         {
             get
@@ -74,6 +82,14 @@ namespace JaminBooks.Model
             }
         }
 
+        public int Sales
+        {
+            get
+            {
+                return (int)SQL.Execute("uspGetSalesByBook", new Param("BookID", this.BookID)).Rows[0]["Sales"];
+            }
+        }
+
         public Publisher Publisher
         {
             get
@@ -113,10 +129,10 @@ namespace JaminBooks.Model
                 var rating = SQL.Execute("uspGetAverageRating", new Param("BookID", BookID)).Rows[0]["Rating"];
                 this.Rating = rating != DBNull.Value ? Convert.ToInt32(rating) : 0;
             }
-            //else
-            //{
-            //    throw new Exception("Invalid Book ID");
-            //}
+            else
+            {
+                throw new Exception("Invalid Book ID");
+            }
         }
 
         private Book(int BookID, string Title, DateTime PublicationDate, int PublisherID, string ISBN10,
@@ -154,6 +170,7 @@ namespace JaminBooks.Model
                 new Param("Price", Price),
                 new Param("Cost", Cost),
                 new Param("Quantity", Quantity),
+                new Param("IsDeleted", IsDeleted),
                 new Param("BookImage", BookImage ?? SqlBinary.Null));
 
             if (dt.Rows.Count > 0)

@@ -288,6 +288,7 @@
     var index = 0;
     var loading = false;
     var loaded = false;
+    var callID = 0;
     $(document).ready(function () {
         $.ajax({
             type: "POST",
@@ -437,6 +438,7 @@
         var data = {
             Index: index,
             Count: count,
+            CallID: ++callID,
             Search: $("#Search").val(),
             SearchType: $("#SearchType").val(),
             Cats: cats,
@@ -455,10 +457,11 @@
             dataType: "json",
             success: function (response) {
                 response = JSON.parse(response);
+                if (response[0] < callID) return;
 
                 if (reset) $("#Books").empty();
 
-                response[1].forEach(function (book) {
+                response[2].forEach(function (book) {
 
                     var bookcard = "";
 
@@ -503,9 +506,9 @@
                     $(this).find(".book-overlay").fadeOut();
                 })
 
-                if (response[0] < count)
+                if (response[1] < count)
                     loaded = true;
-                index += response[0];
+                index += response[1];
                 loading = false;
                 $("#LoadIcon").hide();
 

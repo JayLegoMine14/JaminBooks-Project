@@ -17,6 +17,19 @@ namespace JaminBooks.Model
         public Address Address;
         public Dictionary<Book, dynamic> Books = new Dictionary<Book, dynamic>();
 
+        public decimal Total
+        {
+            get
+            {
+                decimal BookTotal = 0;
+
+                foreach (KeyValuePair<Book, dynamic> item in Books)
+                    BookTotal += item.Value.Quantity * item.Value.Price;
+
+                return BookTotal - (BookTotal * (PercentDiscount / 100m));
+            }
+        }
+
         public Order() { }
 
         public Order(int OrderID) {
@@ -75,6 +88,14 @@ namespace JaminBooks.Model
                new Param("BookID", b.BookID),
                new Param("Price", Books[b].Price),
                new Param("Quantity", Books[b].Quantity));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is Order)
+                return this.OrderID == ((Order)obj).OrderID;
+            else
+                return false;
         }
 
         public static List<Order> GetAll()
