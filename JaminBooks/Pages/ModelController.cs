@@ -320,7 +320,7 @@ namespace JaminBooks.Pages
 
             foreach (KeyValuePair<Book, int> item in currentUser.GetCart().AsEnumerable())
             {
-                order.Books.Add(item.Key, new { Price = item.Key.Price, Quantity = item.Value });
+                order.Books.Add(item.Key, new { Price = item.Key.Price, Quantity = item.Value, Cost = item.Key.Cost });
                 BookTotal += item.Key.Price * item.Value;
             }
 

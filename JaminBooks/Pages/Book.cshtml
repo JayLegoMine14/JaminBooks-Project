@@ -43,7 +43,7 @@
 <span class="d-none" id="UserID">@(Model.CurrentUser == null ? -1 : Model.CurrentUser.UserID)</span>
 <span class="d-none" id="UserIsAdmin">@(Model.CurrentUser == null ? false : Model.CurrentUser.IsAdmin)</span>
 
-@if (Model.CurrentUser.IsAdmin)
+@if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
 {
     <div id="AdminOptions" class="float-right">
         <div class="row">
@@ -205,7 +205,7 @@
                                             <input id="CopyrightDate" type="text" readonly class="form-control-plaintext" value="@Model.Book.CopyrightDate.ToString("M/d/yyyy")">
                                         </div>
                                     </div>
-                                    @if (Model.CurrentUser.IsAdmin)
+                                    @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
                                     {
                                         <div class="form-group row">
                                             <label class="col-4 col-form-label font-weight-bold">Cost:</label>
@@ -248,7 +248,7 @@ else
                                             <input id="Publisher" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.PublisherName">
                                         </div>
                                     </div>
-                                    @if (Model.CurrentUser.IsAdmin)
+                                    @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
     {
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label font-weight-bold">Publisher Contact:</label>

@@ -68,7 +68,7 @@ namespace JaminBooks.Model
                 foreach(DataRow book in books.Rows)
                 {
                     Books.Add(new Book((int)book["BookID"]),
-                        new { Price = (decimal)book["Price"], Quantity = (int)book["Quantity"] });
+                        new { Price = (decimal)book["Price"], Quantity = (int)book["Quantity"], Cost = (decimal)book["Cost"] });
                 }
             }
             else
@@ -91,7 +91,7 @@ namespace JaminBooks.Model
             foreach (DataRow book in books.Rows)
             {
                 Books.Add(new Book((int)book["BookID"]),
-                    new { Price = (decimal)book["Price"], Quantity = (int)book["Quantity"] });
+                    new { Price = (decimal)book["Price"], Quantity = (int)book["Quantity"], Cost = (decimal)book["Cost"] });
             }
         }
 
@@ -115,7 +115,8 @@ namespace JaminBooks.Model
                    new Param("OrderID", OrderID),
                    new Param("BookID", b.BookID),
                    new Param("Price", Books[b].Price),
-                   new Param("Quantity", Books[b].Quantity));
+                   new Param("Quantity", Books[b].Quantity),
+                   new Param("Cost", Books[b].Cost));
         }
 
         public override bool Equals(object obj)

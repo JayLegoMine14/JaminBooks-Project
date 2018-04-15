@@ -1,0 +1,91 @@
+﻿@page
+@model JaminBooks.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Console";
+    Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+}
+
+<div class="container body-content">
+    <div class="container mt-2">
+        <div class="row justify-content-end">
+            <input type="date" class="form-control col-2" min="2018-03-01" value="@Model.Start.ToString("yyyy-MM-dd")" />
+            <div class="text-center mr-2 ml-2" style="line-height:40px">
+                to
+            </div>
+            <input type="date" class="form-control col-2 mr-2" value="@Model.End.ToString("yyyy-MM-dd")" />
+            <button id="Load" class="btn btn-primary col-2">Load</button>
+        </div>
+        <div class="row mt-3 ">
+            <div class="col-2">
+                <div class="card text-white bg-primary mb-3 w-100 h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-4">Total Sales</h6>
+                        <h3 class="card-text text-center">$@(((decimal)Model.Fields["TotalSales"]).ToString("0.00"))</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="card text-white bg-secondary mb-3 w-100 h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-4">Gross Profit</h6>
+                        <h3 class="card-text text-center">$@(((decimal)Model.Fields["GrossProfit"]).ToString("0.00"))</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="card text-white bg-info mb-3 w-100 h-100">
+                    <div class="card-body pb-0">
+                        <h6 class="card-title">Total Orders</h6>
+                        <h1 class="card-text text-center">@Model.Fields["TotalOrders"]</h1>
+                        <h5 class="card-text">@Model.Fields["TotalItems"] Books</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="card text-white bg-warning mb-3 w-100 h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-4">Average Order</h6>
+                        <h3 class="card-text text-center">$@(((decimal)Model.Fields["AverageOrder"]).ToString("0.00"))</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="card text-white bg-success mb-3 w-100 h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">New Users</h6>
+                        <h1 class="card-text text-center">@Model.Fields["NewUsers"]</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="card text-white bg-danger mb-3 w-100 h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-4">Refund Costs</h6>
+                        <h3 class="card-text text-center">$@(((decimal)Model.Fields["RefundExpense"]).ToString("0.00"))</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 ">
+            <div class="col-8">
+
+            </div>
+            <div class="col-4">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-3 pr-1">@Model.Fields["OutItems"]</span><span class="col-8 pl-0">Books out of stock</span>
+                        </p>
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-3 pr-1">@Model.Fields["UnfulfilledOrders"]</span><span class="col-8 pl-0">Unfulfilled orders</span>
+                        </p>
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-3 pr-1">@Model.Fields["RefundedOrders"]</span><span class="col-8 pl-0">Refunded orders</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
