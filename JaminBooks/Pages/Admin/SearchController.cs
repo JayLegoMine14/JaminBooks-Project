@@ -60,7 +60,7 @@ namespace JaminBooks.Pages.Admin
                             string val = item["Value"].ToString();
                             bool? or = (bool?)item["Link"];
 
-                            List<Order> searchItems = (!itemLink.HasValue || itemLink.Value) ? all : some.Count > 0 ? some : matches;
+                            List<Order> searchItems = ((!groupLink.HasValue || groupLink.Value) ? !itemLink.HasValue || itemLink.Value : false) ? all : some.Count > 0 ? some : matches;
 
                             switch (column)
                             {
@@ -471,6 +471,88 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+                                case "RefundDate":
+                                    DateTime refundDate = new DateTime();
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date == refundDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date > refundDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date < refundDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date >= refundDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date <= refundDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date != refundDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o => o.RefundDate != null &&
+                                            (o.RefundDate.Value.Date.ToString().Contains(val) || val.Contains(o.RefundDate.Value.Date.ToString()))
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "FulfilledDate":
+                                    DateTime fulfilledDate = new DateTime();
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date == fulfilledDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date > fulfilledDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date < fulfilledDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date >= fulfilledDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date <= fulfilledDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date != fulfilledDate.Date
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o => o.FulfilledDate != null &&
+                                            (o.FulfilledDate.Value.Date.ToString().Contains(val) || val.Contains(o.FulfilledDate.Value.Date.ToString()))
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
                             }
 
                             if (!itemLink.HasValue)
@@ -624,7 +706,7 @@ namespace JaminBooks.Pages.Admin
                             string val = item["Value"].ToString();
                             bool? or = (bool?)item["Link"];
 
-                            List<User> searchItems = (!itemLink.HasValue || itemLink.Value) ? all : some.Count > 0 ? some : matches;
+                            List<User> searchItems = ((!groupLink.HasValue || groupLink.Value) ? !itemLink.HasValue || itemLink.Value : false) ? all : some.Count > 0 ? some : matches;
 
                             switch (column)
                             {
@@ -1441,7 +1523,7 @@ namespace JaminBooks.Pages.Admin
                             string val = item["Value"].ToString();
                             bool? or = (bool?)item["Link"];
 
-                            List<Book> searchItems = (!itemLink.HasValue || itemLink.Value) ? all : some.Count > 0 ? some : matches;
+                            List<Book> searchItems = ((!groupLink.HasValue || groupLink.Value) ? !itemLink.HasValue || itemLink.Value : false) ? all : some.Count > 0 ? some : matches;
 
                             switch (column)
                             {
@@ -1806,6 +1888,88 @@ namespace JaminBooks.Pages.Admin
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Sales.ToString().Contains(val) || val.Contains(o.Sales.ToString())
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "Rating":
+                                    int rating = 0;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out rating) ? false : o.Rating == rating
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out rating) ? false : o.Rating > rating
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out rating) ? false : o.Rating < rating
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Int32.TryParse(val, out rating) ? false : o.Rating >= rating
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out rating) ? false : o.Rating <= rating
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out rating) ? false : o.Rating != rating
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.Rating.ToString().Contains(val) || val.Contains(o.Rating.ToString())
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "Reviews":
+                                    int reviewCount = 0;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count == reviewCount
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count > reviewCount
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count < reviewCount
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count >= reviewCount
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count <= reviewCount
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count != reviewCount
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            Rating.GetRatings(o.BookID).Count.ToString().Contains(val) || val.Contains(Rating.GetRatings(o.BookID).Count.ToString())
                                             ).ToList();
                                             break;
                                     }

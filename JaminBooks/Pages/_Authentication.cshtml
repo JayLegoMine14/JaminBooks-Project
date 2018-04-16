@@ -24,10 +24,10 @@
                     <div class="col-md-6">
                         <p class="lead">Register now for <span class="text-success">FREE</span></p>
                         <ul class="list-unstyled" style="line-height: 2">
-                            <li><span class="fa fa-check text-success"></span> Rate Books</li>
-                            <li><span class="fa fa-check text-success"></span> Special Deals</li>
-                            <li><span class="fa fa-check text-success"></span> Save Addresses and Payment</li>
                             <li><span class="fa fa-check text-success"></span> Fast Checkout</li>
+                            <li><span class="fa fa-check text-success"></span> Special Offers</li>
+                            <li><span class="fa fa-check text-success"></span> Review Books</li>
+                            <li><span class="fa fa-check text-success"></span> Save Addresses and Payments</li>
                         </ul>
                         <p><button id="RegisterView" class="btn btn-info btn-block btn-dark-red">Register Now</button></p>
                     </div>
@@ -140,6 +140,14 @@
             }
         });
 
+        $('#authenticationModal').on('hidden.bs.modal', function () {
+            $("#LoginRedirectLocation").remove();
+            $("#Email").removeAttr("style");
+            $("#Password").removeAttr("style");
+            $("#Email").val("");
+            $("#Password").val("");
+        })
+
         $("#RegisterView").click(function () {
             if (!$("#RegistrationDiv").is(":visible") || !$("#RegistrationDiv").height() > 0) {
                 $("#loginErrorMsg").hide();
@@ -186,11 +194,12 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-                    var loggedin = JSON.parse(response);
-                    if (loggedin) {
+                    if (response[0]) {
                         var redirectLocation = $("#LoginRedirectLocation");
-                        if (redirectLocation != undefined || redirectLocation.text() == "")
+                        if (redirectLocation.text() != "")
                             location.href = redirectLocation.text();
+                        else if (response[1])
+                            location.href = "/Admin/Dashboard";
                         else location.reload();
                     } else {
                         $("#loginErrorMsg").show();

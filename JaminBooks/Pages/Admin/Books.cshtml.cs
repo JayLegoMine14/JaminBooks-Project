@@ -41,6 +41,8 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("Price", "Price");
             SearchColumns.Add("Cost", "Cost");
             SearchColumns.Add("Quantity", "Quantity");
+            SearchColumns.Add("Rating", "Rating");
+            SearchColumns.Add("Reviews", "Reviews");
             SearchColumns.Add("Sales", "Sales");
             SearchColumns.Add("Author", "Author");
             SearchColumns.Add("Category", "Category");

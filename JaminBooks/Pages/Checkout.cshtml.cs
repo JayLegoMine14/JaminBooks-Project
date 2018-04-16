@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using JaminBooks.Model;
 using JaminBooks.Tools;
@@ -42,6 +43,8 @@ namespace JaminBooks.Pages
                 this.BookTotal = "$" + BookTotal.ToString("0.00");
                 this.PercentDiscount = Discount == 0 ? "" : Discount + "%";
                 this.OrderTotal = "$" + OrderTotal.ToString("0.00");
+
+                Request.HttpContext.Session.SetString("CheckingOut", "true");
             }
         }
     }

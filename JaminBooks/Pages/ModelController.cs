@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using JaminBooks.Model;
 using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
@@ -169,10 +170,14 @@ namespace JaminBooks.Pages
         public IActionResult ClearReservations()
         {
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
-            foreach (KeyValuePair<Book, int> item in currentUser.GetCart().AsEnumerable())
+            if (currentUser != null)
             {
-                item.Key.Quantity += item.Value;
-                item.Key.Save();
+                foreach (KeyValuePair<Book, int> item in currentUser.GetCart().AsEnumerable())
+                {
+                    item.Key.Quantity += item.Value;
+                    item.Key.Save();
+                }
+                Request.HttpContext.Session.SetString("CheckingOut", "false");
             }
             return null;
         }

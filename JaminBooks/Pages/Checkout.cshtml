@@ -278,7 +278,17 @@
                 dots: false,
                 nav: true,
                 navText: ["<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-left'></i></div>", "<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-right'></i></div>"],
-                margin: 5
+                margin: 5,
+                onInitialized: function () {
+                    $("#CardCreate").unbind("click");
+                    $("#CardCreate").click(function () {
+                        $("#CardModal").modal("show");
+                    });
+                    $("#AddressCreate").unbind("click");
+                    $("#AddressCreate").click(function () {
+                        $("#AddressModal").modal("show");
+                    });
+                }
             });
             $('#Cards, #Addresses').prepend('<div class="fade-in"></div><div class="fade-out" ></div>')
 

@@ -208,8 +208,40 @@
                 loadItems(false);
             }
         });
+
+        if (getRequestQueryString("query") != "") {
+            var query = getRequestQueryString("query");
+
+            var items = query.split(" ");
+            for (var i = 0; i < items.length; i += 4) {
+                if (items[i] == "(") {
+                    if ($(".where").length == 0) $("#ASModal").prepend("<hr data-group='top'/>")
+                    else $(".where").last().after("<hr data-group='top'/>");
+                    i++;
+                }
+
+                if (items[i + 3] == ")") {
+                    addNewWhere(items[i], items[i + 1], items[i + 2].split('$sp').join(' '), items[i + 4]);
+                    $(".where").last().after("<hr data-group='bottom'/>");
+                    i++;
+                } else {
+                    addNewWhere(items[i], items[i + 1], items[i + 2].split('$sp').join(' '), items[i + 3]);
+                }
+            }
+            addHRListeners();
+            showFilters();
+        }
+
         loadItems();
     });
+
+    //Get a variable from the url
+    function getRequestQueryString(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
 
     function loadItems(reset) {
         if (reset) {
@@ -277,7 +309,7 @@
                 response[3].forEach(function (item) {
                     var row = "";
                     row += '<div class="card item w-100 mb-3">'
-                    row += '<div class="row" onmousedown="switch(event.which) { case 1: location.href =\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'; break; case 2: case 3: window.open(\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'); break;}">'
+                    row += '<div class="row" onmouseup="switch(event.which) { case 1: location.href =\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'; break; case 2: case 3: window.open(\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'); break;}">'
 
                     @if(Model.DisplayColumns.Count % 12 != 0)
                     {
@@ -295,9 +327,9 @@
 
                     row += '    <div class="col-2 text-center h6 p-2">'
                     if (item.deleted)
-                        row += '        <button class="btn btn-warning undelete-btn" onclick="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>'
+                        row += '        <button class="btn btn-warning undelete-btn" onmouseup="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>'
                     else
-                        row += '        <button class="btn btn-danger delete-btn" onclick="deleteUser(event, this)"><i class="fas fa-trash"></i></button>'
+                        row += '        <button class="btn btn-danger delete-btn" onmouseup="deleteUser(event, this)"><i class="fas fa-trash"></i></button>'
                     row += '    </div>'
 
                     row += '</div>'

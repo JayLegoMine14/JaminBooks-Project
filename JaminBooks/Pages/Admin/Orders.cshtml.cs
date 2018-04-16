@@ -40,7 +40,8 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("Total", "Total");
             SearchColumns.Add("PercentDiscount", "Dicount");
             SearchColumns.Add("IsFulfilled", "Is Fulfilled");
-            SearchColumns.Add("IsRefunded", "Is Refunded");
+            SearchColumns.Add("FulfilledDate", "Date Fulfilled");
+            SearchColumns.Add("RefundDate", "Date Refunded");
         }
     }
 }

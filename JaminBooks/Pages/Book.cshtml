@@ -269,7 +269,9 @@ else
                         </div>
                         <hr />
                         <div id="Ratings" class="mt-3">
-                            <h3>Leave a review</h3>
+                            <h3>Reviews</h3>
+                            @if(Model.CurrentUser != null)
+                            {
                             <div class="col-12">
                                 <span id="RatingStars">
                                     <span class="star-overlay"></span>
@@ -286,6 +288,7 @@ else
                                 <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
                                 <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
                             </div>
+                            }
                             <div id="RatingMessages" class="mt-3"></div>
                             <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
                                 <div class="col-12">

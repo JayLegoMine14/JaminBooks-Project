@@ -152,14 +152,14 @@
             </div>
             <div class="row">
                 <div class="col-8 offset-2">
-                    <div class="row mb-2">
+                    <div class="row mb-2 mt-5">
                         <div class="col-12">
                             <h3>Orders</h3>
                         </div>
                     </div>
                     <div class="row mb-5">
                         <div class="col-6 offset-3 text-center">
-                            <a href="\Orders@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-primary btn-block"> View Past Orders</a>
+                            <a href="\Orders@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-dark-red text-white btn-block"> View Past Orders</a>
                         </div>
                     </div>
                 </div>
@@ -173,7 +173,7 @@
                     </div>
                     <div class="row mb-5">
                         <div class="col-6 offset-3 text-center">
-                            <a href="\Ratings@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-primary btn-block">View Reviews</a>
+                            <a href="\Ratings@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-dark-red text-white btn-block">View Reviews</a>
                         </div>
                     </div>
                 </div>

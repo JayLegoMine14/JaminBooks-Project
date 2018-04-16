@@ -8,27 +8,29 @@
 <div class="container body-content">
     <div class="container mt-2">
         <div class="row justify-content-end">
-            <input type="date" class="form-control col-2" min="2018-03-01" value="@Model.Start.ToString("yyyy-MM-dd")" />
+            <h4 class="col-5">@Model.Start.ToString("d MMMM \\'yy") - @Model.End.ToString("d MMMM \\'yy")</h4>
+            <input id="StartDate" type="date" class="form-control col-2" min="2018-03-01" value="@Model.Start.ToString("yyyy-MM-dd")" />
             <div class="text-center mr-2 ml-2" style="line-height:40px">
                 to
             </div>
-            <input type="date" class="form-control col-2 mr-2" value="@Model.End.ToString("yyyy-MM-dd")" />
+            <input id="EndDate" type="date" class="form-control col-2 mr-2" value="@Model.End.ToString("yyyy-MM-dd")" />
             <button id="Load" class="btn btn-primary col-2">Load</button>
         </div>
         <div class="row mt-3 ">
             <div class="col-2">
                 <div class="card text-white bg-primary mb-3 w-100 h-100">
                     <div class="card-body">
-                        <h6 class="card-title mb-4">Total Sales</h6>
+                        <h6 class="card-title mb-4">Total Revenue</h6>
                         <h3 class="card-text text-center">$@(((decimal)Model.Fields["TotalSales"]).ToString("0.00"))</h3>
                     </div>
                 </div>
             </div>
             <div class="col-2">
                 <div class="card text-white bg-secondary mb-3 w-100 h-100">
-                    <div class="card-body">
+                    <div class="card-body pb-0">
                         <h6 class="card-title mb-4">Gross Profit</h6>
                         <h3 class="card-text text-center">$@(((decimal)Model.Fields["GrossProfit"]).ToString("0.00"))</h3>
+                        <h5 class="card-text text-center">@(((((decimal)Model.Fields["GrossProfit"]) / ((decimal)Model.Fields["TotalSales"])) * 100m).ToString("0.00"))%</h5>
                     </div>
                 </div>
             </div>
@@ -37,7 +39,7 @@
                     <div class="card-body pb-0">
                         <h6 class="card-title">Total Orders</h6>
                         <h1 class="card-text text-center">@Model.Fields["TotalOrders"]</h1>
-                        <h5 class="card-text">@Model.Fields["TotalItems"] Books</h5>
+                        <h5 class="card-text text-center">@Model.Fields["TotalItems"] Books</h5>
                     </div>
                 </div>
             </div>
@@ -67,25 +69,372 @@
             </div>
         </div>
         <div class="row mt-3 ">
-            <div class="col-8">
-
+            <div class="col-7">
+                <div class="card w-100">
+                    <div class="card-header">
+                        <h5 class="card-title">Total Income</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="Revenue" class="w-100"></div>
+                        <div id="RevenueLoadIcon" class="row text-center mt-5 mb-5">
+                            <div class="col-12">
+                                <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-100">
+                    <div class="card-header">
+                        <h5 class="card-title">Daily Income</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="DailyRevenue" class="w-100"></div>
+                        <div id="DailyLoadIcon" class="row text-center mt-5 mb-5">
+                            <div class="col-12">
+                                <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-100">
+                    <div class="card-header">
+                        <h5 class="card-title">New Users</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="NewUsers" class="w-100"></div>
+                        <div id="UsersLoadIcon" class="row text-center mt-5 mb-5">
+                            <div class="col-12">
+                                <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-4">
+            <div class="col-5">
                 <div class="card w-100">
                     <div class="card-body">
                         <p class="card-text row align-items-center">
-                            <span class="h3 col-3 pr-1">@Model.Fields["OutItems"]</span><span class="col-8 pl-0">Books out of stock</span>
+                            <span class="h3 col-2 pr-1">@Model.Fields["OutItems"]</span>
+                            <span class="col-7 pl-0">Books out of stock</span>
+                            <a href="Books?query=Quantity eq 0" class="btn btn-primary btn-sm">View</a>
                         </p>
                         <p class="card-text row align-items-center">
-                            <span class="h3 col-3 pr-1">@Model.Fields["UnfulfilledOrders"]</span><span class="col-8 pl-0">Unfulfilled orders</span>
+                            <span class="h3 col-2 pr-1">@Model.Fields["UnfulfilledOrders"]</span>
+                            <span class="col-7 pl-0">Unfulfilled orders</span>
+                            <a href="Orders?query=IsFulfilled eq false" class="btn btn-primary btn-sm">View</a>
                         </p>
                         <p class="card-text row align-items-center">
-                            <span class="h3 col-3 pr-1">@Model.Fields["RefundedOrders"]</span><span class="col-8 pl-0">Refunded orders</span>
+                            <span class="h3 col-2 pr-1">@Model.Fields["RefundedOrders"]</span>
+                            <span class="col-7 pl-0">Refunded orders</span>
+                            <a href="Orders?query=RefundDate ge @Model.Start.ToString("yyyy-MM-dd") AND RefundDate le @Model.End.ToString("yyyy-MM-dd")" class="btn btn-primary btn-sm">View</a>
                         </p>
+                        <hr />
+                        <div class="row">
+                            <div class="col-12">
+                                <h4 class="mb-4">Sales by Category</h4>
+                            </div>
+                            <div class="col-12">
+                                <div id="SalesByCategory"></div>
+                                <div id="CategoryLoadIcon" class="row text-center mt-5 mb-5">
+                                    <div class="col-12">
+                                        <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-12">
+                                <h4 class="mb-4">Best Sellers</h4>
+                            </div>
+                            <div class="col-12">
+                                <div class="row mb-1">
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-4">
+                                        <h5>Title</h5>
+                                    </div>
+                                    <div class="col-4">
+                                        <h5>Sales</h5>
+                                    </div>
+                                </div>
+                                @foreach (Model.Book book in Model.BestSellers.Keys)
+            {
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <img height="50" style="width:auto" src="@book.LoadImage" />
+                        </div>
+                        <div class="col-4">
+                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
+                        </div>
+                        <div class="col-4">
+                            <h6>@Model.BestSellers[book]</h6>
+                        </div>
+                    </div>
+}
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-12">
+                                <h4 class="mb-4">Worst Sellers</h4>
+                            </div>
+                            <div class="col-12">
+                                <div class="row mb-1">
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-4">
+                                        <h5>Title</h5>
+                                    </div>
+                                    <div class="col-4">
+                                        <h5>Sales</h5>
+                                    </div>
+                                </div>
+                                @foreach (Model.Book book in Model.WorstSellers.Keys)
+            {
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <img height="50" style="width:auto" src="@book.LoadImage" />
+                        </div>
+                        <div class="col-4">
+                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
+                        </div>
+                        <div class="col-4">
+                            <h6>@Model.WorstSellers[book]</h6>
+                        </div>
+                    </div>
+}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart', 'bar']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        $.ajax({
+            type: "POST",
+            url: "/Dashboard/LoadSalesByCategory",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                start: "@Model.Start",
+                end: "@Model.End"
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (response) {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Category');
+                data.addColumn('number', 'Sales');
+
+                response.forEach(function (column) {
+                    data.addRow(column);
+                });
+
+                var options = {
+                    colors: ['#007bff'],
+                    bars: 'horizontal'
+                };
+
+                var chart = new google.charts.Bar(document.getElementById('SalesByCategory'));
+                $("#CategoryLoadIcon").hide();
+                chart.draw(data, google.charts.Bar.convertOptions(options));
+            }
+          });
+
+          $.ajax({
+            type: "POST",
+            url: "/Dashboard/LoadDailyRevenue",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                start: "@Model.Start",
+                end: "@Model.End"
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (response) {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', 'Revenue');
+                data.addColumn('number', 'Gross Profit');
+
+                response.forEach(function (column) {
+                    var date = column[0].split("-");
+                    data.addRow([new Date(date[0], date[1] - 1, date[2]), column[1], column[2]]);
+                });
+
+                var options = {
+                    colors: ['#007bff', '#ffc107'],
+                    legend: { position: 'top' },
+                    chartArea: { 'width': '90%', 'height': '80%' },
+                    hAxis: {
+                        format: 'M/d'
+                    },
+                    animation: {
+                        startup: true,
+                        duration: 1000,
+                        easing: 'out'
+                    }
+                };
+
+                var chart = new google.visualization.AreaChart(document.getElementById('DailyRevenue'));
+                $("#DailyLoadIcon").hide();
+                chart.draw(data, options);
+            }
+          });
+
+          $.ajax({
+            type: "POST",
+            url: "/Dashboard/LoadRevenue",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                start: "@Model.Start",
+                end: "@Model.End"
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (response) {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', 'Revenue');
+                data.addColumn('number', 'Gross Profit');
+
+                response.forEach(function (column) {
+                    var date = column[0].split("-");
+                    data.addRow([new Date(date[0], date[1] - 1, date[2]), column[1], column[2]]);
+                });
+
+                var options = {
+                    colors: ['#007bff', '#ffc107'],
+                    legend: { position: 'top' },
+                    chartArea: { 'width': '90%', 'height': '80%' },
+                    hAxis: {
+                        format: 'M/d'
+                    },
+                    animation: {
+                        startup: true,
+                        duration: 1000,
+                        easing: 'out'
+                    }
+                };
+
+                var chart = new google.visualization.AreaChart(document.getElementById('Revenue'));
+                $("#RevenueLoadIcon").hide();
+                chart.draw(data, options);
+            }
+          });
+
+          $.ajax({
+            type: "POST",
+            url: "/Dashboard/LoadNewUsers",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                start: "@Model.Start",
+                end: "@Model.End"
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (response) {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', 'Users');
+
+                response.forEach(function (column) {
+                    var date = column[0].split("-");
+                    data.addRow([new Date(date[0], date[1] - 1, date[2]), column[1]]);
+                });
+
+                var options = {
+                    colors: ['#28a745'],
+                    legend: { position: 'top' },
+                    chartArea: { 'width': '90%', 'height': '80%' },
+                    hAxis: {
+                        format: 'M/d'
+                    },
+                    animation: {
+                        startup: true,
+                        duration: 1000,
+                        easing: 'out'
+                    }
+                };
+
+                var chart = new google.visualization.AreaChart(document.getElementById('NewUsers'));
+                $("#UsersLoadIcon").hide();
+                chart.draw(data, options);
+            }
+          });
+      }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#Load").click(function () {
+            var start = $("#StartDate").val();
+            var end = $("#EndDate").val();
+
+            $("#StartDate").removeAttr("style");
+            $("#EndDate").removeAttr("style");
+
+            if (start == undefined || start == "") {
+                $("#StartDate").css("border-color", "red");
+            } else if (end == undefined || end == "") {
+                $("#EndDate").css("border-color", "red");
+            } else if (start >= end) {
+                $("#StartDate").css("border-color", "red");
+                $("#EndDate").css("border-color", "red");
+            } else {
+                var form = $('<form></form>');
+
+                form.attr("method", "post");
+                form.attr("action", "Dashboard");
+
+                var startField = $('<input></input>');
+                startField.attr("type", "hidden");
+                startField.attr("name", "start");
+                startField.attr("value", start);
+
+                form.append(startField);
+
+                var endField = $('<input></input>');
+                endField.attr("type", "hidden");
+                endField.attr("name", "end");
+                endField.attr("value", end);
+
+                form.append(endField);
+
+                var af = $('@Html.AntiForgeryToken()');
+                form.append(af);
+
+                $(document.body).append(form);
+                form.submit();
+            }
+        });
+    });
+</script>
 

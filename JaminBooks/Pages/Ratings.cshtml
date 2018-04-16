@@ -39,11 +39,13 @@
                             </div>
                         </div>
                     }
-                    @{
+                    else
+                    {
+
                         Model.User user = new Model.User(Model.Ratings[0].UserID);
                         var image = user.LoadImage;
                         var username = user.FullName;
-                    }
+
                     @foreach (Model.Rating rating in Model.Ratings)
                     {
                         <div class="rating card" data-id="@rating.RatingID" data-rating="@rating.RatingValue" data-comment="@rating.Comment">
@@ -73,6 +75,7 @@
                             </h5>
                             <h6 class="comment">@rating.Comment</h6>
                         </div>
+                    }
                     }
                 </div>
             </div>
