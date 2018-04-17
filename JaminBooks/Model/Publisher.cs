@@ -52,6 +52,12 @@ namespace JaminBooks.Model
             this.IsDeleted = IsDeleted;
         }
 
+        private Publisher(int PublisherID, string PublisherName)
+        {
+            this.PublisherID = PublisherID;
+            this.PublisherName = PublisherName;
+        }
+
         public void Save()
         {
             DataTable dt = SQL.Execute("uspSavePublisher",
@@ -80,6 +86,30 @@ namespace JaminBooks.Model
             DataTable dt = SQL.Execute("uspGetPublisherByID",
                 new Param("PublisherID", PublisherID));
             return (int)dt.Rows[0]["PublisherID"];
+        }
+
+        public static List<Publisher> GetPublishers(int BookID)
+        {
+            DataTable dt = SQL.Execute("uspGetPublishers", new Param("BookID", BookID));
+            List<Publisher> publishers = new List<Publisher>();
+            foreach (DataRow dr in dt.Rows)
+                publishers.Add(new Publisher(
+                    (int)dr["PublisherID"],
+                    (String)dr["PulisherName"]
+                    ));
+            return publishers;
+        }
+
+        public static List<Publisher> GetAllPublishers()
+        {
+            DataTable dt = SQL.Execute("uspAllGetPublishers");
+            List<Publisher> publishers = new List<Publisher>();
+            foreach (DataRow dr in dt.Rows)
+                publishers.Add(new Publisher(
+                    (int)dr["PublisherID"],
+                    (String)dr["PulisherName"]
+                    ));
+            return publishers;
         }
 
 

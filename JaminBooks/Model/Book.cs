@@ -113,10 +113,10 @@ namespace JaminBooks.Model
                 var rating = SQL.Execute("uspGetAverageRating", new Param("BookID", BookID)).Rows[0]["Rating"];
                 this.Rating = rating != DBNull.Value ? Convert.ToInt32(rating) : 0;
             }
-            //else
-            //{
-            //    throw new Exception("Invalid Book ID");
-            //}
+            else
+            {
+                throw new Exception("Invalid Book ID");
+            }
         }
 
         private Book(int BookID, string Title, DateTime PublicationDate, int PublisherID, string ISBN10,
