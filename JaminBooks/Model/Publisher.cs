@@ -18,6 +18,14 @@ namespace JaminBooks.Model
         public string ContactLastName;
         public bool IsDeleted;
 
+        public string FullName
+        {
+            get
+            {
+                return ContactFirstName + " " + ContactLastName;
+            }
+        }
+
         public Publisher() { }
 
         public Publisher(int PublisherID)

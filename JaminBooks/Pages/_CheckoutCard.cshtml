@@ -32,7 +32,7 @@
                                 <input type="text" id="ExpYear" class="form-control" maxlength="2" placeholder="YY">
                             </div>
                             <div class="col-3 offset-2">
-                                <input type="text" id="CCV" class="form-control" maxlength="3" placeholder="CCV">
+                                <input type="text" id="CVC" class="form-control" maxlength="3" placeholder="CVC">
                             </div>
                         </div>
                     </div>
@@ -173,7 +173,7 @@
                 Name: $("#Name").val(),
                 ExpMonth: $("#ExpMonth").val(),
                 ExpYear: $("#ExpYear").val(),
-                CCV: $("#CCV").val(),
+                CVC: $("#CVC").val(),
                 Line1: $("#Line1").val(),
                 Line2: $("#Line2").val(),
                 City: $("#City").val(),
@@ -242,7 +242,7 @@
             $("#Number1, #Number2, #Number3, #Number4").val("");
             $("#Name").val("");
             $("#ExpMonth, #ExpYear").val("");
-            $("#CCV").val("");
+            $("#CVC").val("");
             $("#Line1").val("");
             $("#Line2").val("");
             $("#City").val("");
@@ -308,7 +308,7 @@
             $("#Name").removeAttr("style");
             $("#ExpMonth").removeAttr("style");
             $("#ExpYear").removeAttr("style");
-            $("#CCV").removeAttr("style");
+            $("#CVC").removeAttr("style");
 
             if ($("#Number1").val().length != 4 ||
                 $("#Number2").val().length != 4 ||
@@ -329,8 +329,8 @@
                 valid = false;
             }
 
-            if ($("#CCV").val().length != 3) {
-                $("#CCV").css("border-color", "red");
+            if ($("#CVC").val().length != 3) {
+                $("#CVC").css("border-color", "red");
 
                 valid = false;
             }

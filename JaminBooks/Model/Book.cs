@@ -32,6 +32,14 @@ namespace JaminBooks.Model
 
         public bool LoadPublisher = true;
 
+        public bool HasIcon
+        {
+            get
+            {
+                return BookImage != null;
+            }
+        }
+
         public string LoadImage
         {
             get
@@ -71,6 +79,14 @@ namespace JaminBooks.Model
             get
             {
                 return Author.GetAuthors(this.BookID);
+            }
+        }
+
+        public int Sales
+        {
+            get
+            {
+                return (int)SQL.Execute("uspGetSalesByBook", new Param("BookID", this.BookID)).Rows[0]["Sales"];
             }
         }
 
@@ -154,6 +170,7 @@ namespace JaminBooks.Model
                 new Param("Price", Price),
                 new Param("Cost", Cost),
                 new Param("Quantity", Quantity),
+                new Param("IsDeleted", IsDeleted),
                 new Param("BookImage", BookImage ?? SqlBinary.Null));
 
             if (dt.Rows.Count > 0)

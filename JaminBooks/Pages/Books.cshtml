@@ -215,7 +215,9 @@
                     </div>
                     <hr />
                     <div id="Ratings" class="mt-3">
-                        <h3>Leave a review</h3>
+                        <h3>Reviews</h3>
+                         @if(Model.CurrentUser != null)
+                         {
                         <div class="col-12">
                             <span id="RatingStars">
                                 <span class="star-overlay"></span>
@@ -232,6 +234,7 @@
                             <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
                             <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
                         </div>
+                         }
                         <div id="RatingMessages" class="mt-3"></div>
                         <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
                             <div class="col-12">
@@ -288,6 +291,7 @@
     var index = 0;
     var loading = false;
     var loaded = false;
+    var callID = 0;
     $(document).ready(function () {
         $.ajax({
             type: "POST",
@@ -437,6 +441,7 @@
         var data = {
             Index: index,
             Count: count,
+            CallID: ++callID,
             Search: $("#Search").val(),
             SearchType: $("#SearchType").val(),
             Cats: cats,
@@ -455,10 +460,11 @@
             dataType: "json",
             success: function (response) {
                 response = JSON.parse(response);
+                if (response[0] < callID) return;
 
                 if (reset) $("#Books").empty();
 
-                response[1].forEach(function (book) {
+                response[2].forEach(function (book) {
 
                     var bookcard = "";
 
@@ -503,9 +509,9 @@
                     $(this).find(".book-overlay").fadeOut();
                 })
 
-                if (response[0] < count)
+                if (response[1] < count)
                     loaded = true;
-                index += response[0];
+                index += response[1];
                 loading = false;
                 $("#LoadIcon").hide();
 

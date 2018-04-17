@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="1200" />
     <title>@ViewData["Title"] - Jamin' Books</title>
 
     <environment include="Development">
@@ -13,10 +14,12 @@
         <link rel="stylesheet" href="~/css/tooltipster-sideTip-light.min.css" />
         <link rel="stylesheet" href="~/css/owl.carousel.min.css" />
         <link rel="stylesheet" href="~/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="~/css/bootstrap-toggle.min.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="~/css/jquery-confirm.css" />
         <link rel="stylesheet" href="~/css/tooltipster.bundle.min.css" />
+        <link rel="stylesheet" href="~/css/bootstrap-toggle.min.css" />
         <link rel="stylesheet" href="~/css/tooltipster-sideTip-light.min.css" />
         <link rel="stylesheet" href="~/css/owl.carousel.min.css" />
         <link rel="stylesheet" href="~/css/owl.theme.default.min.css" />
@@ -35,12 +38,14 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/js/tooltipster.bundle.min.js"></script>
     <script src="~/js/owl.carousel.min.js"></script>
+    <script src="~/js/bootstrap-toggle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </environment>
 <environment exclude="Development">
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
     <script src="~/js/tooltipster.bundle.min.js"></script>
     <script src="~/js/owl.carousel.min.js"></script>
+    <script src="~/js/bootstrap-toggle.min.js"></script>
     <script src="~/js/sha256.min.js" asp-append-version="true"></script>
     <script src="~/js/jquery-confirm.js" asp-append-version="true"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -69,39 +74,39 @@
 <body>
     <div class="row">
         <div class="col-2 text-center" id="AdminSidebar">
-            <div class="sticky-top">
+            <div class="sticky-top" class="min-height: 100vh;">
                 <img class="brand-logo mt-2" src="~/images/slogo.png" />
                 <ul class="nav flex-column mt-1">
                     <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Index">Home <i class="fas fa-home float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Index">Home <i class="fas fa-home float-right mt-1"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Console">Console <i class="fas fa-chart-pie float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Admin/Dashboard">Dashboard <i class="fas fa-chart-pie float-right mt-1"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Books">Catalog <i class="fas fa-book float-right mt-1"></i></a>
-                    </li>
-                    <hr />
-                    <li class="nav-item">
-                        <a class="nav-link home" asp-page="/BookSearch">Books <i class="fas fa-book float-right mt-1"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Admin/BookCreate">New Book <i class="fas fa-plus float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Books">Catalog <i class="fas fa-book float-right mt-1"></i></a>
                     </li>
                     <hr />
                     <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Users">Users <i class="fas fa-users float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Admin/Books">Books <i class="fas fa-book float-right mt-1"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link home" href="/Admin/BookCreate">New Book <i class="fas fa-plus float-right mt-1"></i></a>
                     </li>
                     <hr />
                     <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Orders">Orders <i class="fas fa-file-alt float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Admin/Accounts">Users <i class="fas fa-users float-right mt-1"></i></a>
                     </li>
                     <hr />
                     <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Account">My Account <i class="fas fa-user float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Admin/Orders">Orders <i class="fas fa-file-alt float-right mt-1"></i></a>
+                    </li>
+                    <hr />
+                    <li class="nav-item">
+                        <a class="nav-link home" href="/Account">My Account <i class="fas fa-user float-right mt-1"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link home" asp-page="/Cart">My Cart <i class="fas fa-shopping-cart float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Cart">My Cart <i class="fas fa-shopping-cart float-right mt-1"></i></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link home" href="/Security/Logout">Logout <i class="fas fa-sign-out-alt float-right mt-1"></i></a>

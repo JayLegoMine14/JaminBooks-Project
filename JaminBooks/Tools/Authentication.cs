@@ -52,7 +52,7 @@ namespace JaminBooks.Tools
                 && User.Exists(user["Email"]);
         }
 
-        public static bool SetCurrentUser(HttpRequest request)
+        public static bool[] SetCurrentUser(HttpRequest request)
         {
             Dictionary<string, string> user = AJAX.GetFields(request);
             int? UserID;
@@ -60,9 +60,9 @@ namespace JaminBooks.Tools
                 && !new User(UserID.Value).IsDeleted)
             {
                 request.HttpContext.Session.SetInt32("UserID", UserID.Value);
-                return true;
+                return new bool[] { true, new User(UserID.Value).IsAdmin};
             }
-            else return false;
+            else return new bool[] { false };
         }
 
         public static int CreateUser(HttpRequest request)

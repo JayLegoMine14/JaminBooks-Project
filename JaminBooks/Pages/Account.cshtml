@@ -94,13 +94,13 @@
                     <div class="form-group">
                         <input type="email" id="Email" value="@Model.DisplayUser.Email" class="form-control input-sm valid" maxlength="100" placeholder="Email Address">
                         @if (Model.DisplayUser.IsConfirmed)
-                    {
-                        <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
-                }
-                else
                 {
-                    <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
-            }
+                    <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+        }
+        else
+        {
+            <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
+}
                     </div>
                     <div class="row mb-5">
                         <div class="col-6 offset-3 text-center">
@@ -150,6 +150,34 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-8 offset-2">
+                    <div class="row mb-2 mt-5">
+                        <div class="col-12">
+                            <h3>Orders</h3>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-6 offset-3 text-center">
+                            <a href="\Orders@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-dark-red text-white btn-block"> View Past Orders</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8 offset-2">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <h3>Reviews</h3>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-6 offset-3 text-center">
+                            <a href="\Ratings@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-dark-red text-white btn-block">View Reviews</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row mt-4">
                 <div class="col-8 offset-2">
                     <div class="row">
@@ -160,18 +188,18 @@
                     <div class="row mb-2">
                         <div id="Phones" class="col-12 mb-4">
                             @foreach (Model.Phone phone in Model.DisplayUser.Phones)
-                        {
-                            <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
-                                <div class="card-header">
-                                    <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                    <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title phone-number">@phone.Number</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
-                                </div>
+                    {
+                        <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
+                            <div class="card-header">
+                                <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                             </div>
-                    }
+                            <div class="card-body">
+                                <h5 class="card-title phone-number">@phone.Number</h5>
+                                <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
+                            </div>
+                        </div>
+            }
                             <div class="card d-inline-block" style="width:200px">
                                 <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
                                     <i class="fas fa-plus"></i>
@@ -194,26 +222,26 @@
                     <div class="row">
                         <div id="Cards" class="col-12 mb-4">
                             @foreach (Model.Card card in Model.DisplayUser.Cards)
-                        {
-                            <div class="card dc-card d-inline-block" data-id="@card.CardID" style="width:300px"
-                                 data-name="@card.Name"
-                                 data-last-four="@card.LastFourDigits" data-month="@card.ExpMonth"
-                                 data-year="@card.ExpYear" data-line1="@card.Address.Line1"
-                                 data-line2="@card.Address.Line2" data-city="@card.Address.City"
-                                 data-state="@card.Address.State" data-country="@card.Address.Country"
-                                 data-zip="@card.Address.ZIP">
-                                <div class="card-header">
-                                    <button type="button" onclick="EditCard(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                    <button type="button" onclick="DeleteCard(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    <span class="float-right text-dark show-address popup" data-tooltip-content="#AddressPopup"><i class="fas fa-home"></i></span>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title dc-card-last-four">****-****-****-@card.LastFourDigits</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted dc-card-exp">@(card.ExpMonth + "/" + card.ExpYear)</h6>
-                                    <h5 class="card-title text-muted dc-card-name">@card.Name</h5>
-                                </div>
+                    {
+                        <div class="card dc-card d-inline-block" data-id="@card.CardID" style="width:300px"
+                             data-name="@card.Name"
+                             data-last-four="@card.LastFourDigits" data-month="@card.ExpMonth"
+                             data-year="@card.ExpYear" data-line1="@card.Address.Line1"
+                             data-line2="@card.Address.Line2" data-city="@card.Address.City"
+                             data-state="@card.Address.State" data-country="@card.Address.Country"
+                             data-zip="@card.Address.ZIP">
+                            <div class="card-header">
+                                <button type="button" onclick="EditCard(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                <button type="button" onclick="DeleteCard(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                <span class="float-right text-dark show-address popup" data-tooltip-content="#AddressPopup"><i class="fas fa-home"></i></span>
                             </div>
-                    }
+                            <div class="card-body">
+                                <h5 class="card-title dc-card-last-four">****-****-****-@card.LastFourDigits</h5>
+                                <h6 class="card-subtitle mb-2 text-muted dc-card-exp">@(card.ExpMonth + "/" + card.ExpYear)</h6>
+                                <h5 class="card-title text-muted dc-card-name">@card.Name</h5>
+                            </div>
+                        </div>
+            }
                             <div class="card d-inline-block" style="width:300px">
                                 <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
                                     <i class="fas fa-plus"></i>
@@ -236,34 +264,34 @@
                     <div class="row">
                         <div id="Addresses" class="col-12 mb-4">
                             @foreach (Model.Address add in Model.DisplayUser.Addresses)
-                        {
-                            <div class="card address d-inline-block" data-id="@add.AddressID" style="width:300px"
-                                 data-line1="@add.Line1" data-line2="@add.Line2"
-                                 data-city="@add.City" data-state="@add.State"
-                                 data-country="@add.Country" data-zip="@add.ZIP">
-                                <div class="card-header">
-                                    <button type="button" onclick="EditAddress(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                    <button type="button" onclick="DeleteAddress(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="card-title">@add.Line1</h6>
-
-                                    @if (add.Line2 != null)
-                                {
-                                    <h6 class="card-title text-muted">@add.Line2</h6>
-                            }
-
-                                    @if (add.State != null)
-                                {
-                                    <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
-                            }
-                            else
-                            {
-                                <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
-                        }
-                                </div>
+                    {
+                        <div class="card address d-inline-block" data-id="@add.AddressID" style="width:300px"
+                             data-line1="@add.Line1" data-line2="@add.Line2"
+                             data-city="@add.City" data-state="@add.State"
+                             data-country="@add.Country" data-zip="@add.ZIP">
+                            <div class="card-header">
+                                <button type="button" onclick="EditAddress(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                <button type="button" onclick="DeleteAddress(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                             </div>
-                    }
+                            <div class="card-body">
+                                <h6 class="card-title">@add.Line1</h6>
+
+                                @if (add.Line2 != null)
+                        {
+                            <h6 class="card-title text-muted">@add.Line2</h6>
+                }
+
+                                @if (add.State != null)
+                        {
+                            <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
+                }
+                else
+                {
+                    <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
+        }
+                            </div>
+                        </div>
+            }
                             <div class="card d-inline-block" style="width:300px">
                                 <div id="AddressCreate" class="card-body create-card" style="line-height: 95px">
                                     <i class="fas fa-plus"></i>
@@ -288,7 +316,7 @@
                     <div class="col-6 offset-3 text-center">
                         @if (Model.DisplayUser.IsDeleted)
                     {
-                        <span class="text-danger">Account Deleted</span>
+                        <input id="UndeleteAccount" type="submit" value="Undelete Account" class="btn btn-warning btn-block">
                 }
                 else
                 {
@@ -544,11 +572,47 @@
                     }
                 });
 
+                $("#UndeleteAccount").click(function () {
+                    $.confirm({
+                        title: 'Undelete Account',
+                        content: 'Are you sure you want to undelete this account?',
+                        type: 'orange',
+                        buttons: {
+                            delete: {
+                                text: 'Undelete',
+                                btnClass: 'btn-orange',
+                                action: function () {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/Model/UndeleteAccount",
+                                        beforeSend: function (xhr) {
+                                            xhr.setRequestHeader("XSRF-TOKEN",
+                                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                                        },
+                                        data: JSON.stringify({
+                                            ID: @Model.DisplayUser.UserID
+                                        }),
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "json",
+                                        success: function (logout) {
+                                            location.reload();
+                                        },
+                                        failure: function (response) {
+                                            alert(response);
+                                        }
+                                    });
+                                }
+                            },
+                            Cancel: function () { }
+                        }
+                    });
+                });
+
                 $("#DeleteAccount").click(function () {
                     $.confirm({
                         title: 'Delete Account',
                         icon: 'fas fa-exclamation',
-                        content: 'Are you sure you want to delete your account?',
+                        content: 'Are you sure you want to delete this account?',
                         autoClose: 'Cancel|5000',
                         type: 'red',
                         buttons: {

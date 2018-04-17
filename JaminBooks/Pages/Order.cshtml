@@ -25,8 +25,12 @@
             width: auto !important;
         }
 
-        .book{
+        .book {
             transition: .3s;
+        }
+
+        .card {
+            margin-top: inherit;
         }
 
         .book:hover {
@@ -64,9 +68,132 @@
             }
             else
             {
+                @if (Model.CurrentUser.IsAdmin)
+                {
+                    <div class="row justify-content-end">
+                        @if (!Model.Order.IsRefunded)
+                        {
+                        <div class="col-3">
+                            <button class="btn btn-info btn-block" onclick="refundOrder()">Refund <i class="fas fa-credit-card ml-2"></i></button>
+                        </div>
+                        }
+                        <div class="col-3">
+                            @if (!Model.Order.IsFulfilled)
+                            {
+                                <button class="btn btn-success btn-block" onclick="fullfillOrder()">Fullfill <i class="fas fa-shipping-fast ml-2"></i></button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-warning btn-block" onclick="fullfillOrder()">Reship <i class="fas fa-shipping-fast ml-2"></i></button>
+                            }
+                        </div>
+                    </div>
+
+                    <script>
+                            function fullfillOrder() {
+                                $.confirm({
+                                    title: 'Fullfill Order',
+                                    content: 'Are you sure you want to mark this order as having shipped?',
+                                    type: 'blue',
+                                    buttons: {
+                                        delete: {
+                                            text: 'Shipped',
+                                            btnClass: 'btn-primary',
+                                            action: function () {
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/Model/FulfillOrder",
+                                                    beforeSend: function (xhr) {
+                                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                                    },
+                                                    data: JSON.stringify({
+                                                        ID: @Model.Order.OrderID
+                                                    }),
+                                                    contentType: "application/json; charset=utf-8",
+                                                    dataType: "json",
+                                                    success: function (logout) {
+                                                        location.reload();
+                                                    },
+                                                    failure: function (response) {
+                                                        alert(response);
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        Cancel: function () { }
+                                    }
+                                });
+                            }
+
+                            function refundOrder() {
+                                $.confirm({
+                                    title: 'Refund Order',
+                                    type: 'blue',
+                                    content: '' +
+                                        '<form action="" class="formName">' +
+                                        '<div class="form-group">' +
+                                        '<span class="mb-3">Are you sure you want to refund this order? The customer will recieve a receipt. Enter card number to complete refund:</span>' +
+                                        '<input type="text" placeholder="Card Number" maxlength=16 class="card form-control w-100 mt-3" required />' +
+                                        '</div>' +
+                                        '</form>',
+                                    buttons: {
+                                        refund: {
+                                            text: 'Refund',
+                                            btnClass: 'btn-info',
+                                            action: function () {
+                                                var card = this.$content.find('.card').val();
+                                                if (!card || card.length != 16) {
+                                                    this.$content.find('.card').css("border-color", "red")
+                                                    return false;
+                                                }
+
+                                                $.ajax({
+                                                        type: "POST",
+                                                        url: "/Model/RefundOrder",
+                                                        beforeSend: function (xhr) {
+                                                            xhr.setRequestHeader("XSRF-TOKEN",
+                                                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                                                        },
+                                                        data: JSON.stringify({
+                                                            ID: @Model.Order.OrderID,
+                                                            CardNumber: card
+                                                        }),
+                                                        contentType: "application/json; charset=utf-8",
+                                                        dataType: "json",
+                                                        success: function (valid) {
+                                                            if (!valid) {
+                                                                refundOrder();
+                                                                $.alert({
+                                                                    title: 'Card Number Invalid',
+                                                                    content: 'Please reenter the card number.',
+                                                                    type: 'red'
+                                                                });
+                                                            }else location.reload();
+                                                        },
+                                                        failure: function (response) {
+                                                            alert(response);
+                                                        }
+                                                    });
+                                            }
+                                        },
+                                        cancel: function () {
+                                        },
+                                    },
+                                    onContentReady: function () {
+                                        var jc = this;
+                                        this.$content.find('form').on('submit', function (e) {
+                                            e.preventDefault();
+                                            jc.$$formSubmit.trigger('click');
+                                        });
+                                    }
+                                });
+                            }
+                    </script>
+                }
             <div class="row">
                 <div class="col-12">
-                    <span class="font-weight-bold h4 mr-3">Order Placed:</span><span class="h5">@Model.Order.OrderDate.ToString("MM/dd/yyyy HH:mm:ss")</span>
+                    <span class="font-weight-bold h4 mr-3">Order Placed:</span><span class="h5">@Model.Order.OrderDate.ToString("M/d/yyyy HH:mm")</span>
                 </div>
             </div>
             <div class="row">
@@ -74,6 +201,22 @@
                     <span class="font-weight-bold h4 mr-3">Receipt Email:</span><span class="h5">@Model.Order.Card.User.Email</span>
                 </div>
             </div>
+            @if (Model.Order.IsFulfilled)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <span class="font-weight-bold h4 mr-3">Order Shipped:</span><span class="h5">@Model.Order.FulfilledDate.Value.ToString("M/d/yyyy")</span>
+                    </div>
+                </div>
+            }
+            @if (Model.Order.IsRefunded)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <span class="font-weight-bold h4 mr-3">Order Refunded:</span><span class="h5">@Model.Order.RefundDate.Value.ToString("M/d/yyyy HH:mm")</span>
+                    </div>
+                </div>
+            }
             }
             <div class="row mt-4">
                 <div class="col-4 d-flex">
