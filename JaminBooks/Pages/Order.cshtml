@@ -1,0 +1,339 @@
+﻿@page
+@using Microsoft.AspNetCore.Routing;
+@model JaminBooks.Pages.OrderModel
+@{
+    ViewData["Title"] = "Order";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
+}
+
+@if (Model.CurrentUser != null)
+{
+    <style>
+        .book-icon {
+            height: 100px;
+            width: auto !important;
+        }
+
+        .book {
+            transition: .3s;
+        }
+
+        .card {
+            margin-top: inherit;
+        }
+
+        .book:hover {
+            transform: scale(1.05);
+        }
+
+        .truncate-ellipsis {
+            display: table;
+            table-layout: fixed;
+            width: 100%;
+            white-space: nowrap;
+        }
+
+            .truncate-ellipsis > * {
+                display: table-cell;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    </style>
+
+    <div class="container body-content">
+        <div class="container mt-5">
+            @if (Model.DisplayThanks)
+            {
+            <div class="row">
+                <div class="col-12">
+                    <h3 class="text-center">Thank you for your order.</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="text-center">A receipt has been emailed to <span class="text-primary font-weight-bold">@Model.Order.Card.User.Email.</span></h5>
+                </div>
+            </div>
+            }
+            else
+            {
+                @if (Model.CurrentUser.IsAdmin)
+                {
+                    <div class="row justify-content-end">
+                        @if (!Model.Order.IsRefunded)
+                        {
+                        <div class="col-3">
+                            <button class="btn btn-info btn-block" onclick="refundOrder()">Refund <i class="fas fa-credit-card ml-2"></i></button>
+                        </div>
+                        }
+                        <div class="col-3">
+                            @if (!Model.Order.IsFulfilled)
+                            {
+                                <button class="btn btn-success btn-block" onclick="fullfillOrder()">Fullfill <i class="fas fa-shipping-fast ml-2"></i></button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-warning btn-block" onclick="fullfillOrder()">Reship <i class="fas fa-shipping-fast ml-2"></i></button>
+                            }
+                        </div>
+                    </div>
+
+                    <script>
+                            function fullfillOrder() {
+                                $.confirm({
+                                    title: 'Fullfill Order',
+                                    content: 'Are you sure you want to mark this order as having shipped?',
+                                    type: 'blue',
+                                    buttons: {
+                                        delete: {
+                                            text: 'Shipped',
+                                            btnClass: 'btn-primary',
+                                            action: function () {
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/Model/FulfillOrder",
+                                                    beforeSend: function (xhr) {
+                                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                                    },
+                                                    data: JSON.stringify({
+                                                        ID: @Model.Order.OrderID
+                                                    }),
+                                                    contentType: "application/json; charset=utf-8",
+                                                    dataType: "json",
+                                                    success: function (logout) {
+                                                        location.reload();
+                                                    },
+                                                    failure: function (response) {
+                                                        alert(response);
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        Cancel: function () { }
+                                    }
+                                });
+                            }
+
+                            function refundOrder() {
+                                $.confirm({
+                                    title: 'Refund Order',
+                                    type: 'blue',
+                                    content: '' +
+                                        '<form action="" class="formName">' +
+                                        '<div class="form-group">' +
+                                        '<span class="mb-3">Are you sure you want to refund this order? The customer will recieve a receipt. Enter card number to complete refund:</span>' +
+                                        '<input type="text" placeholder="Card Number" maxlength=16 class="card form-control w-100 mt-3" required />' +
+                                        '</div>' +
+                                        '</form>',
+                                    buttons: {
+                                        refund: {
+                                            text: 'Refund',
+                                            btnClass: 'btn-info',
+                                            action: function () {
+                                                var card = this.$content.find('.card').val();
+                                                if (!card || card.length != 16) {
+                                                    this.$content.find('.card').css("border-color", "red")
+                                                    return false;
+                                                }
+
+                                                $.ajax({
+                                                        type: "POST",
+                                                        url: "/Model/RefundOrder",
+                                                        beforeSend: function (xhr) {
+                                                            xhr.setRequestHeader("XSRF-TOKEN",
+                                                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                                                        },
+                                                        data: JSON.stringify({
+                                                            ID: @Model.Order.OrderID,
+                                                            CardNumber: card
+                                                        }),
+                                                        contentType: "application/json; charset=utf-8",
+                                                        dataType: "json",
+                                                        success: function (valid) {
+                                                            if (!valid) {
+                                                                refundOrder();
+                                                                $.alert({
+                                                                    title: 'Card Number Invalid',
+                                                                    content: 'Please reenter the card number.',
+                                                                    type: 'red'
+                                                                });
+                                                            }else location.reload();
+                                                        },
+                                                        failure: function (response) {
+                                                            alert(response);
+                                                        }
+                                                    });
+                                            }
+                                        },
+                                        cancel: function () {
+                                        },
+                                    },
+                                    onContentReady: function () {
+                                        var jc = this;
+                                        this.$content.find('form').on('submit', function (e) {
+                                            e.preventDefault();
+                                            jc.$$formSubmit.trigger('click');
+                                        });
+                                    }
+                                });
+                            }
+                    </script>
+                }
+            <div class="row">
+                <div class="col-12">
+                    <span class="font-weight-bold h4 mr-3">Order Placed:</span><span class="h5">@Model.Order.OrderDate.ToString("M/d/yyyy HH:mm")</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <span class="font-weight-bold h4 mr-3">Receipt Email:</span><span class="h5">@Model.Order.Card.User.Email</span>
+                </div>
+            </div>
+            @if (Model.Order.IsFulfilled)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <span class="font-weight-bold h4 mr-3">Order Shipped:</span><span class="h5">@Model.Order.FulfilledDate.Value.ToString("M/d/yyyy")</span>
+                    </div>
+                </div>
+            }
+            @if (Model.Order.IsRefunded)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <span class="font-weight-bold h4 mr-3">Order Refunded:</span><span class="h5">@Model.Order.RefundDate.Value.ToString("M/d/yyyy HH:mm")</span>
+                    </div>
+                </div>
+            }
+            }
+            <div class="row mt-4">
+                <div class="col-4 d-flex">
+                    <div class="card dc-card d-inline-block" style="width:310px">
+                        <div class="card-header">
+                            <h5>Payment</h5>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title dc-card-last-four">****-****-****-@Model.Order.Card.LastFourDigits</h5>
+                            <h6 class="card-subtitle mb-2 text-muted dc-card-exp">@(Model.Order.Card.ExpMonth + "/" + Model.Order.Card.ExpYear)</h6>
+                            <h5 class="card-title text-muted dc-card-name">@Model.Order.Card.Name</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 d-flex">
+                    <div class="card address d-inline-block item" style="width:310px">
+                        <div class="card-header">
+                            <h5>Billing Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">@Model.Order.Card.Address.Line1</h6>
+
+                            @if (Model.Order.Card.Address.Line2 != null)
+                    {
+                        <h6 class="card-title text-muted">@Model.Order.Card.Address.Line2</h6>
+            }
+
+                            @if (Model.Order.Card.Address.State != null)
+                    {
+                        <h6 class="card-title text-muted">@Model.Order.Card.Address.City, @Model.Order.Card.Address.State @Model.Order.Card.Address.ZIP</h6>
+            }
+            else
+            {
+                <h6 class="card-title text-muted">@Model.Order.Card.Address.City, @Model.Order.Card.Address.Country @Model.Order.Card.Address.ZIP</h6>
+    }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 d-flex">
+                    <div class="card address d-inline-block item" style="width:310px">
+                        <div class="card-header">
+                            <h5>Shipping Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">@Model.Order.Address.Line1</h6>
+
+                            @if (Model.Order.Address.Line2 != null)
+                    {
+                        <h6 class="card-title text-muted">@Model.Order.Address.Line2</h6>
+            }
+
+                            @if (Model.Order.Address.State != null)
+                    {
+                        <h6 class="card-title text-muted">@Model.Order.Address.City, @Model.Order.Address.State @Model.Order.Address.ZIP</h6>
+            }
+            else
+            {
+                <h6 class="card-title text-muted">@Model.Order.Address.City, @Model.Order.Address.Country @Model.Order.Address.ZIP</h6>
+    }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-md-12">
+                    <div id="Books">
+                        @foreach (KeyValuePair<Model.Book, dynamic> book in Model.Order.Books)
+                {
+                    <div class="book card w-100 p-1" data-id="@book.Key.BookID" onclick="location.href='\Book?id=@book.Key.BookID'">
+                        <div class="row">
+                            <div class="col-2">
+                                <img class="book-icon" src="@book.Key.LoadImage">
+                            </div>
+                            <div class="col-5 mt-4 truncate-ellipsis">
+                                <h4 class="title">@book.Key.Title</h4>
+                            </div>
+                            <div class="col-3 mt-4">
+                                <h5 class="price">$@(((decimal)new RouteValueDictionary(book.Value)["Price"]).ToString("0.##"))</h5>
+                            </div>
+                            <div class="col-2 mt-4">
+                                <h5 class="quantity">x@(new RouteValueDictionary(book.Value)["Quantity"])</h5>
+                            </div>
+                        </div>
+                    </div>
+        }
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card w-100 p-2">
+                        <div class="row p-2">
+                            <h5 class="col-6">Book Total</h5>
+                            <div class="col-6 text-right">
+                                <span>@Model.BookTotal</span>
+                            </div>
+                        </div>
+                        <div class="row p-2" id="Discount" style="display:none">
+                            <h5 class="col-6">Discount</h5>
+                            <div class="col-6 text-right">
+                                <span>@Model.PercentDiscount</span>
+                            </div>
+                        </div>
+                        <div class="row p-2">
+                            <h5 class="col-6">Shipping</h5>
+                            <div class="col-6 text-right">
+                                <span class="text-success">FREE</span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row p-2">
+                            <h5 class="col-6">Order Total</h5>
+                            <div class="col-6 text-right">
+                                <span><strong>@Model.OrderTotal</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

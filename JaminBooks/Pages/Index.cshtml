@@ -4,6 +4,16 @@
     ViewData["Title"] = "Home page";
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
 }
 
 <div class="container body-content">
@@ -39,10 +49,10 @@
         <div class="col-md-4">
             <h2 class="text-center">Recommended</h2>
             <div class="card">
-                <img src="~/images/love elliot.png" alt="Love, Elliot">
+                <img src="@Model.Reccomended.LoadImage" alt="@Model.Reccomended.Title">
                 <div class="card-container">
-                    <h4><b>Love, Elliot</b></h4>
-                    <a class="btn btn-lg btn-success" href="#">
+                    <h4><b>@Model.Reccomended.Title</b></h4>
+                    <a class="btn btn-lg btn-success" href="\Book?id=@Model.Reccomended.BookID">
                         Shop Now
                     </a>
                 </div>
@@ -51,10 +61,10 @@
         <div class="col-md-4">
             <h2 class="text-center">Best Seller</h2>
             <div class="card">
-                <img src="~/images/love elliot.png" alt="Love, Elliot">
+                <img src="@Model.BestSeller.LoadImage" alt="@Model.BestSeller.Title">
                 <div class="card-container">
-                    <h4><b>Love, Elliot</b></h4>
-                    <a class="btn btn-lg btn-success" href="#">
+                    <h4><b>@Model.BestSeller.Title</b></h4>
+                    <a class="btn btn-lg btn-success" href="\Book?id=@Model.BestSeller.BookID">
                         Shop Now
                     </a>
                 </div>
@@ -63,10 +73,10 @@
         <div class="col-md-4">
             <h2 class="text-center">Popular</h2>
             <div class="card">
-                <img src="~/images/love elliot.png" alt="Love, Elliot">
+                <img src="@Model.MostPopular.LoadImage" alt="@Model.MostPopular.Title">
                 <div class="card-container">
-                    <h4><b>Love, Elliot</b></h4>
-                    <a class="btn btn-lg btn-success" href="#">
+                    <h4><b>@Model.MostPopular.Title</b></h4>
+                    <a class="btn btn-lg btn-success" href="\Book?id=@Model.MostPopular.BookID">
                         Shop Now
                     </a>
                 </div>

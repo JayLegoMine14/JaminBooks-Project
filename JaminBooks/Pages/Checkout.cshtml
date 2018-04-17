@@ -1,0 +1,396 @@
+﻿@page
+@model JaminBooks.Pages.CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
+}
+
+@if (Model.CurrentUser != null)
+{
+
+    <style>
+        .create-card {
+            text-align: center;
+            border: 2px dashed #2b303a;
+            margin: 10px;
+            font-size: 3rem;
+            background-color: #ccc;
+            transition: .3s;
+        }
+
+            .create-card:hover {
+                background-color: #aaa;
+            }
+
+        .owl-carousel .card {
+            margin: 5px;
+        }
+
+        .center .card:not(.create) {
+            border: 5px solid green;
+            margin: 0;
+        }
+
+        .owl-nav.disabled {
+            display: block !important;
+        }
+
+        .fade-in {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            z-index: 1000;
+            background: linear-gradient(90deg, #f0e7d8 0%, rgba(255,255,255,0) 100%);
+        }
+
+        .fade-out {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            z-index: 1000;
+            right: 15px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #f0e7d8 100%);
+        }
+    </style>
+
+    <span id="UserID" class="d-none">@Model.CurrentUser.UserID</span>
+    <div class="container body-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-12">
+                    <div class="row mt-3">
+                        <div class="col-11">
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <h3>Select Payment</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="Cards" class="col-12 mb-4 owl-carousel owl-theme">
+                                    @foreach (Model.Card card in Model.CurrentUser.Cards)
+                                    {
+                                        <div class="card dc-card d-inline-block item" data-id="@card.CardID" style="width:300px"
+                                             data-name="@card.Name"
+                                             data-last-four="@card.LastFourDigits" data-month="@card.ExpMonth"
+                                             data-year="@card.ExpYear" data-line1="@card.Address.Line1"
+                                             data-line2="@card.Address.Line2" data-city="@card.Address.City"
+                                             data-state="@card.Address.State" data-country="@card.Address.Country"
+                                             data-zip="@card.Address.ZIP">
+                                            <div class="card-header" style="height:50px">
+                                                <span class="float-right text-dark show-address popup" data-tooltip-content="#AddressPopup"><i class="fas fa-home"></i></span>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title dc-card-last-four">****-****-****-@card.LastFourDigits</h5>
+                                                <h6 class="card-subtitle mb-2 text-muted dc-card-exp">@(card.ExpMonth + "/" + card.ExpYear)</h6>
+                                                <h5 class="card-title text-muted dc-card-name">@card.Name</h5>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="card d-inline-block create item" style="width:300px">
+                                        <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @await Html.PartialAsync("_CheckoutCard")
+
+                    <div class="row mb-3">
+                        <div class="col-11">
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <h3>Select Shipping Address</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="Addresses" class="col-12 mb-4 owl-carousel owl-theme">
+                                    @foreach (Model.Address add in Model.CurrentUser.AllAddresses)
+                                    {
+                                        <div class="card address d-inline-block item" data-id="@add.AddressID" style="width:300px"
+                                             data-line1="@add.Line1" data-line2="@add.Line2"
+                                             data-city="@add.City" data-state="@add.State"
+                                             data-country="@add.Country" data-zip="@add.ZIP">
+                                            <div class="card-body">
+                                                <h6 class="card-title">@add.Line1</h6>
+
+                                                @if (add.Line2 != null)
+                                                {
+                                                    <h6 class="card-title text-muted">@add.Line2</h6>
+                                                }
+
+                                                @if (add.State != null)
+                                                {
+                                                    <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
+                                                }
+                                                else
+                                                {
+                                                    <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="card d-inline-block create item" style="width:300px">
+                                        <div id="AddressCreate" class="card-body create-card" style="line-height: 70px">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @await Html.PartialAsync("_CheckoutAddress")
+
+                </div>
+                <div class="col-4 mt-5">
+                    <div class="card w-100 p-2">
+                        <h3>Summary</h3>
+                        <hr />
+                        <div class="row p-2">
+                            <h5 class="col-6">Book Total</h5>
+                            <div class="col-6 text-right">
+                                <span>@Model.BookTotal</span>
+                            </div>
+                        </div>
+                        @if (Model.PercentDiscount != "")
+                        {
+                            <div class="row p-2" id="Discount" style="display:none">
+                                <h5 class="col-6">Discount</h5>
+                                <div class="col-6 text-right">
+                                    <span>@Model.PercentDiscount</span>
+                                </div>
+                            </div>
+                        }
+                        <div class="row p-2">
+                            <h5 class="col-6">Shipping</h5>
+                            <div class="col-6 text-right">
+                                <span class="text-success">FREE</span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row p-2">
+                            <h5 class="col-6">Order Total</h5>
+                            <div class="col-6 text-right">
+                                <span><strong>@Model.OrderTotal</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <button id="PlaceOrder" class="btn btn-dark-red text-white btn-lg btn-block">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ReviewModal" data-id="-1" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h3 class="text-center">Please Review Your Order</h3>
+                        </div>
+                    </div>
+                    <div class="row"><h5 class="col-8 offset-2">Payment</h5></div>
+                    <div class="row">
+                        <div id="ReviewCard" class="col-8 offset-2 d-flex">
+
+                        </div>
+                    </div>
+                    <div class="row"><h5 class="col-8 offset-2">Shipping Address</h5></div>
+                    <div class="row">
+                        <div id="ReviewAddress" class="col-8 offset-2 d-flex">
+
+                        </div>
+                    </div>
+                    <div class="row"><h5 class="col-8 offset-2">Total Billing</h5></div>
+                    <div class="row">
+                        <div class="card w-100 p-2 col-6 offset-3">
+                            <div class="row p-2">
+                                <h5 class="col-6">Book Total</h5>
+                                <div class="col-6 text-right">
+                                    <span>@Model.BookTotal</span>
+                                </div>
+                            </div>
+                            @if (Model.PercentDiscount != "")
+            {
+                <div class="row p-2" id="Discount" style="display:none">
+                    <h5 class="col-6">Discount</h5>
+                    <div class="col-6 text-right">
+                        <span>@Model.PercentDiscount</span>
+                    </div>
+                </div>
+}
+                            <div class="row p-2">
+                                <h5 class="col-6">Shipping</h5>
+                                <div class="col-6 text-right">
+                                    <span class="text-success">FREE</span>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row p-2">
+                                <h5 class="col-6">Order Total</h5>
+                                <div class="col-6 text-right">
+                                    <span><strong>@Model.OrderTotal</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3"><h6 class="col-8 offset-2 text-center">Enter CVC to confirm transaction.</h6></div>
+                    <div class="row">
+                        <div class="col-6 offset-3 text-center">
+                            <div class="input-group mb-3">
+                                <input type="text" id="ReviewCVC" class="form-control" maxlength="3" placeholder="CVC">
+                                <div class="input-group-append">
+                                    <button id="ConfirmPlaceOrder" class="btn btn-dark-red text-white" type="button">Place Order</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#Cards, #Addresses').owlCarousel({
+                center: true,
+                items: 2,
+                loop: true,
+                dots: false,
+                nav: true,
+                navText: ["<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-left'></i></div>", "<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-right'></i></div>"],
+                margin: 5,
+                onInitialized: function () {
+                    $("#CardCreate").unbind("click");
+                    $("#CardCreate").click(function () {
+                        $("#CardModal").modal("show");
+                    });
+                    $("#AddressCreate").unbind("click");
+                    $("#AddressCreate").click(function () {
+                        $("#AddressModal").modal("show");
+                    });
+                }
+            });
+            $('#Cards, #Addresses').prepend('<div class="fade-in"></div><div class="fade-out" ></div>')
+
+            $("#PlaceOrder").click(function () {
+                var cardID = $("#Cards .center").find(".dc-card").data("id");
+                var addressID = $("#Addresses .center").find(".address").data("id");
+                if (cardID == undefined) {
+                    $.alert({
+                        title: 'Select Payment',
+                        content: 'Please select a payment method.',
+                        type: 'red'
+                    });
+                } else if (addressID == undefined) {
+                    $.alert({
+                        title: 'Select Shipping Address',
+                        content: 'Please select a shipping address.',
+                        type: 'red'
+                    });
+                } else {
+                    $("#ReviewCard").html($("#Cards .center .dc-card").clone())
+                    $("#ReviewAddress").html($("#Addresses .center .address").clone())
+                    $("#ReviewModal").modal("show");
+                }
+            });
+
+            $("#ConfirmPlaceOrder").click(function () {
+                $("#ReviewCVC").removeAttr("style");
+                var CVC = $("#ReviewCVC").val();
+                if (CVC == "") {
+                    $("#ReviewCVC").css("border-color", "red");
+                } else {
+                    var data = {
+                        CVC: CVC,
+                        CardID: $("#ReviewCard .dc-card").data("id"),
+                        AddressID: $("#ReviewAddress .address").data("id")
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "Model/CreateOrder",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (orderid) {
+                            if (orderid == "") {
+                                $.alert({
+                                    title: 'Invalid CVC',
+                                    content: 'Please re-enter your CVC.',
+                                    type: 'red'
+                                });
+                            } else {
+                                var form = $('<form></form>');
+
+                                form.attr("method", "post");
+                                form.attr("action", "\Order");
+
+                                var field = $('<input></input>');
+                                field.attr("type", "hidden");
+                                field.attr("name", "id");
+                                field.attr("value", orderid);
+
+                                form.append(field);
+
+                                var thanks = $('<input></input>');
+                                thanks.attr("type", "hidden");
+                                thanks.attr("name", "thanks");
+                                thanks.attr("value", "true");
+
+                                form.append(thanks);
+
+                                var af = $('@Html.AntiForgeryToken()');
+                                form.append(af);
+
+                                $(document.body).append(form);
+                                form.submit();
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response);
+                        }
+                    });
+                }
+            })
+
+            $(window).unload(function () {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "Model/ClearReservations",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+            });
+        });
+    </script>
+}
+

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JaminBooks.Model;
+using Microsoft.AspNetCore.Http;
 using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,6 +38,17 @@ namespace JaminBooks.Pages
         [Route("Security/Logout")]
         public void Logout()
         {
+            var checkingOut = HttpContext.Session.GetString("CheckingOut");
+            if(checkingOut != null && Convert.ToBoolean(checkingOut))
+            {
+                Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+                foreach (KeyValuePair<Book, int> item in currentUser.GetCart().AsEnumerable())
+                {
+                    item.Key.Quantity += item.Value;
+                    item.Key.Save();
+                }
+            }
+
             Authentication.LogoutCurrentUser(HttpContext);
             Response.Redirect("/Index");
         }

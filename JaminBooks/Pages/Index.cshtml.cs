@@ -17,10 +17,16 @@ namespace JaminBooks.Pages
     public class IndexModel : PageModel
     {
         public User CurrentUser;
+        public Book Reccomended;
+        public Book MostPopular;
+        public Book BestSeller;
 
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
+            Reccomended = BookPreviews.GetReccomended(CurrentUser);
+            MostPopular = BookPreviews.GetMostPopular();
+            BestSeller = BookPreviews.GetBestSeller();
         }
     }
 }

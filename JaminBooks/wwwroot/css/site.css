@@ -18,9 +18,38 @@ body {
     line-height: 1.4;
 }
 
+#AdminSidebar {
+    background-color: #2b303a;
+}
+
+#AdminSidebar .nav-link{
+    color: white;
+    font-size: 1.2em;
+}
+
+    #AdminSidebar hr{
+        margin: 5px;
+    }
+
+    #AdminSidebar .nav-item {
+        border-top-right-radius: 10px;
+        margin-bottom: 4px;
+    }
+
+        #AdminSidebar .nav-item:hover {
+            background-color: #22262d;
+            transition: background-color .3s;
+            border-bottom: 4px solid #a31631;
+            margin-bottom: 0px;
+        }
+
 /* Make .svg files in the carousel display properly in older browsers */
 .carousel-inner .item img[src$=".svg"] {
     width: 100%;
+}
+
+.sticky-top {
+    min-height: 100vh;
 }
 
 /* QR code generator */
@@ -191,6 +220,14 @@ body {
 
 .white-text {
     color: white !important;
+}
+
+.fa-layers-counter {
+    padding: 0.09em;
+    right: -10px;
+    top: -10px;
+    font-size: 2.0em;
+    background-color: #650d1b;
 }
 
 footer {

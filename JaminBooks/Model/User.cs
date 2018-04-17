@@ -1,7 +1,9 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static JaminBooks.Model.SQL;
@@ -21,12 +23,77 @@ namespace JaminBooks.Model
         public bool IsConfirmed = false;
         public string ConfirmationCode;
         public string Password;
-        public byte[] Icon;
+        public byte[] Icon { private get; set; }
+
+        public bool HasIcon
+        {
+            get
+            {
+                return Icon != null;
+            }
+        }
+
+        public string LastFirstName
+        {
+            get
+            {
+                return LastName + ", " + FirstName;
+            }
+        }
+
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
+
+        public string LoadImage
+        {
+            get
+            {
+                if (Icon == null) return "/images/user.png";
+                var filename = Authentication.Hash(Convert.ToBase64String(Icon)) + ".png";
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "temp");
+                Directory.CreateDirectory(path);
+                path = Path.Combine(path, filename);
+                if (!File.Exists(path))
+                {
+                    using (MemoryStream ms = new MemoryStream(Icon))
+                    {
+                        using (FileStream fs = new FileStream(path, FileMode.Create, System.IO.FileAccess.Write))
+                        {
+                            ms.CopyTo(fs);
+                            fs.Flush();
+                        }
+                    }
+                }
+
+                return "/images/temp/" + filename;
+            }
+        }
+
+        public List<Order> Orders
+        {
+            get
+            {
+                return Order.GetAllByUser(this.UserID);
+            }
+        }
 
         public List<Address> Addresses {
             get
             {
                 return Address.GetAddresses(this.UserID);
+            }
+        }
+
+        public List<Address> AllAddresses
+        {
+            get
+            {
+                return Address.GetAddressesIncludingCards(this.UserID);
             }
         }
 
@@ -128,6 +195,53 @@ namespace JaminBooks.Model
             p.AddUser(this.UserID);
         }
 
+        public bool CartContains(int BookID)
+        {
+            DataTable bookresults = SQL.Execute("uspGetCart", new Param("UserID", UserID));
+            List<Book> books = Book.GetBooks(bookresults);
+            return books.Any(b => b.BookID == BookID);
+        }
+
+        public Dictionary<Book, int> GetCart()
+        {
+            DataTable bookresults = SQL.Execute("uspGetCart", new Param("UserID", UserID));
+            List<Book> books = Book.GetBooks(bookresults);
+
+            Dictionary<Book, int> cartItems = new Dictionary<Book, int>();
+            int i = 0;
+            foreach (Book book in books)
+            {
+                book.Publisher.Address = null;
+                book.Publisher.ContactFirstName = "";
+                book.Publisher.ContactLastName = "";
+                book.Publisher.Phone = null;
+                book.Cost = 0;
+                cartItems.Add(book, Convert.ToInt32(bookresults.Rows[i++]["QuantityInCart"]));
+            }
+
+            return cartItems;
+        }
+
+        public void AddBookToCart(int BookID)
+        {
+            SQL.Execute("uspAddToCart", new Param("UserID", UserID), new Param("BookID", BookID));
+        }
+
+        public void RemoveBookFromCart(int BookID)
+        {
+            SQL.Execute("uspRemoveFromCart", new Param("UserID", UserID), new Param("BookID", BookID));
+        }
+
+        public void EmptyCart()
+        {
+            SQL.Execute("uspEmptyCart", new Param("UserID", UserID));
+        }
+
+        public void UpdateQuantityInCart(int BookID, int Quantity)
+        {
+            SQL.Execute("uspUpdateQuantityInCart", new Param("UserID", UserID), new Param("BookID", BookID), new Param("Quantity", Quantity));
+        }
+
         public static List<User> GetUsers()
         {
             DataTable dt = SQL.Execute("uspGetUsers");
@@ -144,7 +258,26 @@ namespace JaminBooks.Model
                     (Boolean)dr["IsAdmin"],
                     (Boolean)dr["IsConfirmed"],
                     (String)dr["ConfirmationCode"],
-                    (byte[])dr["Icon"]));
+                    dr["Icon"] == DBNull.Value ? null : (byte[])dr["Icon"]));
+            return users;
+        }
+
+        public static List<User> getUsers(DataTable dt)
+        {
+            List<User> users = new List<User>();
+            foreach (DataRow dr in dt.Rows)
+                users.Add(new User(
+                    (int)dr["UserID"],
+                    (String)dr["FirstName"],
+                    (String)dr["LastName"],
+                    (DateTime)dr["CreationDate"],
+                    (String)dr["Password"],
+                    (String)dr["Email"],
+                    (Boolean)dr["IsDeleted"],
+                    (Boolean)dr["IsAdmin"],
+                    (Boolean)dr["IsConfirmed"],
+                    (String)dr["ConfirmationCode"],
+                    dr["Icon"] == DBNull.Value ? null : (byte[])dr["Icon"]));
             return users;
         }
 

@@ -98,7 +98,7 @@ namespace JaminBooks.Model
 
         private static List<Address> GetAddresses(int UserID, string proc)
         {
-            DataTable dt = SQL.Execute("uspGetAddresses", new Param("UserID", UserID));
+            DataTable dt = SQL.Execute(proc, new Param("UserID", UserID));
             List<Address> addresses = new List<Address>();
             foreach (DataRow dr in dt.Rows)
                 addresses.Add(new Address(
