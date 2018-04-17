@@ -54,8 +54,7 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Author</label>
                         <div class="col-5">
-                            <select id="Authors" class="form-control">
-                                <option value="-1">Author</option>
+                            <select id="Authors" class="form-control" multiple>
                             </select>
                         </div>
                         <div class="col-4">
@@ -90,7 +89,7 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Publisher</label>
                         <div class="col-5">
-                            <select id="Publisher" class="form-control">
+                            <select id="Publisher" class="form-control" multiple>
                                 <option value="-1">Publisher</option>
                             </select>
                         </div>
@@ -113,6 +112,11 @@
                                 <input type="text" class="form-control" placeholder="Address" required name="Address" />
                             </div>
                         </div>
+
+
+                        <!--Add Address fields-->
+
+
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">Phone</label>
                             <div class="col-9">
@@ -148,8 +152,11 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Category</label>
                         <div class="col-5">
-                            <select id="BookCat" class="form-control">
-                                <option value="-1">Category...</option>
+                            <select id="BookCat" class="form-control" multiple>
+                                @foreach(Model.Category c in Model.Book.Categories)
+                                {
+                                    @Html.Raw("<option " + (Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
+                                }
                             </select>
                         </div>
                         <div class="col-4">
@@ -190,13 +197,16 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Customer Price</label>
                         <div class="col-9">
-                            <input type="number" class="form-control" step="0.1" required name="Price" value="@(Model.Book == null ? 0 : Model.Book.Price)" />
+                            <input type="number" class="form-control" step="0.1" required name="Price" value="@(Model.Book == null ? "0.00" : Model.Book.Price.ToString("0.00"))" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-3 col-form-label">Wholesale Cost</label>
-                        <div class="col-9">
-                            <input type="number" class="form-control" step="0.1" required name="Cost" value="@(Model.Book == null ? 0 : Model.Book.Cost)" />
+                        <label class="col-3 col-form-label">Cost</label>
+                        <div class="input-group col-9">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">$</div>
+                            </div>
+                            <input type="number" class="form-control" step="0.1" required name="Cost" value="@(Model.Book == null ? "0.00" : Model.Book.Cost.ToString("0.00"))" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -224,33 +234,39 @@
 </div>
 <script>
     $(document).ready(function () {
-        $.ajax({
-            type: "POST",
-            url: "Model/GetBookCategories",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("XSRF-TOKEN",
-                    $('input:hidden[name="__RequestVerificationToken"]').val());
-            },
-            success: function (response) {
-                response = JSON.parse(response);
-                $.each(response, function (key, value) {
-                    $("#BookCat").append("<option value=" + key + ">" + value + "</option>")
+        $("#SaveBook").click(function () {
+            if (validate()) {
+
+                var data = {
+                    BookID: $("#BookID").val(),
+                    UserID: $("#UserID").val()
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "Model/SaveBook",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+
+                    },
+                    failure: function (response) {
+                        location.href = "\Error";
+                    }
                 });
             }
         });
+    });
 
+    function validate() {
+        return true;
 
-        $("#BookCat").change(function () {
-            var id = $("#BookCat").val();
-            var name = $("#BookCat option:selected").text();
-
-            if (id == -1) return;
-            $("#SearchCats").append('<span class="badge badge-primary m-1" data-id='
-                + id + '><i class="fas fa-times mr-1" onclick="removeCat(this)"></i>' + name + '</span>');
-
-            $("#BookCat option:selected").hide();
-            $("#BookCat").val(-1);
-        });
+    }
 </script>
 
 <script type="text/javascript">
