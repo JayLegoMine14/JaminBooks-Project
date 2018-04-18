@@ -29,7 +29,7 @@ namespace JaminBooks.Pages.Admin
             DisplayColumns.Add("Email");
             DisplayColumns.Add("Name");
             DisplayColumns.Add("CreationDate");
-            DisplayColumns.Add("Deleted");
+            DisplayColumns.Add("Enabled");
 
             SearchColumns.Add("UserID", "User ID");
             SearchColumns.Add("Email", "Email");
@@ -44,7 +44,7 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("State", "State");
             SearchColumns.Add("Country", "Country");
             SearchColumns.Add("ZIP", "ZIP");
-            SearchColumns.Add("IsDeleted", "Is Deleted");
+            SearchColumns.Add("IsEnabled", "Is Enabled");
             SearchColumns.Add("IsConfirmed", "Is Confirmed");
             SearchColumns.Add("IsAdmin", "Is Admin");
         }

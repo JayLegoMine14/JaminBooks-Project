@@ -13,6 +13,7 @@ namespace JaminBooks.Pages
     {
         public User CurrentUser;
         public Order Order;
+        public List<int> Children;
 
         public string BookTotal;
         public string PercentDiscount;
@@ -66,6 +67,7 @@ namespace JaminBooks.Pages
             this.BookTotal = "$" + BookTotal.ToString("0.00");
             this.PercentDiscount = Discount == 0 ? "" : Discount + "%";
             this.OrderTotal = "$" + OrderTotal.ToString("0.00");
+            Children = order.Children;
         }
     }
 }

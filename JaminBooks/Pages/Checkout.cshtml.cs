@@ -17,7 +17,7 @@ namespace JaminBooks.Pages
         public string PercentDiscount;
         public string OrderTotal;
 
-        public void OnGet()
+        public void OnGet(string code)
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
             if (CurrentUser == null || CurrentUser.GetCart().Count == 0 || !CurrentUser.IsConfirmed)
@@ -37,7 +37,12 @@ namespace JaminBooks.Pages
                     BookTotal += item.Key.Price * item.Value;
                 }
 
-                if (BookTotal > 75.00m) Discount = 10;
+                if (!String.IsNullOrEmpty(code))
+                    Discount = Promotions.GetDiscount(code);
+
+                var totalDiscount = Promotions.GetDiscount(BookTotal);
+                if (totalDiscount > Discount) Discount = totalDiscount;
+
                 OrderTotal = BookTotal - (BookTotal * (Discount / 100m));
 
                 this.BookTotal = "$" + BookTotal.ToString("0.00");

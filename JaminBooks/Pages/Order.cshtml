@@ -71,20 +71,20 @@
                 @if (Model.CurrentUser.IsAdmin)
                 {
                     <div class="row justify-content-end">
-                        @if (!Model.Order.IsRefunded)
+                        @if (!Model.Order.IsRefunded && Model.Order.ParentOrderID == null)
                         {
                         <div class="col-3">
                             <button class="btn btn-info btn-block" onclick="refundOrder()">Refund <i class="fas fa-credit-card ml-2"></i></button>
                         </div>
                         }
                         <div class="col-3">
-                            @if (!Model.Order.IsFulfilled)
+                            @if (!Model.Order.IsFulfilled && !Model.Order.IsRefunded && Model.Order.ParentOrderID == null)
                             {
                                 <button class="btn btn-success btn-block" onclick="fullfillOrder()">Fullfill <i class="fas fa-shipping-fast ml-2"></i></button>
                             }
-                            else
+                            else if(!Model.Order.IsRefunded && Model.Order.ParentOrderID == null)
                             {
-                                <button class="btn btn-warning btn-block" onclick="fullfillOrder()">Reship <i class="fas fa-shipping-fast ml-2"></i></button>
+                                <button class="btn btn-warning btn-block" onclick="reshipOrder()">Reship <i class="fas fa-shipping-fast ml-2"></i></button>
                             }
                         </div>
                     </div>
@@ -116,7 +116,65 @@
                                                         location.reload();
                                                     },
                                                     failure: function (response) {
-                                                        alert(response);
+                                                        location.href = "\Error"
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        Cancel: function () { }
+                                    }
+                                });
+                            }
+
+                            function reshipOrder() {
+                                $.confirm({
+                                    title: 'Reship Order',
+                                    content: 'Are you sure you want to reship this order?',
+                                    type: 'orange',
+                                    buttons: {
+                                        delete: {
+                                            text: 'Ship',
+                                            btnClass: 'btn-orange',
+                                            action: function () {
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/Model/ReshipOrder",
+                                                    beforeSend: function (xhr) {
+                                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                                    },
+                                                    data: JSON.stringify({
+                                                        ID: @Model.Order.OrderID
+                                                    }),
+                                                    contentType: "application/json; charset=utf-8",
+                                                    dataType: "json",
+                                                    success: function (response) {
+                                                        if (response[0] == 0) {
+                                                            $.alert({
+                                                                title: 'Too Many Reshipings',
+                                                                content: 'The following order has already been reshipped twice and cannot be reshipped again.',
+                                                                type: 'red'
+                                                            });
+                                                        }
+                                                        else if (response[0] == 1) {
+                                                            location.href = "\Order?id=" + response[1]
+                                                        } else {
+
+                                                            content = 'There is insufficient stock of the following books:<ul>';
+                                                            response[1].forEach(function (title) {
+                                                                    content += "<li>" + title + "</li>";
+                                                            });
+                                                            content += "</ul>"
+
+                                                            $.alert({
+                                                                title: 'Insufficient Stock',
+                                                                content: content,
+                                                                type: 'red'
+                                                            });
+                                                        }
+                                                    },
+                                                    failure: function (response) {
+                                                        location.href = "\Error"
                                                     }
                                                 });
                                             }
@@ -172,7 +230,7 @@
                                                             }else location.reload();
                                                         },
                                                         failure: function (response) {
-                                                            alert(response);
+                                                            location.href = "\Error"
                                                         }
                                                     });
                                             }
@@ -201,7 +259,20 @@
                     <span class="font-weight-bold h4 mr-3">Receipt Email:</span><span class="h5">@Model.Order.Card.User.Email</span>
                 </div>
             </div>
-            @if (Model.Order.IsFulfilled)
+            @if(Model.Order.ParentOrderID != null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <span class="font-weight-bold h4 mr-3">Order Reshipped:</span><span class="h5">@Model.Order.FulfilledDate.Value.ToString("M/d/yyyy")</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span class="font-weight-bold h4 mr-3">Original Order:</span><span class="h5"><a href="\Order?id=@Model.Order.ParentOrderID">#@Model.Order.ParentOrderID</a></span>
+                    </div>
+                </div>
+
+            }else if (Model.Order.IsFulfilled)
             {
                 <div class="row">
                     <div class="col-12">
@@ -209,11 +280,25 @@
                     </div>
                 </div>
             }
-            @if (Model.Order.IsRefunded)
+            @if (Model.Order.IsRefunded && Model.Order.ParentOrderID == null)
             {
                 <div class="row">
                     <div class="col-12">
                         <span class="font-weight-bold h4 mr-3">Order Refunded:</span><span class="h5">@Model.Order.RefundDate.Value.ToString("M/d/yyyy HH:mm")</span>
+                    </div>
+                </div>
+            }
+            @if (Model.Children.Count > 0)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <span class="font-weight-bold h4 mr-3">Reshipping Orders:</span>
+                        <span class="h5">
+                        @foreach(int id in Model.Children)
+                        {
+                            <a href="\Order?id=@id">#@id</a> 
+                        }
+                        </span>
                     </div>
                 </div>
             }
@@ -312,7 +397,7 @@
                                 <span>@Model.BookTotal</span>
                             </div>
                         </div>
-                        <div class="row p-2" id="Discount" style="display:none">
+                        <div class="row p-2 @(Model.Order.PercentDiscount == 0 ? "d-none" : "")" id="Discount" >
                             <h5 class="col-6">Discount</h5>
                             <div class="col-6 text-right">
                                 <span>@Model.PercentDiscount</span>

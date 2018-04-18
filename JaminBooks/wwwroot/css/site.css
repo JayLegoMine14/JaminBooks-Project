@@ -1,4 +1,4 @@
-body {
+﻿body {
     padding-top: 95px;
     color: #020202;
     background-color: #f0e7d8;
@@ -24,7 +24,7 @@ body {
 
 #AdminSidebar .nav-link{
     color: white;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
     #AdminSidebar hr{
@@ -281,6 +281,33 @@ footer {
         footer ul.quick-links li:hover a i {
             font-weight: 700;
         }
+
+input[type=checkbox].sleek-checkbox {
+    display: none !important;
+}
+
+    input[type=checkbox].sleek-checkbox + label {
+        height: 30px;
+    }
+
+        input[type=checkbox].sleek-checkbox + label:before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-bottom: -7px;
+            background-color: #F5F5F5;
+            box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+        }
+
+    input[type=checkbox].sleek-checkbox:checked + label:before {
+        content: "✓";
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+        font-size: 22px;
+        color: black;
+        text-align: center;
+    }
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {

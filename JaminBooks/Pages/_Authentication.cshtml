@@ -140,14 +140,6 @@
             }
         });
 
-        $('#authenticationModal').on('hidden.bs.modal', function () {
-            $("#LoginRedirectLocation").remove();
-            $("#Email").removeAttr("style");
-            $("#Password").removeAttr("style");
-            $("#Email").val("");
-            $("#Password").val("");
-        })
-
         $("#RegisterView").click(function () {
             if (!$("#RegistrationDiv").is(":visible") || !$("#RegistrationDiv").height() > 0) {
                 $("#loginErrorMsg").hide();
@@ -166,6 +158,8 @@
                 $("#loginErrorMsg").hide();
                 $("#Email").removeAttr("style");
                 $("#Password").removeAttr("style");
+                $("#Email").val("");
+                $("#Password").val("");
                 showLogin();
         })
 
@@ -208,7 +202,7 @@
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
@@ -279,10 +273,8 @@
                                 dataType: "json",
                                 success: function (response) {
                                     var loggedin = JSON.parse(response);
-                                    if (loggedin == 1) {
+                                    if (loggedin > 0) {
                                         location.reload();
-                                    }else if (loggedin == 2) {
-                                        $("#RegEmail").css("border-color", "red");
                                     } else {
                                         $.alert({
                                             title: 'Error',
@@ -293,7 +285,7 @@
                                     }
                                 },
                                 failure: function (response) {
-                                    alert(response);
+                                    location.href = "\Error"
                                 }
                             });
                         } else {
@@ -316,7 +308,7 @@
                         }
                     },
                     failure: function (response) {
-                        alert(response);
+                        location.href = "\Error"
                     }
                 });
             }

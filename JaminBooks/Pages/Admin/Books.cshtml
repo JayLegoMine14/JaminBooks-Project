@@ -232,7 +232,7 @@
                 }
             }
             addHRListeners();
-            showFilters();
+            showASButtons();
         }
 
         loadItems();
@@ -254,6 +254,7 @@
 
         if (loading || loaded) return;
         $("#LoadIcon").show();
+        $("#ResultCount").text("-");
         if (!reset) {
             loading = true;
         }
@@ -350,7 +351,7 @@
                 $("#LoadIcon").hide();
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }
@@ -381,7 +382,7 @@
                                 $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-danger delete-btn" onclick="deleteBook(event, this)"><i class="fas fa-trash"></i></button>');
                             },
                             failure: function (response) {
-                                alert(response);
+                                location.href = "\Error"
                             }
                         });
                     }
@@ -420,7 +421,7 @@
                                 $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-warning undelete-btn" onclick="undeleteBook(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
                             },
                             failure: function (response) {
-                                alert(response);
+                                location.href = "\Error"
                             }
                         });
                     }
@@ -430,6 +431,11 @@
         });
         event.stopPropagation();
         return false;
+    }
+
+    function showASButtons() {
+        $("#SearchBox").hide();
+        $("#AS").fadeIn();
     }
 
     //Show the advanced search options

@@ -15,7 +15,17 @@ namespace JaminBooks.Model
         public string Comment;
         public int BookID;
         public int UserID;
+        public bool Hidden;
         public DateTime CreationDate { get; private set; } = DateTime.Now;
+        private List<int> Flags = new List<int>();
+
+        public List<int> FlagUsers
+        {
+            get
+            {
+                return Flags.ToList();
+            }
+        }
 
         public string FormatedDate
         {
@@ -49,6 +59,13 @@ namespace JaminBooks.Model
                 this.BookID = (int)dt.Rows[0]["BookID"];
                 this.UserID = (int)dt.Rows[0]["UserID"];
                 this.CreationDate = (DateTime)dt.Rows[0]["CreationDate"];
+                this.Hidden = (bool)dt.Rows[0]["Hidden"];
+
+                DataTable flags = SQL.Execute("uspGetFlagsByRating", new Param("RatingID", RatingID));
+                foreach(DataRow dr in flags.Rows)
+                {
+                    this.Flags.Add((int)dr["UserID"]);
+                }
             }
             else
             {
@@ -57,7 +74,7 @@ namespace JaminBooks.Model
 
         }
 
-        private Rating(int RatingID, int bRating, string Comment, int BookID, int UserID, DateTime CreationDate)
+        private Rating(int RatingID, int bRating, string Comment, int BookID, int UserID, DateTime CreationDate, bool Hidden)
         {
             this.RatingID = RatingID;
             this.RatingValue = bRating;
@@ -65,6 +82,13 @@ namespace JaminBooks.Model
             this.BookID = BookID;
             this.UserID = UserID;
             this.CreationDate = CreationDate;
+            this.Hidden = Hidden;
+
+            DataTable flags = SQL.Execute("uspGetFlagsByRating", new Param("RatingID", RatingID));
+            foreach (DataRow dr in flags.Rows)
+            {
+                this.Flags.Add((int)dr["UserID"]);
+            }
         }
 
         public void Save()
@@ -74,7 +98,8 @@ namespace JaminBooks.Model
                 new Param("Rating", RatingValue),
                 new Param("Comment", Comment),
                 new Param("BookID", BookID),
-                new Param("UserID", UserID)
+                new Param("UserID", UserID),
+                new Param("Hidden", Hidden)
                 );
 
             if (dt.Rows.Count > 0)
@@ -83,8 +108,26 @@ namespace JaminBooks.Model
 
         public void Delete()
         {
+            DeleteFlags();
             DataTable dt = SQL.Execute("uspDeleteRating", new Param("RatingID", RatingID));
             RatingID = -1;
+        }
+
+        public void AddFlag(int userID)
+        {
+            SQL.Execute("uspSaveFlag",
+                new Param("UserID", userID),
+                new Param("RatingID", RatingID));
+        }
+
+        public void DeleteFlags()
+        {
+            SQL.Execute("uspDeleteFlags", new Param("RatingID", RatingID));
+        }
+
+        public bool hasFlagged(int userID)
+        {
+            return Flags.Contains(userID);
         }
 
         public static List<Rating> GetRatings(int BookID)
@@ -98,7 +141,25 @@ namespace JaminBooks.Model
                     dr["Comment"] != DBNull.Value ? (String)dr["Comment"] : "",
                     (int)dr["BookID"],
                     (int)dr["UserID"],
-                    (DateTime)dr["CreationDate"]
+                    (DateTime)dr["CreationDate"],
+                    (bool)dr["Hidden"]
+                    ));
+            return ratings;
+        }
+
+        public static List<Rating> GetFlagged()
+        {
+            DataTable dt = SQL.Execute("uspGetFlagged");
+            List<Rating> ratings = new List<Rating>();
+            foreach (DataRow dr in dt.Rows)
+                ratings.Add(new Rating(
+                    (int)dr["RatingID"],
+                    (int)dr["Rating"],
+                    dr["Comment"] != DBNull.Value ? (String)dr["Comment"] : "",
+                    (int)dr["BookID"],
+                    (int)dr["UserID"],
+                    (DateTime)dr["CreationDate"],
+                    (bool)dr["Hidden"]
                     ));
             return ratings;
         }
@@ -114,7 +175,8 @@ namespace JaminBooks.Model
                     dr["Comment"] != DBNull.Value ? (String)dr["Comment"] : "",
                     (int)dr["BookID"],
                     (int)dr["UserID"],
-                     (DateTime)dr["CreationDate"]
+                     (DateTime)dr["CreationDate"],
+                     (bool)dr["Hidden"]
                     ));
             return ratings;
         }

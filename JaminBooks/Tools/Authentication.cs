@@ -65,51 +65,60 @@ namespace JaminBooks.Tools
             else return new bool[] { false };
         }
 
-        public static int CreateUser(HttpRequest request)
+        public static int CreateUser(HttpRequest request, bool requireAdmin = false, bool login = true, bool confirm = true)
         {
-            try
-            {
-                Dictionary<string, string> creds = AJAX.GetFields(request);
-
-                User user = new User();
-                user.FirstName = creds["FirstName"];
-                user.LastName = creds["LastName"];
-                user.Email = creds["Email"];
-                user.Password = Hash(creds["Password"]);
-
-                var phoneNumber = creds["Phone"];
-
-                if (user.FirstName != "" &&
-                    user.LastName != "" &&
-                    user.FirstName.Length <= 50 &&
-                    user.LastName.Length <= 50 &&
-                    user.Email.Length <= 100 &&
-                    phoneNumber.Length <= 20 &&
-                    !User.Exists(user.Email) &&
-                    new Regex("^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")
-                    .IsMatch(user.Email) &&
-                    new Regex("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$")
-                    .IsMatch(phoneNumber))
+            User currentUser = Authentication.GetCurrentUser(request.HttpContext);
+            if (!requireAdmin || (currentUser != null && currentUser.IsAdmin))
+                try
                 {
-                    user.ConfirmationCode = GenerateConfirmationCode();
+                    Dictionary<string, string> creds = AJAX.GetFields(request);
 
-                    Phone p = new Phone();
-                    p.Number = phoneNumber;
-                    p.Category = creds["PhoneCat"];
-                    p.Save();
+                    User user = new User();
+                    user.FirstName = creds["FirstName"];
+                    user.LastName = creds["LastName"];
+                    user.Email = creds["Email"];
+                    user.Password = Hash(creds["Password"]);
 
-                    user.Save();
-                    user.AddPhone(p);
-                    if (!SendConfirmationEmail(request, user)) return 2;
-                    request.HttpContext.Session.SetInt32("UserID", user.UserID);
-                    return 1;
+                    var phoneNumber = creds["Phone"];
+
+                    if (user.FirstName != "" &&
+                        user.LastName != "" &&
+                        user.FirstName.Length <= 50 &&
+                        user.LastName.Length <= 50 &&
+                        user.Email.Length <= 100 &&
+                        phoneNumber.Length <= 20 &&
+                        !User.Exists(user.Email) &&
+                        new Regex("^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")
+                        .IsMatch(user.Email) &&
+                        new Regex("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$")
+                        .IsMatch(phoneNumber))
+                    {
+                        user.ConfirmationCode = GenerateConfirmationCode();
+
+                        Phone p = new Phone();
+                        p.Number = phoneNumber;
+                        p.Category = creds["PhoneCat"];
+                        p.Save();
+
+                        user.Save();
+                        user.AddPhone(p);
+                        if (confirm)
+                            Task.Run(() => SendConfirmationEmail(request, user));
+                        else
+                        {
+                            user.IsConfirmed = true;
+                            user.Save();
+                        }
+                        if (login) request.HttpContext.Session.SetInt32("UserID", user.UserID);
+                        return user.UserID;
+                    }
+                    else return 0;
                 }
-                else return 0;
-            }
-            catch (Exception e)
-            {
-                return 0;
-            }
+                catch (Exception e)
+                {
+                    return 0;
+                }
+            else return 0;
         }
 
         public static bool SendConfirmationEmail(HttpRequest request, User u)

@@ -23,14 +23,27 @@ namespace JaminBooks.Model
         public string ISBN13;
         public string Description;
         public DateTime CopyrightDate;
-        public decimal Price;
+        public decimal _Price;
         public decimal Cost;
         public int Quantity;
         public bool IsDeleted = false;
         public byte[] BookImage { set; private get; }
         public int Rating;
+        public int PercentDiscount = 0;
 
         public bool LoadPublisher = true;
+
+        public decimal Price
+        {
+            get
+            {
+                return Math.Round((_Price - (_Price * (PercentDiscount / 100m))), 2);
+            }
+            set
+            {
+                _Price = value;
+            }
+        }
 
         public bool HasIcon
         {
@@ -121,13 +134,14 @@ namespace JaminBooks.Model
                 this.ISBN13 = (string)dt.Rows[0]["ISBN13"];
                 this.Description = (string)dt.Rows[0]["Description"];
                 this.CopyrightDate = (DateTime)dt.Rows[0]["CopyrightDate"];
-                this.Price = (decimal)dt.Rows[0]["Price"];
+                this._Price = (decimal)dt.Rows[0]["Price"];
                 this.Cost = (decimal)dt.Rows[0]["Cost"];
                 this.Quantity = (int)dt.Rows[0]["Quantity"];
                 this.IsDeleted = (bool)dt.Rows[0]["IsDeleted"];
                 this.BookImage = dt.Rows[0]["BookImage"] == DBNull.Value ? null : (byte[])dt.Rows[0]["BookImage"];
                 var rating = SQL.Execute("uspGetAverageRating", new Param("BookID", BookID)).Rows[0]["Rating"];
                 this.Rating = rating != DBNull.Value ? Convert.ToInt32(rating) : 0;
+                this.PercentDiscount = Promotions.GetDiscount(this);
             }
             else
             {
@@ -136,7 +150,7 @@ namespace JaminBooks.Model
         }
 
         private Book(int BookID, string Title, DateTime PublicationDate, int PublisherID, string ISBN10,
-            string ISBN13, string Description, DateTime CopyrightDate, decimal Price, decimal Cost,
+            string ISBN13, string Description, DateTime CopyrightDate, decimal _Price, decimal Cost,
             int Quantity, bool IsDeleted, byte[] BookImage)
         {
             this.BookID = BookID;
@@ -147,13 +161,14 @@ namespace JaminBooks.Model
             this.ISBN13 = ISBN13;
             this.Description = Description;
             this.CopyrightDate = CopyrightDate;
-            this.Price = Price;
+            this._Price = _Price;
             this.Cost = Cost;
             this.Quantity = Quantity;
             this.IsDeleted = IsDeleted;
             this.BookImage = BookImage;
             var rating = SQL.Execute("uspGetAverageRating", new Param("BookID", BookID)).Rows[0]["Rating"];
             this.Rating = rating != DBNull.Value ? Convert.ToInt32(rating) : 0;
+            this.PercentDiscount = Promotions.GetDiscount(this);
         }
 
         public void Save()
@@ -167,7 +182,7 @@ namespace JaminBooks.Model
                 new Param("ISBN13", ISBN13),
                 new Param("Description", Description),
                 new Param("CopyrightDate", CopyrightDate),
-                new Param("Price", Price),
+                new Param("Price", _Price),
                 new Param("Cost", Cost),
                 new Param("Quantity", Quantity),
                 new Param("IsDeleted", IsDeleted),
@@ -197,6 +212,11 @@ namespace JaminBooks.Model
         public void AddCategory(Category c)
         {
             c.AddCategory(this.BookID);
+        }
+
+        public static List<Book> GetBookShelf(User user)
+        {
+            return GetBooks(SQL.Execute("uspGetBooks", new Param("UserID", user.UserID)));
         }
 
         public static List<Book> GetBooks()

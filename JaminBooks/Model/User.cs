@@ -222,6 +222,26 @@ namespace JaminBooks.Model
             return cartItems;
         }
 
+        public List<Book> GetBookShelf()
+        {
+            return Book.GetBookShelf(this);
+        }
+
+        public bool hasBought(int BookID)
+        {
+            return SQL.Execute("uspUserHasBoughtBook", new Param("UserID", UserID), new Param("BookID", BookID)).Rows.Count > 0;
+        }
+
+        public void AddBookToBookShelf(int BookID)
+        {
+            SQL.Execute("uspAddBookToBookShelf", new Param("UserID", UserID), new Param("BookID", BookID));
+        }
+
+        public void RemoveBookFromBookShelf(int BookID)
+        {
+            SQL.Execute("uspRemoveBookFromBookShelf", new Param("UserID", UserID), new Param("BookID", BookID));
+        }
+
         public void AddBookToCart(int BookID)
         {
             SQL.Execute("uspAddToCart", new Param("UserID", UserID), new Param("BookID", BookID));

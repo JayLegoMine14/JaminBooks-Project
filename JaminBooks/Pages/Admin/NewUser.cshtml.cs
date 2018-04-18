@@ -7,20 +7,19 @@ using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace JaminBooks.Pages
+namespace JaminBooks.Pages.Admin
 {
-    public class BookModel : PageModel
+    public class NewUserModel : PageModel
     {
-        public Book Book;
         public User CurrentUser;
-        public Promotion Promo;
 
-        public void OnGet(int id)
+        public void OnGet()
         {
-            Promotion.DeleteExpiredPromotions(id);
-            Book = new Book(id);
-            Promo = Promotions.GetPromotion(Book);
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
+            if (CurrentUser == null || !CurrentUser.IsAdmin)
+            {
+                Response.Redirect("/");
+            }
         }
     }
 }

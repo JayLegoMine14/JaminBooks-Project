@@ -16,6 +16,7 @@ namespace JaminBooks.Pages.Admin
         public User CurrentUser;
         public DateTime Start;
         public DateTime End;
+        public int FlaggedRatings;
         public Dictionary<string, object> Fields;
         public Dictionary<Book, int> BestSellers = new Dictionary<Book, int>();
         public Dictionary<Book, int> WorstSellers = new Dictionary<Book, int>();
@@ -42,6 +43,8 @@ namespace JaminBooks.Pages.Admin
 
         public void RenderPage(DateTime Start, DateTime end)
         {
+            FlaggedRatings = Rating.GetFlagged().Count;
+
             DataTable fields = SQL.Execute("uspGetDashboard", new Param("BeginDate", Start.Date), new Param("EndDate", End.AddDays(1).Date));
             Fields = fields.Rows[0].Table.Columns
               .Cast<DataColumn>()

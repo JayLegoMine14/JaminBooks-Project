@@ -4,6 +4,12 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-6">
+                        <div class="row mb-2 ml-2" style="font-size:2em;color:#aaa">
+                            <i class="fas fab fa-cc-visa mr-1"></i>
+                            <i class="fas fab fa-cc-mastercard mr-1"></i>
+                            <i class="fas fab fa-cc-discover mr-1"></i>
+                            <i class="fas fab fa-cc-diners-club mr-1"></i>
+                        </div>
                         <div class="row mb-2">
                             <div class="col-3">
                                 <input type="text" id="Number1" class="form-control" maxlength="4" placeholder="####">
@@ -186,7 +192,7 @@
                             });
                         },
                         failure: function (response) {
-                            alert(response);
+                            location.href = "\Error"
                         }
                     });
                 },
@@ -283,7 +289,7 @@
                         initPopup();
                     },
                     failure: function (response) {
-                        alert(response);
+                        location.href = "\Error"
                     }
                 });
             }

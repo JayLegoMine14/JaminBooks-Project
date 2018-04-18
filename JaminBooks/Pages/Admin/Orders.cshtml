@@ -221,7 +221,7 @@
                 }
             }
             addHRListeners();
-            showFilters();
+            showASButtons();
         }
 
         loadItems();
@@ -243,6 +243,7 @@
 
         if (loading || loaded) return;
         $("#LoadIcon").show();
+        $("#ResultCount").text("-");
         if (!reset) {
             loading = true;
         }
@@ -328,9 +329,14 @@
                 $("#LoadIcon").hide();
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
+    }
+
+    function showASButtons() {
+        $("#SearchBox").hide();
+        $("#AS").fadeIn();
     }
 
     //Show the advanced search options

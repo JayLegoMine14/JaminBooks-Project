@@ -24,6 +24,19 @@
         height: 100px;
         width: auto !important;
     }
+
+    .price{
+        position: relative;
+    }
+
+    .oldprice {
+        text-decoration: line-through;
+        position: absolute;
+        bottom: -23px;
+        left: 15px;
+        font-size: smaller;
+    }
+
     .truncate-ellipsis {
         display: table;
         table-layout: fixed;
@@ -67,7 +80,12 @@
                                     <h4 class="title">@book.Title</h4>
                                 </div>
                                 <div class="col-2 mt-4">
-                                    <h5 class="price">$@book.Price.ToString("0.##")</h5>
+                                    <h5 class="price @(book.PercentDiscount > 0 ? "text-success" : "")">$@book.Price.ToString("0.00")
+                                    @if(book.PercentDiscount > 0)
+                                    {
+                                        <span class="oldprice text-muted">$@book._Price.ToString("0.00")</span>
+                                    }
+                                    </h5>
                                 </div>
                                 <div class="col-2 mt-4">
                                     @if(@book.Quantity == 0)
@@ -119,6 +137,11 @@
                 </div>
                 <div class="row mb-5">
                     <div class="col-12">
+                        <input id="Code" type="text" maxlength="10" class="form-control" placeholder="Coupon Code"/>
+                    </div>
+                </div>
+                <div class="row mb-5">
+                    <div class="col-12">
                         @if (Model.DisplayUser.IsConfirmed)
                         {
                             <button id="Checkout" class="btn btn-dark-red text-white btn-lg btn-block">Checkout</button>
@@ -136,10 +159,16 @@
 </div>
 
 <script>
+    var callID = 0;
+
     $(document).ready(function () {
         getTotal();
 
         $(".quantity").on("input", function () {
+            getTotal();
+        });
+
+        $("#Code").on("input", function () {
             getTotal();
         });
 
@@ -152,6 +181,7 @@
 
             var data = {
                 UserID: $("#UserID").text(),
+                Code: $("#Code").val(),
                 Books: JSON.stringify(books)
             }
 
@@ -167,7 +197,8 @@
                 dataType: "json",
                 success: function (reply) {
                     if (reply[0]) {
-                        location.href = "\Checkout";
+                        var code = $("#Code").val()
+                        location.href = "\Checkout" + (code == "" ? "" : "?code=" + code);
                     } else {
                         var books = reply[1];
                         var content = 'The available quantity of the following books has reduced. Your cart will be updated to reflect the change.<ul>';
@@ -223,7 +254,7 @@
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
@@ -271,7 +302,7 @@
                 }
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }
@@ -284,7 +315,9 @@
         });
 
         var data = {
+            CallID: ++callID,
             UserID: $("#UserID").text(),
+            Code: $("#Code").val(),
             Books: JSON.stringify(books)
         }
 
@@ -299,17 +332,21 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (totals) {
-                $("#BookTotal").text(totals[0]);
-                if (totals[1] == 0) {
+                if (totals[0] < callID) return;
+                if (totals[1]) $("#Code").css("border-color", "green");
+                else $("#Code").removeAttr("style");
+
+                $("#BookTotal").text(totals[2]);
+                if (totals[3] == 0) {
                     $("#Discount").hide();
                 } else {
                     $("#Discount").show();
-                    $("#DiscountPercent").text(totals[1]);
+                    $("#DiscountPercent").text(totals[3]);
                 }
-                $("#OrderTotal").text(totals[2]);
+                $("#OrderTotal").text(totals[4]);
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }

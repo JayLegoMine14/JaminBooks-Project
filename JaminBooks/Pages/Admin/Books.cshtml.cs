@@ -50,6 +50,8 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("PublisherName", "Publisher");
             SearchColumns.Add("PublicationDate", "PublicationDate");
             SearchColumns.Add("PublisherContact", "Publisher Contact");
+            SearchColumns.Add("PercentDiscount", "Percent Discount");
+            SearchColumns.Add("IsOnSale", "On Sale");
             SearchColumns.Add("IsDeleted", "Is Deleted");
         }
     }

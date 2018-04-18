@@ -48,7 +48,7 @@
 
                     @foreach (Model.Rating rating in Model.Ratings)
                     {
-                        <div class="rating card" data-id="@rating.RatingID" data-rating="@rating.RatingValue" data-comment="@rating.Comment">
+                        <div class="rating card @(rating.Hidden ? "text-secondary bg-dark" : "")" data-id="@rating.RatingID" data-rating="@rating.RatingValue" data-comment="@rating.Comment">
                             <div class="icon-div">
                                 <img class="userIcon" src="@image" />
                             </div>
@@ -56,7 +56,10 @@
                             <h5 class="book">for <a href="\Book?id=@rating.BookID">@(new Model.Book(rating.BookID).Title)</a></h5>
                             <div class="options mt-1">
                                 <button class="btn btn-danger btn-sm mr-2" onclick="deleteRating(this)"><i class="fas fa-trash"></i></button>
-                                <button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>
+                                @if(!rating.Hidden)
+                                {
+                                    <button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>
+                                }
                             </div>
                             <div class="date mt-1">
                                 <h6>@rating.FormatedDate</h6>
@@ -73,7 +76,9 @@
                                     }
                                 </span>
                             </h5>
-                            <h6 class="comment">@rating.Comment</h6>
+                            <h6 class="comment @(rating.Hidden ? "text-danger" : "")">
+                                @(rating.Hidden ? "This review has been removed for being inappropriate." : rating.Comment)
+                            </h6>
                         </div>
                     }
                     }

@@ -35,6 +35,12 @@ namespace JaminBooks.Pages
             return new JsonResult(Authentication.CreateUser(Request));
         }
 
+        [Route("Security/AdminCreate")]
+        public IActionResult AdminCreate()
+        {
+            return new JsonResult(Authentication.CreateUser(Request, true, false, false));
+        }
+
         [Route("Security/Logout")]
         public void Logout()
         {

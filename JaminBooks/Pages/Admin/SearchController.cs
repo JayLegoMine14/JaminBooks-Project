@@ -553,6 +553,88 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+                                case "IsReshipping":
+                                    bool reshipping = false;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null) == reshipping
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null)
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipping) ? false : !(o.ParentOrderID != null)
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null)
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipping) ? false : !(o.ParentOrderID != null)
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null) != reshipping
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null) == reshipping
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "IsReshipped":
+                                    bool reshipped = false;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0) == reshipped
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0)
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipped) ? false : !(o.Children.Count > 0)
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0)
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipped) ? false : !(o.Children.Count > 0)
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0) != reshipped
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0) == reshipped
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
                             }
 
                             if (!itemLink.HasValue)
@@ -1192,43 +1274,43 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
-                                case "IsDeleted":
-                                    bool deleted = false;
+                                case "IsEnabled":
+                                    bool enabled = false;
                                     switch (comp)
                                     {
                                         case "eq":
                                             holder = searchItems.Where(o =>
-                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
+                                            !Boolean.TryParse(val, out enabled) ? false : !o.IsDeleted == enabled
                                             ).ToList();
                                             break;
                                         case "gt":
                                             holder = searchItems.Where(o =>
-                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
+                                            !Boolean.TryParse(val, out enabled) ? false : !o.IsDeleted
                                             ).ToList();
                                             break;
                                         case "lt":
                                             holder = searchItems.Where(o =>
-                                            !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
+                                            !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted
                                             ).ToList();
                                             break;
                                         case "ge":
                                             holder = searchItems.Where(o =>
-                                           !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
+                                           !Boolean.TryParse(val, out enabled) ? false : !o.IsDeleted
                                            ).ToList();
                                             break;
                                         case "le":
                                             holder = searchItems.Where(o =>
-                                            !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
+                                            !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted
                                             ).ToList();
                                             break;
                                         case "nt":
                                             holder = searchItems.Where(o =>
-                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted != deleted
+                                            !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted == enabled
                                             ).ToList();
                                             break;
                                         case "lk":
                                             holder = searchItems.Where(o =>
-                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
+                                            !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted != enabled
                                             ).ToList();
                                             break;
                                     }
@@ -2253,6 +2335,88 @@ namespace JaminBooks.Pages.Admin
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "IsOnSale":
+                                    bool onsale = false;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0) == onsale
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0)
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out onsale) ? false : !(o.PercentDiscount > 0)
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0)
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out onsale) ? false : !(o.PercentDiscount > 0)
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0) != onsale
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0) == onsale
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "PercentDiscount":
+                                    int discount = 0;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out discount) ? false : o.PercentDiscount == discount
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out discount) ? false : o.PercentDiscount > discount
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out discount) ? false : o.PercentDiscount < discount
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Int32.TryParse(val, out discount) ? false : o.PercentDiscount >= discount
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out discount) ? false : o.PercentDiscount <= discount
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out discount) ? false : o.PercentDiscount != discount
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.PercentDiscount.ToString().Contains(val) || val.Contains(o.PercentDiscount.ToString())
                                             ).ToList();
                                             break;
                                     }

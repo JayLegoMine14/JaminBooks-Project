@@ -1,0 +1,298 @@
+﻿@page
+@model JaminBooks.Pages.Admin.PromotionsModel
+@{
+    ViewData["Title"] = "Promotions";
+    Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+}
+
+<div class="container body-content" style="min-height:80vh">
+    <div>
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 text-center mt-3 mb-3">
+                        <h2>Order Total Promotions</h2>
+                    </div>
+                </div>
+                <div id="TotalPromotions">
+                @foreach (Model.Promotion p in Model.TotalPromotions)
+                {
+                    <div class="row">
+                        <div class="col-10 offset-1">
+                            <div class="card w-100 p-2 promotion" data-id="@p.PromotionID">
+                                <div class="row">
+                                    <div class="input-group col-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">$</div>
+                                        </div>
+                                        <input type="number" step=".01" class="form-control total" placeholder="Total" value="@p.Total.Value.ToString("0.00")">
+                                    </div>
+                                    <div class="input-group col-2 mr-3">
+                                        <input type="number" step="1" min="0" max="100" class="form-control precent" placeholder="Dicount" value="@p.PercentDiscount">
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">%</div>
+                                        </div>
+                                    </div>
+                                    <input type="date" class="form-control start-date col-3 mr-2" placeholder="Start" value="@p.StartDate.ToString("yyyy-MM-dd")">
+                                    <span class="text-center" style="line-height:40px">to</span>
+                                    <input type="date" class="form-control end-date col-3 ml-2 mr-3" placeholder="End" value="@p.EndDate.ToString("yyyy-MM-dd")">
+                                    <button class="btn btn-danger col-1" onclick="deletePromotion(this)"><i class="fas fa-trash"></i></button>
+                                </div>
+                                 @if (p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now)
+                                {
+                                    <div class="row"><span class="badge badge-primary mt-2 ml-3">Active</span></div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mb-3">
+                        <button id="CreateTotalPromotion" class="btn btn-primary">Create Total Promotion <i class="fas fa-plus ml-2"></i></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mt-3 mb-3">
+                        <h2>Dicount Code Promotions</h2>
+                    </div>
+                </div>
+                <div id="CodePromotions">
+                @foreach (Model.Promotion p in Model.CodePromotions)
+                {
+                    <div class="row">
+                        <div class="col-10 offset-1">
+                            <div class="card w-100 p-2 promotion" data-id="@p.PromotionID">
+                                <div class="row">
+                                    <div class="input-group col-2">
+                                        <input type="text" maxlength="10" class="form-control code" placeholder="Coupon Code" value="@p.Code">
+                                    </div>
+                                    <div class="input-group col-2 mr-3">
+                                        <input type="number" step="1" min="1" max="100" class="form-control percent" placeholder="Dicount" value="@p.PercentDiscount">
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">%</div>
+                                        </div>
+                                    </div>
+                                    <input type="date" class="form-control col-3 mr-2 start-date" placeholder="Start" value="@p.StartDate.ToString("yyyy-MM-dd")">
+                                    <span class="text-center" style="line-height:40px">to</span>
+                                    <input type="date" class="form-control col-3 ml-2 mr-3 end-date" placeholder="End" value="@p.EndDate.ToString("yyyy-MM-dd")">
+                                    <button class="btn btn-danger col-1" onclick="deletePromotion(this)"><i class="fas fa-trash"></i></button>
+                                </div>
+                                @if (p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now)
+                                {
+                                    <div class="row"><span class="badge badge-primary mt-2 ml-3">Active</span></div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mb-3">
+                        <button id="CreateCodePromotion" class="btn btn-primary">Create Code Promotion <i class="fas fa-plus ml-2"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#CreateTotalPromotion").click(function () {
+            var promo = "";
+
+            promo += '      <div class="row">';
+            promo += '            <div class="col-10 offset-1">';
+            promo += '               <div class="card w-100 p-2 promotion" data-id="-1">';
+            promo += '                    <div class="row">';
+            promo += '                        <div class="input-group col-2">';
+            promo += '                            <div class="input-group-prepend">';
+            promo += '                                <div class="input-group-text">$</div>';
+            promo += '                            </div>';
+            promo += '                           <input type="number" step=".01" class="form-control total" placeholder="Total" value="10.00">';
+            promo += '                        </div>';
+            promo += '                        <div class="input-group col-2 mr-3">';
+            promo += '                            <input type="number" step="1" min="0" max="100" class="form-control percent" placeholder="Dicount" value="10">';
+            promo += '                            <div class="input-group-append">';
+            promo += '                                <div class="input-group-text">%</div>';
+            promo += '                            </div>';
+            promo += '                        </div>';
+            promo += '                        <input type="date" class="form-control start-date col-3 mr-2" placeholder="Start" value="2018-01-01">';
+            promo += '                        <span class="text-center" style="line-height:40px">to</span>';
+            promo += '                        <input type="date" class="form-control end-date col-3 ml-2 mr-3" placeholder="End" value="2018-01-02">';
+            promo += '                        <button class="btn btn-danger col-1" onclick="deletePromotion(this)"><i class="fas fa-trash"></i></button>';
+            promo += '                    </div>';
+            promo += '                </div>';
+            promo += '           </div>';
+            promo += '       </div>';
+
+            $("#TotalPromotions").append(promo);
+            savePromotion($(".promotion[data-id='-1']"));
+            AddListeners();
+        });
+
+        $("#CreateCodePromotion").click(function () {
+            var promo = "";
+
+            promo += '      <div class="row">';
+            promo += '            <div class="col-10 offset-1">';
+            promo += '               <div class="card w-100 p-2 promotion" data-id="-1">';
+            promo += '                    <div class="row">';
+            promo += '                        <div class="input-group col-2">';
+            promo += '                           <input type="text" maxlength="10" class="form-control code" placeholder="Coupon Code" value="CHANGEME">';
+            promo += '                        </div>';
+            promo += '                        <div class="input-group col-2 mr-3">';
+            promo += '                            <input type="number" step="1" min="0" max="100" class="form-control percent" placeholder="Dicount" value="10">';
+            promo += '                            <div class="input-group-append">';
+            promo += '                                <div class="input-group-text">%</div>';
+            promo += '                            </div>';
+            promo += '                        </div>';
+            promo += '                        <input type="date" class="form-control start-date col-3 mr-2" placeholder="Start" value="2018-01-01">';
+            promo += '                        <span class="text-center" style="line-height:40px">to</span>';
+            promo += '                        <input type="date" class="form-control end-date col-3 ml-2 mr-3" placeholder="End" value="2018-01-02">';
+            promo += '                        <button class="btn btn-danger col-1" onclick="deletePromotion(this)"><i class="fas fa-trash"></i></button>';
+            promo += '                    </div>';
+            promo += '                </div>';
+            promo += '           </div>';
+            promo += '       </div>';
+
+            $("#CodePromotions").append(promo);
+            savePromotion($(".promotion[data-id='-1']"));
+            AddListeners();
+        });
+    })
+
+    function AddListeners() {
+        $(".total, .code, .percent, .start-date, .end-date").unbind("input");
+        $(".total, .code, .percent, .start-date, .end-date").on("input", function () {
+            var promo = $(this).parents(".promotion");
+            savePromotion(promo);
+        });
+
+        $(".total, .percent").keypress(function (event) {
+            if (event.which != 8 && event.which != 0 && (event.which < 48 || event.which > 57)) {
+                return false;
+            }
+        });
+    }
+
+    function savePromotion(promo) {
+        var total = promo.find(".total");
+        var code = promo.find(".code");
+        var percent = promo.find(".percent");
+        var startdate = promo.find(".start-date");
+        var enddate = promo.find(".end-date");
+
+        if (validate(promo)) {
+
+            var data = {
+                ID: parseInt(promo.data("id")),
+                Total: total.length == 0 ? null : total.val(),
+                Code: code.length == 0 ? null : code.val(),
+                Percent: percent.val(),
+                Startdate: startdate.val(),
+                Enddate: enddate.val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Model/SavePromotion",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response != '') {
+                        promo.data("id", response);
+                        if (Date.parse(startdate.val()) <= new Date() && Date.parse(enddate.val()) >= new Date()) {
+                            promo.parents(".row").first().append('<div class="row"><span class="badge badge-primary mt-2 ml-3">Active</span></div>');                        
+                        }
+                    } else {
+                        location.href = "\Error"
+                    }
+                },
+                failure: function (response) {
+                    location.href = "\Error"
+                }
+            });
+
+        }
+    }
+
+    function deletePromotion(button) {
+        var promo = $(button).parents(".promotion");
+        var id = promo.data("id");
+        $.ajax({
+            type: "POST",
+            url: "/Model/DeletePromotion",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify({ ID: id + "" }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                promo.fadeOut(function () {
+                    promo.remove();
+                });
+            },
+            failure: function (response) {
+                location.href = "\Error"
+            }
+        });
+    }
+
+    function validate(promo) {
+        var total = promo.find(".total");
+        var code = promo.find(".code");
+        var percent = promo.find(".percent");
+        var startdate = promo.find(".start-date");
+        var enddate = promo.find(".end-date");
+
+        total.removeAttr("style");
+        code.removeAttr("style");
+        percent.removeAttr("style");
+        startdate.removeAttr("style");
+        enddate.removeAttr("style");
+
+        var valid = true;
+
+        if (total.length != 0 && (total.val() == "" || total.val() <= 0)) {
+            valid = false;
+            total.css("border-color", "red");
+        }
+
+        if (code.length != 0 && code.val() == "") {
+            valid = false;
+            code.css("border-color", "red");
+        }
+
+        if (percent.val() == "") {
+            valid = false;
+            percent.css("border-color", "red");
+        }
+
+        if (startdate == "") {
+            valid = false;
+            startdate.css("border-color", "red");
+        }
+
+        if (enddate == "") {
+            valid = false;
+            enddate.css("border-color", "red");
+        }
+
+        if (Date.parse(enddate) <= Date.parse(startdate)) {
+            valid = false;
+            startdate.css("border-color", "red");
+            enddate.css("border-color", "red");
+        }
+
+        return valid;
+    }
+</script>

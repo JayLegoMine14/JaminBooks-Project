@@ -37,6 +37,21 @@
         margin: 25px;
     }
 
+    .overlay-oldprice {
+        text-decoration: line-through;
+        position: absolute;
+        bottom: -20px;
+        left: 65px;
+        color: #ccc;
+        font-size: smaller;
+    }
+
+    .oldprice {
+        text-decoration: line-through;
+        font-size: .8em;
+        margin-top: 0;
+    }
+
     #BookView {
         position: fixed;
         top: 0;
@@ -162,7 +177,7 @@
                     <span id="BookID" class="d-none">-1</span>
                     <h2 id="BookTitle">Title</h2>
                     <h4 id="BookAuthor">Author</h4>
-                    <h3>$<span id="BookPrice">0.00</span></h3>
+                    <h3>$<span id="BookPrice">0.00</span> <span class="ml-3 oldprice text-muted">$<span id="BookOldPrice">0.00</span></span></h3>
                     <div id="Rating">
                         <span>
                             <i class="far fa-star"></i>
@@ -216,25 +231,29 @@
                     <hr />
                     <div id="Ratings" class="mt-3">
                         <h3>Reviews</h3>
-                         @if(Model.CurrentUser != null)
-                         {
-                        <div class="col-12">
-                            <span id="RatingStars">
-                                <span class="star-overlay"></span>
-                                <i class="fas fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                            </span>
-                            <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
-                            <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
-                        </div>
-                         }
+                        @if (Model.CurrentUser != null && Model.CurrentUser.IsConfirmed)
+        {
+                <div class="col-12">
+                    <span id="RatingStars">
+                        <span class="star-overlay"></span>
+                        <i class="fas fa-star"></i>
+                        <span class="star-overlay"></span>
+                        <i class="far fa-star"></i>
+                        <span class="star-overlay"></span>
+                        <i class="far fa-star"></i>
+                        <span class="star-overlay"></span>
+                        <i class="far fa-star"></i>
+                        <span class="star-overlay"></span>
+                        <i class="far fa-star"></i>
+                    </span>
+                    <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                    <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
+                </div>
+}
+else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
+{
+                <h5 class="text-danger font-weight-bold">Verify email address to write reviews.</h5>
+}
                         <div id="RatingMessages" class="mt-3"></div>
                         <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
                             <div class="col-12">
@@ -381,7 +400,7 @@
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
@@ -479,7 +498,7 @@
                     bookcard += 'data-id="' + book.BookID + '"'
                     bookcard += 'data-title="' + book.Title + '"'
                     bookcard += 'data-quantity="' + book.Quantity + '"'
-                    bookcard += 'data-price="' + book.Price + '"'
+                    bookcard += 'data-price="' + book.Price.toFixed(2) + '"'
                     bookcard += 'data-description="' + book.Description + '"'
                     bookcard += 'data-authors=\'' + JSON.stringify(book.Authors) + '\''
                     bookcard += 'data-categories=\'' + JSON.stringify(book.Categories) + '\''
@@ -489,13 +508,24 @@
                     bookcard += 'data-copyright="' + book.CopyrightDate + '"'
                     bookcard += 'data-publication="' + book.PublicationDate + '"'
                     bookcard += 'data-publisher="' + book.Publisher.PublisherName + '"'
+                    bookcard += 'data-discount="' + book.PercentDiscount + '"'
+                    bookcard += 'data-oldprice="' + book._Price.toFixed(2) + '"'
                     bookcard += '> '
                     bookcard += '<img class="card-img" src="' + book.LoadImage + '">'
                     bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
                     if (book.Quantity == 0) bookcard += '<h5 class="card-title"><span class="badge badge-danger">Out Of Stock</span></h5>'
+                    if (book.PercentDiscount > 0) bookcard += '<h5 class="card-title"><span class="badge badge-success">On Sale</span></h5>'
                     bookcard += '<h5 class="card-title">' + book.Title + '</h5>'
-                    bookcard += '<h5 class="card-text mt-4">$' + book.Price + '</h5>'
-                    bookcard += '<h5 class="card-text mt-4">' + bookrating + '</h5>'
+
+                    if (book.PercentDiscount == 0) {
+                        bookcard += '<h5 class="card-text mt-4">$' + book.Price.toFixed(2);  + '</h5>'
+                    } else {
+                        bookcard += '<h5 class="card-text mt-4 position-relative">$' + book.Price.toFixed(2); 
+                        bookcard += '<span class="overlay-oldprice">$' + book._Price.toFixed(2);  + '</span>';
+                        bookcard += '</h5>'
+                    }
+
+                    bookcard += '<h5 class="card-text mt-5">' + bookrating + '</h5>'
                     bookcard += '</div>'
                     bookcard += '</div>'
 
@@ -521,7 +551,7 @@
                 }
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }
@@ -531,7 +561,21 @@
         $("#BookImage").attr("src", book.find("img").attr("src"))
         $("#BookID").text(book.data("id"));
         $("#BookTitle").text(book.data("title"));
+
+        if (book.data("discount") > 0) {
+            $("#BookPrice").text(book.data("price"));
+            $("#BookPrice").parent().addClass("text-success");
+            $("#BookOldPrice").parent().show();
+            $("#BookOldPrice").text(book.data("oldprice"));
+        } else {
+            $("#BookPrice").text(book.data("price"));
+            $("#BookPrice").parent().removeClass("text-success");
+            $("#BookOldPrice").parent().hide();
+        }
+
         $("#BookPrice").text(book.data("price"));
+
+
         $("#Description").text(book.data("description"));
 
         $("#ISBN10").val(book.data("isbn10"));

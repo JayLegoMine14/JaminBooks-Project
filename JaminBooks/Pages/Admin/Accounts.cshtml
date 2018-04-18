@@ -229,7 +229,7 @@
                 }
             }
             addHRListeners();
-            showFilters();
+            showASButtons();
         }
 
         loadItems();
@@ -251,6 +251,7 @@
 
         if (loading || loaded) return;
         $("#LoadIcon").show();
+        $("#ResultCount").text("-");
         if (!reset) {
             loading = true;
         }
@@ -329,7 +330,7 @@
                     if (item.deleted)
                         row += '        <button class="btn btn-warning undelete-btn" onmouseup="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>'
                     else
-                        row += '        <button class="btn btn-danger delete-btn" onmouseup="deleteUser(event, this)"><i class="fas fa-trash"></i></button>'
+                        row += '        <button class="btn btn-danger delete-btn" onmouseup="deleteUser(event, this)"><i class="fas fa-times"></i></button>'
                     row += '    </div>'
 
                     row += '</div>'
@@ -352,19 +353,19 @@
                 $("#LoadIcon").hide();
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }
 
     function undeleteUser(event, button) {
         $.confirm({
-            title: 'Undelete User',
-            content: 'Are you sure you want to undelete this user?',
+            title: 'Enable User',
+            content: 'Are you sure you want to enable this user?',
             type: 'orange',
             buttons: {
                 delete: {
-                    text: 'Undelete',
+                    text: 'Enable',
                     btnClass: 'btn-orange',
                     action: function () {
                         $.ajax({
@@ -380,10 +381,10 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (logout) {
-                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onclick="deleteUser(event, this)"><i class="fas fa-trash"></i></button>');
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onclick="deleteUser(event, this)"><i class="fas fa-times"></i></button>');
                             },
                             failure: function (response) {
-                                alert(response);
+                                location.href = "\Error"
                             }
                         });
                     }
@@ -397,14 +398,14 @@
 
     function deleteUser(event, button) {
         $.confirm({
-            title: 'Delete Account',
+            title: 'Disable Account',
             icon: 'fas fa-exclamation',
-            content: 'Are you sure you want to delete this account?',
+            content: 'Are you sure you want to disable this account?',
             autoClose: 'Cancel|5000',
             type: 'red',
             buttons: {
                 delete: {
-                    text: 'Delete Account',
+                    text: 'Disable Account',
                     btnClass: 'btn-red',
                     action: function () {
                         $.ajax({
@@ -423,7 +424,7 @@
                                 $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-warning undelete-btn" onclick="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
                             },
                             failure: function (response) {
-                                alert(response);
+                                location.href = "\Error"
                             }
                         });
                     }
@@ -433,6 +434,11 @@
         });
         event.stopPropagation();
         return false;
+    }
+
+    function showASButtons() {
+        $("#SearchBox").hide();
+        $("#AS").fadeIn();
     }
 
     //Show the advanced search options
