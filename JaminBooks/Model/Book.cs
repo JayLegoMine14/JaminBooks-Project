@@ -105,6 +105,14 @@ namespace JaminBooks.Model
             }
         }
 
+        public List<Publisher> Publishers
+        {
+            get
+            {
+                return Publisher.GetPublishers(this.BookID);
+            }
+        }
+
         public Book() { }
 
         public Book(int BookID)

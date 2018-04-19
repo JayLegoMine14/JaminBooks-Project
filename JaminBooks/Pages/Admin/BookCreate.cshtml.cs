@@ -14,6 +14,9 @@ namespace JaminBooks.Pages.Admin
         public Book Book;
         public Author Author;
         public Publisher Publisher;
+        public List<Publisher> PubList;
+        public List<Author> Authors;
+        public List<Category> Categories;
 
         public DateTime date1 = new DateTime(2000, 1, 1);
 

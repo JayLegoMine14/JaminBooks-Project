@@ -84,7 +84,7 @@ namespace JaminBooks.Model
 
         }
 
-        public static List<Category> GetAllCategories()
+        public static List<Category> GetCategories()
         {
             DataTable dt = SQL.Execute("uspGetCategories");
             List<Category> categories = new List<Category>();

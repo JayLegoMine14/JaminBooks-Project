@@ -54,7 +54,11 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Author</label>
                         <div class="col-5">
-                            <select id="Authors" class="form-control" multiple>
+                            <select id="AuthorList" class="form-control" multiple>
+                                @foreach (Model.Author a in Model.Book.Authors)
+    {
+                            @Html.Raw("<option " + (Model.Book.Authors.Any(a2 => a2.AuthorID == a.AuthorID) ? "selected='selected'" : "") + " value='" + a.AuthorID + "'>" + a.FullName + "</option>");
+}
                             </select>
                         </div>
                         <div class="col-4">
@@ -85,78 +89,16 @@
 
 
                     <!--End Author sub entry-->
-                    <!--Publisher sub entry-->
-                    <div class="form-group row">
-                        <label class="col-3 col-form-label">Publisher</label>
-                        <div class="col-5">
-                            <select id="Publisher" class="form-control" multiple>
-                                <option value="-1">Publisher</option>
-                            </select>
-                        </div>
-
-                        <div class="col-4">
-                            <input type="button" onclick="unhide(this, 'publisher'); " value="Add New" class="btn btn-block btn-dark">
-                        </div>
-                    </div>
-
-                    <div id="publisher" class="hidden">
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Publisher Name</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Publisher Name" required name="PubName" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Address</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Address" required name="Address" />
-                            </div>
-                        </div>
-
-
-                        <!--Add Address fields-->
-
-
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Phone</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Phone Number" required name="Phone" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Contact First Name</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="First Name" required name="ContactFirst" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Contact Last Name</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Last Name" required name="ContactLast" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label"></label>
-                            <div class="col-9">
-                                <button id="SaveAuthor" onlick="SavePublisher()" class="btn btn-block btn-red">Save New Publisher</button>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-                    <!--End Publisher sub Entry-->
                     <!--Category sub Entry-->
 
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Category</label>
                         <div class="col-5">
                             <select id="BookCat" class="form-control" multiple>
-                                @foreach(Model.Category c in Model.Book.Categories)
-                                {
-                                    @Html.Raw("<option " + (Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
-                                }
+                                @foreach (Model.Category c in Model.Book.Categories)
+    {
+                            @Html.Raw("<option " + (Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
+}
                             </select>
                         </div>
                         <div class="col-4">
@@ -181,6 +123,104 @@
                     </div>
 
                     <!--End Category Sub Entry-->
+                    <!--Publisher sub entry-->
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Publisher</label>
+                        <div class="col-5">
+                            <select id="PubList" class="form-control">
+                                @foreach (Model.Publisher p in Model.Book.Publishers)
+                                {
+                                @Html.Raw("<option value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
+                                }
+        
+
+                            </select>
+                        </div>
+
+                        <div class="col-4">
+                            <input type="button" onclick="unhide(this, 'publisher'); " value="Add New" class="btn btn-block btn-dark">
+                        </div>
+                    </div>
+
+                    <div id="publisher" class="hidden">
+                        <div class="form-group row offset-1">
+                            <label class="col-3 col-form-label">Publisher Name</label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" placeholder="Publisher Name" required name="PubName" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-1">
+                            <label class="col-3 col-form-label">Phone</label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" placeholder="Phone Number" required name="Phone" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-1">
+                            <label class="col-3 col-form-label">Contact First Name</label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" placeholder="First Name" required name="ContactFirst" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-1">
+                            <label class="col-3 col-form-label">Contact Last Name</label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" placeholder="Last Name" required name="ContactLast" />
+                            </div>
+                        </div>
+
+
+                        <!-- address fields -->
+                        <div class="form-group row offset-2">
+                            <label class="col-3 col-form-label">Publisher Address</label>
+                        </div>
+
+                        <div class="form-group row offset-2">
+                            <label class="col-3 col-form-label">Line 1</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control" placeholder="Line 1" required name="AddressLine1" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-2">
+                            <label class="col-3 col-form-label">Line 2</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control" placeholder="Line 2" name="AddressLine2" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-2">
+                            <label class="col-3 col-form-label">City</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control" placeholder="City" required name="city" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-2">
+                            <label class="col-3 col-form-label">State</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control" placeholder="State" required name="state" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-2">
+                            <label class="col-3 col-form-label">Country</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control" placeholder="Country" required name="Country" />
+                            </div>
+                        </div>
+                        <div class="form-group row offset-2">
+                            <label class="col-3 col-form-label">ZIP</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control" placeholder="ZIP" required name="zip" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row offset-1">
+                            <label class="col-3 col-form-label"></label>
+                            <div class="col-9">
+                                <button id="SaveAuthor" onlick="SavePublisher()" class="btn btn-block btn-red">Save New Publisher</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--End Publisher sub Entry-->
 
                     <div class="form-group row">
                         <label class="col-3 col-form-label">ISBN10</label>
@@ -196,10 +236,13 @@
                     </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Customer Price</label>
-                        <div class="col-9">
+                        <div class="input-group col-9">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">$</div>
+                            </div>
                             <input type="number" class="form-control" step="0.1" required name="Price" value="@(Model.Book == null ? "0.00" : Model.Book.Price.ToString("0.00"))" />
+                            </div>
                         </div>
-                    </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Cost</label>
                         <div class="input-group col-9">
