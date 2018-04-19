@@ -16,7 +16,8 @@
         Layout = "~/Pages/_Layout.cshtml";
     }
 
-    @if (Model.DisplayUser != null) {
+    @if (Model.DisplayUser != null)
+    {
         userIcon = Model.DisplayUser.LoadImage;
     }
 }
@@ -98,20 +99,20 @@
                     <div class="form-group">
                         <input type="email" id="Email" value="@Model.DisplayUser.Email" class="form-control input-sm valid" maxlength="100" placeholder="Email Address">
                         @if (Model.DisplayUser.IsConfirmed)
-        {
-                <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
-}
-else
-{
-                <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
-}
+                        {
+                            <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger"><i class="fas fa-times"></i> Not Verified</span>
+                        }
                     </div>
-                    @if(Model.CurrentUser.IsAdmin)
+                    @if (Model.CurrentUser.IsAdmin)
                     {
-                    <div class="form-group">
-                        <input id="IsAdmin" type="checkbox" class="form-control sleek-checkbox" @(Model.DisplayUser.IsAdmin ? "checked='checked'" : "") />
-                        <label for="IsAdmin"> Is Administrator</label>
-                    </div>
+                        <div class="form-group">
+                            <input id="IsAdmin" type="checkbox" class="form-control sleek-checkbox" @(Model.DisplayUser.IsAdmin ? "checked='checked'" : "") />
+                            <label for="IsAdmin"> Is Administrator</label>
+                        </div>
                     }
                     <div class="row mb-5">
                         <div class="col-6 offset-3 text-center">
@@ -120,7 +121,7 @@ else
                     </div>
                     <div class="row"><div class="col-6"><h3>Details</h3></div></div>
                     <div class="row mb-2">
-                        <div class="col-8 offset-2">              
+                        <div class="col-8 offset-2">
                             <div class="row">
                                 <div class="col-6">
                                     <a href="\Orders@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-primary text-white btn-block"> View Past Orders</a>
@@ -129,6 +130,14 @@ else
                                     <a href="\Ratings@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-secondary text-white btn-block">View Reviews</a>
                                 </div>
                             </div>
+                            @if (Model.CurrentUser.IsAdmin)
+                            {
+                                <div class="row mt-2">
+                                    <div class="col-6 offset-3">
+                                        <a href="\Bookshelf@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-info text-white btn-block"> View Bookshelf</a>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="row mt-5"><div class="col-6"><h3>Password</h3></div></div>
@@ -184,18 +193,18 @@ else
                     <div class="row mb-2">
                         <div id="Phones" class="col-12 mb-4">
                             @foreach (Model.Phone phone in Model.DisplayUser.Phones)
-                    {
-                        <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
-                            <div class="card-header">
-                                <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title phone-number">@phone.Number</h5>
-                                <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
-                            </div>
-                        </div>
-            }
+                            {
+                                <div class="card phone d-inline-block" data-id="@phone.PhoneID" style="width:200px">
+                                    <div class="card-header">
+                                        <button type="button" onclick="EditPhone(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                        <button type="button" onclick="DeletePhone(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title phone-number">@phone.Number</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted phone-cat">@phone.Category</h6>
+                                    </div>
+                                </div>
+                            }
                             <div class="card d-inline-block" style="width:200px">
                                 <div id="PhoneCreate" class="card-body create-card" style="line-height: 89px">
                                     <i class="fas fa-plus"></i>
@@ -218,26 +227,26 @@ else
                     <div class="row">
                         <div id="Cards" class="col-12 mb-4">
                             @foreach (Model.Card card in Model.DisplayUser.Cards)
-                    {
-                        <div class="card dc-card d-inline-block" data-id="@card.CardID" style="width:300px"
-                             data-name="@card.Name"
-                             data-last-four="@card.LastFourDigits" data-month="@card.ExpMonth"
-                             data-year="@card.ExpYear" data-line1="@card.Address.Line1"
-                             data-line2="@card.Address.Line2" data-city="@card.Address.City"
-                             data-state="@card.Address.State" data-country="@card.Address.Country"
-                             data-zip="@card.Address.ZIP">
-                            <div class="card-header">
-                                <button type="button" onclick="EditCard(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                <button type="button" onclick="DeleteCard(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                <span class="float-right text-dark show-address popup" data-tooltip-content="#AddressPopup"><i class="fas fa-home"></i></span>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title dc-card-last-four">****-****-****-@card.LastFourDigits</h5>
-                                <h6 class="card-subtitle mb-2 text-muted dc-card-exp">@(card.ExpMonth + "/" + card.ExpYear)</h6>
-                                <h5 class="card-title text-muted dc-card-name">@card.Name</h5>
-                            </div>
-                        </div>
-            }
+                            {
+                                <div class="card dc-card d-inline-block" data-id="@card.CardID" style="width:300px"
+                                     data-name="@card.Name"
+                                     data-last-four="@card.LastFourDigits" data-month="@card.ExpMonth"
+                                     data-year="@card.ExpYear" data-line1="@card.Address.Line1"
+                                     data-line2="@card.Address.Line2" data-city="@card.Address.City"
+                                     data-state="@card.Address.State" data-country="@card.Address.Country"
+                                     data-zip="@card.Address.ZIP">
+                                    <div class="card-header">
+                                        <button type="button" onclick="EditCard(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                        <button type="button" onclick="DeleteCard(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                        <span class="float-right text-dark show-address popup" data-tooltip-content="#AddressPopup"><i class="fas fa-home"></i></span>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title dc-card-last-four">****-****-****-@card.LastFourDigits</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted dc-card-exp">@(card.ExpMonth + "/" + card.ExpYear)</h6>
+                                        <h5 class="card-title text-muted dc-card-name">@card.Name</h5>
+                                    </div>
+                                </div>
+                            }
                             <div class="card d-inline-block" style="width:300px">
                                 <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
                                     <i class="fas fa-plus"></i>
@@ -260,34 +269,34 @@ else
                     <div class="row">
                         <div id="Addresses" class="col-12 mb-4">
                             @foreach (Model.Address add in Model.DisplayUser.Addresses)
-                    {
-                        <div class="card address d-inline-block" data-id="@add.AddressID" style="width:300px"
-                             data-line1="@add.Line1" data-line2="@add.Line2"
-                             data-city="@add.City" data-state="@add.State"
-                             data-country="@add.Country" data-zip="@add.ZIP">
-                            <div class="card-header">
-                                <button type="button" onclick="EditAddress(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
-                                <button type="button" onclick="DeleteAddress(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                            </div>
-                            <div class="card-body">
-                                <h6 class="card-title">@add.Line1</h6>
+                            {
+                                <div class="card address d-inline-block" data-id="@add.AddressID" style="width:300px"
+                                     data-line1="@add.Line1" data-line2="@add.Line2"
+                                     data-city="@add.City" data-state="@add.State"
+                                     data-country="@add.Country" data-zip="@add.ZIP">
+                                    <div class="card-header">
+                                        <button type="button" onclick="EditAddress(this)" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>
+                                        <button type="button" onclick="DeleteAddress(this)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title">@add.Line1</h6>
 
-                                @if (add.Line2 != null)
-                        {
-                            <h6 class="card-title text-muted">@add.Line2</h6>
-                }
+                                        @if (add.Line2 != null)
+                                        {
+                                            <h6 class="card-title text-muted">@add.Line2</h6>
+                                        }
 
-                                @if (add.State != null)
-                        {
-                            <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
-                }
-                else
-                {
-                    <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
-        }
-                            </div>
-                        </div>
-            }
+                                        @if (add.State != null)
+                                        {
+                                            <h6 class="card-title text-muted">@add.City, @add.State @add.ZIP</h6>
+                                        }
+                                        else
+                                        {
+                                            <h6 class="card-title text-muted">@add.City, @add.Country @add.ZIP</h6>
+                                        }
+                                    </div>
+                                </div>
+                            }
                             <div class="card d-inline-block" style="width:300px">
                                 <div id="AddressCreate" class="card-body create-card" style="line-height: 95px">
                                     <i class="fas fa-plus"></i>
@@ -311,20 +320,20 @@ else
                 <div class="row mb-5">
                     <div class="col-6 offset-3 text-center">
                         @if (Model.DisplayUser.IsDeleted)
-                    {
-                        <input id="UndeleteAccount" type="submit" value="Enable Account" class="btn btn-warning btn-block">
-                }
-                else
-                {
-                    <input id="DeleteAccount" type="submit" value="@(Model.CurrentUser.IsAdmin ? "Disable Account" : "Delete Account")" class="btn btn-danger btn-block">
-            }
+                        {
+                            <input id="UndeleteAccount" type="submit" value="Enable Account" class="btn btn-warning btn-block">
+                        }
+                        else
+                        {
+                            <input id="DeleteAccount" type="submit" value="@(Model.CurrentUser.IsAdmin ? "Disable Account" : "Delete Account")" class="btn btn-danger btn-block">
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-        <script>
+    <script>
             $(document).ready(function () {
 
                 updateProfileIcon();
@@ -650,5 +659,5 @@ else
                 })
 
             });
-        </script>
-        }
+    </script>
+}

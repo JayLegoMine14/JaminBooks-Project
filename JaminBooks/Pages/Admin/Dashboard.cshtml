@@ -185,19 +185,19 @@
                                     </div>
                                 </div>
                                 @foreach (Model.Book book in Model.BestSellers.Keys)
-            {
-                    <div class="row mb-1">
-                        <div class="col-2">
-                            <img height="50" style="width:auto" src="@book.LoadImage" />
-                        </div>
-                        <div class="col-4">
-                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
-                        </div>
-                        <div class="col-4">
-                            <h6>@Model.BestSellers[book]</h6>
-                        </div>
-                    </div>
-}
+                                {
+                                    <div class="row mb-1">
+                                        <div class="col-2">
+                                            <img height="50" style="width:auto" src="@book.LoadImage" />
+                                        </div>
+                                        <div class="col-4">
+                                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <h6>@Model.BestSellers[book]</h6>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                         <hr />
@@ -217,19 +217,19 @@
                                     </div>
                                 </div>
                                 @foreach (Model.Book book in Model.WorstSellers.Keys)
-            {
-                    <div class="row mb-1">
-                        <div class="col-2">
-                            <img height="50" style="width:auto" src="@book.LoadImage" />
-                        </div>
-                        <div class="col-4">
-                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
-                        </div>
-                        <div class="col-4">
-                            <h6>@Model.WorstSellers[book]</h6>
-                        </div>
-                    </div>
-}
+                                {
+                                    <div class="row mb-1">
+                                        <div class="col-2">
+                                            <img height="50" style="width:auto" src="@book.LoadImage" />
+                                        </div>
+                                        <div class="col-4">
+                                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <h6>@Model.WorstSellers[book]</h6>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>

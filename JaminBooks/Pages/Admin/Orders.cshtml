@@ -19,14 +19,14 @@
         min-height: 50vh;
     }
 
-    .item{
+    .item {
         transition: .3s;
     }
 
-    .item:hover {
-        transform: scale(1.05);
-        background-color: #ddd;
-    }
+        .item:hover {
+            transform: scale(1.05);
+            background-color: #ddd;
+        }
 
     #ButtonDiv {
         display: none; /* Hidden by default */
@@ -51,17 +51,17 @@
         transition: all ease .4s;
     }
 
-    #ASModal hr[data-group="top"] {
-        margin: 0;
-        margin-top: 20px;
-        padding-bottom: 10px;
-    }
+        #ASModal hr[data-group="top"] {
+            margin: 0;
+            margin-top: 20px;
+            padding-bottom: 10px;
+        }
 
-    #ASModal hr[data-group="bottom"] {
-        margin: 0;
-        margin-top: 10px;
-        padding-bottom: 20px;
-    }
+        #ASModal hr[data-group="bottom"] {
+            margin: 0;
+            margin-top: 10px;
+            padding-bottom: 20px;
+        }
 
     input[type=checkbox].sleek-checkbox {
         display: none !important;
@@ -117,7 +117,7 @@
         <div class="form-inline">
             <h6 class="col-3 text-white">Sort By:</h6>
             <select id="SortColumn" class="form-control col-5">
-                @foreach(String Column in Model.DisplayColumns)
+                @foreach (String Column in Model.DisplayColumns)
                 {
                     <option value="@(Model.DisplayColumns.IndexOf(Column) + 1)">@Column</option>
                 }
@@ -149,17 +149,17 @@
     <div class="col-12">
         <div class="row">
             <div class="col-12 text-center mt-3">
-                <span class="h6 mr-2">Results:</span><span class="badge badge-dark"id="ResultCount">0</span>
+                <span class="h6 mr-2">Results:</span><span class="badge badge-dark" id="ResultCount">0</span>
             </div>
             <div id="ItemHeader" class="col-10 offset-1 mt-1">
                 <div class="row">
-                    @if(Model.DisplayColumns.Count % 12 != 0)
+                    @if (Model.DisplayColumns.Count % 12 != 0)
                     {
-                         <div class="col-@(6 - Model.DisplayColumns.Count)"></div>
+                        <div class="col-@(6 - Model.DisplayColumns.Count)"></div>
                     }
-                    @foreach(String Column in Model.DisplayColumns)
+                    @foreach (String Column in Model.DisplayColumns)
                     {
-                         <div class="col-2 text-center">
+                        <div class="col-2 text-center">
                             <h5>@Column</h5>
                         </div>
                     }

@@ -1,0 +1,174 @@
+﻿@page
+@model JaminBooks.Pages.BookshelfModel
+@{
+    ViewData["Title"] = "My Bookshelf";
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+    var Cart = Model.DisplayUser.GetCart();
+
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
+}
+
+@if (Model.CurrentUser != null)
+{
+    <style>
+        #Bookshelf {
+            min-height: 30vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            margin: 20px;
+        }
+
+        .book-overlay {
+            background-color: rgba(0, 0, 0, .5);
+            text-align: center;
+        }
+
+        .overlay-oldprice {
+            text-decoration: line-through;
+            position: absolute;
+            bottom: -20px;
+            left: 65px;
+            color: #ccc;
+            font-size: smaller;
+        }
+
+        .oldprice {
+            text-decoration: line-through;
+            font-size: .8em;
+            margin-top: 0;
+        }
+
+        .remove {
+            position: absolute;
+            bottom: 10px;
+            left: 70px;
+        }
+    </style>
+    <script>$("a.bookshelf").addClass("active")</script>
+    <div class="container body-content" style="min-height:80vh">
+        <div class="container">
+            <div id="EmptyBookshelf" class="row" style="@(Model.Bookshelf.Count == 0 ? "" : "display:none")">
+                <div class="col-12 text-center" style="height: 75vh">
+                    <h2 class="mt-5">Nothing Here Yet</h2>
+                    <h3 class="mb-3">Add Books To Your Bookshelf</h3>
+                    <div class="row mb-5">
+                        <div class="col-4 offset-4">
+                            <a href="\Books" class="btn btn-dark-red text-white btn-lg btn-block">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="Bookshelf" class="col-12">
+                    @foreach (Model.Book book in Model.Bookshelf)
+                    {
+                        <div class="card text-white book" style="width: 200px" data-id="@book.BookID" onclick="location.href='\Book?id=@book.BookID'">
+                            <img class="card-img" src="@book.LoadImage">
+                            <div class="card-img-overlay book-overlay" style="display:none">
+                                @if (Model.DisplayUser.hasBought(book.BookID))
+                                {
+                                    <h6 class="card-title mb-1"><span class="badge badge-info">Purchased</span></h6>
+                                }
+                                @if (book.Quantity == 0)
+                                {
+                                    <h6 class="card-title mb-1"><span class="badge badge-danger">Out Of Stock</span></h6>
+                                }
+                                @if (book.PercentDiscount > 0)
+                                {
+                                    <h6 class="card-title mb-1"><span class="badge badge-success">On Sale</span></h6>
+                                }
+                                <h5 class="card-title">@book.Title</h5>
+
+                                <h5 class="card-text mt-4 position-relative">
+                                    $@book.Price.ToString("0.00")
+                                    @if (book.PercentDiscount > 0)
+                                    {
+                                        <span class="overlay-oldprice">$@book._Price.ToString("0.00")</span>
+                                    }
+                                </h5>
+
+                                <h5 class="card-text mt-5">
+                                    @for (int i = 0; i < book.Rating; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    @for (int i = 0; i < 5 - book.Rating; i++)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                </h5>
+                                <button class="btn btn-danger btn-sm remove mt-3">Remove</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $(".remove").click(function (event) {
+                var book = $(this).parents(".book");
+                $.confirm({
+                    title: 'Remove from Bookshelf',
+                    icon: 'fas fa-times',
+                    content: 'Would you like to remove this book from your bookshelf?',
+                    type: 'red',
+                    buttons: {
+                        yes: {
+                            action: function () {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Model/RemoveBookFromBookShelf",
+                                    beforeSend: function (xhr) {
+                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                    },
+                                    data: JSON.stringify({
+                                        ID: book.data("id")
+                                    }),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function () {
+                                        book.fadeOut(function () {
+                                            book.remove();
+                                            if ($("#Bookshelf .book").length == 0)
+                                                $("#EmptyBookshelf").fadeIn();
+                                        });
+                                    },
+                                    failure: function (response) {
+                                        location.href = "\Error"
+                                    }
+                                });
+                            }
+                        },
+                        no: function () { }
+                    }
+                });
+                event.stopImmediatePropagation();
+            });
+        });
+        $(".book").hover(function () {
+            $(this).find(".book-overlay").fadeIn();
+        },
+            function () {
+                $(this).find(".book-overlay").fadeOut();
+            })
+    </script>
+}
+

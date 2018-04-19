@@ -19,146 +19,147 @@
 
 @if (Model.DisplayUser != null)
 {
-<style>
-    .book-icon{
-        height: 100px;
-        width: auto !important;
-    }
-
-    .price{
-        position: relative;
-    }
-
-    .oldprice {
-        text-decoration: line-through;
-        position: absolute;
-        bottom: -23px;
-        left: 15px;
-        font-size: smaller;
-    }
-
-    .truncate-ellipsis {
-        display: table;
-        table-layout: fixed;
-        width: 100%;
-        white-space: nowrap;
-    }
-
-        .truncate-ellipsis > * {
-            display: table-cell;
-            overflow: hidden;
-            text-overflow: ellipsis;
+    <style>
+        .book-icon {
+            height: 100px;
+            width: auto !important;
         }
-</style>
 
-<span id="UserID" class="d-none">@Model.DisplayUser.UserID</span>
-<div class="container body-content">
-    <div class="container">
-        <div id="EmptyCart" class="row" style="@(Cart.Keys.Count == 0 ? "" : "display:none")">
-            <div class="col-12 text-center" style="height: 75vh">
-                <h2 class="mt-5">Nothing Here Yet</h2>
-                <h3 class="mb-3">Add Books To Your Cart</h3>
-                <div class="row mb-5">
-                    <div class="col-4 offset-4">
+        .price {
+            position: relative;
+        }
+
+        .oldprice {
+            text-decoration: line-through;
+            position: absolute;
+            bottom: -23px;
+            left: 15px;
+            font-size: smaller;
+        }
+
+        .truncate-ellipsis {
+            display: table;
+            table-layout: fixed;
+            width: 100%;
+            white-space: nowrap;
+        }
+
+            .truncate-ellipsis > * {
+                display: table-cell;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    </style>
+
+    <span id="UserID" class="d-none">@Model.DisplayUser.UserID</span>
+    <div class="container body-content">
+        <div class="container">
+            <div id="EmptyCart" class="row" style="@(Cart.Keys.Count == 0 ? "" : "display:none")">
+                <div class="col-12 text-center" style="height: 75vh">
+                    <h2 class="mt-5">Nothing Here Yet</h2>
+                    <h3 class="mb-3">Add Books To Your Cart</h3>
+                    <div class="row mb-5">
+                        <div class="col-4 offset-4">
                             <a href="\Books" class="btn btn-dark-red text-white btn-lg btn-block">Continue Shopping</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="ActiveCart" class="row" style="@(Cart.Keys.Count == 0 ? "display:none" : "")">
-            <div class="col-lg-8 col-md-12">
-                <h2 class="mt-2">@(Model.CurrentUser.UserID == Model.DisplayUser.UserID ? "Your" : Model.DisplayUser.FirstName + " " + Model.DisplayUser.LastName + "'s") Cart</h2>
-                <div id="Books" class="mt-2">
-                    @foreach (Model.Book book in Cart.Keys)
-                    {
-                        <div class="book card w-100 p-1" data-id="@book.BookID" data-out="@(book.Quantity == 0)">
-                            <div class="row">
-                                <div class="col-2">
-                                    <img class="book-icon" src="@book.LoadImage">
-                                </div>
-                                <div class="col-4 mt-4 truncate-ellipsis">
-                                    <h4 class="title">@book.Title</h4>
-                                </div>
-                                <div class="col-2 mt-4">
-                                    <h5 class="price @(book.PercentDiscount > 0 ? "text-success" : "")">$@book.Price.ToString("0.00")
-                                    @if(book.PercentDiscount > 0)
-                                    {
-                                        <span class="oldprice text-muted">$@book._Price.ToString("0.00")</span>
-                                    }
-                                    </h5>
-                                </div>
-                                <div class="col-2 mt-4">
-                                    @if(@book.Quantity == 0)
-                                    {
-                                        <h5><span class="badge badge-danger">Out Of Stock</span></h5>
-                                    }
-                                    else
-                                    {
-                                        <input type="number" value="@Cart[book]" class="quantity form-control input-sm" min=1 max=@book.Quantity onkeydown="javascript: return event.keyCode == 69 ? false : true">
-                                    }
-                                </div>
-                                <div class="col-2 mt-4">
-                                    <button class="btn btn-danger remove-book"><i class="fas fa-times"></i></button>
+            <div id="ActiveCart" class="row" style="@(Cart.Keys.Count == 0 ? "display:none" : "")">
+                <div class="col-lg-8 col-md-12">
+                    <h2 class="mt-2">@(Model.CurrentUser.UserID == Model.DisplayUser.UserID ? "Your" : Model.DisplayUser.FirstName + " " + Model.DisplayUser.LastName + "'s") Cart</h2>
+                    <div id="Books" class="mt-2">
+                        @foreach (Model.Book book in Cart.Keys)
+                        {
+                            <div class="book card w-100 p-1" data-id="@book.BookID" data-out="@(book.Quantity == 0)">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <img class="book-icon" src="@book.LoadImage">
+                                    </div>
+                                    <div class="col-4 mt-4 truncate-ellipsis">
+                                        <h4 class="title">@book.Title</h4>
+                                    </div>
+                                    <div class="col-2 mt-4">
+                                        <h5 class="price @(book.PercentDiscount > 0 ? "text-success" : "")">
+                                            $@book.Price.ToString("0.00")
+                                            @if (book.PercentDiscount > 0)
+                                            {
+                                                <span class="oldprice text-muted">$@book._Price.ToString("0.00")</span>
+                                            }
+                                        </h5>
+                                    </div>
+                                    <div class="col-2 mt-4">
+                                        @if (@book.Quantity == 0)
+                                        {
+                                            <h5><span class="badge badge-danger">Out Of Stock</span></h5>
+                                        }
+                                        else
+                                        {
+                                            <input type="number" value="@Cart[book]" class="quantity form-control input-sm" min=1 max=@book.Quantity onkeydown="javascript: return event.keyCode == 69 ? false : true">
+                                        }
+                                    </div>
+                                    <div class="col-2 mt-4">
+                                        <button class="btn btn-danger remove-book"><i class="fas fa-times"></i></button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
-            </div>
-            <div class="col-4 mt-5">
-                <div class="card w-100 p-2">
-                    <h3>Summary</h3>
-                    <hr/>
-                    <div class="row p-2">
-                        <h5 class="col-6">Book Total</h5>
-                        <div class="col-6 text-right">
-                            <span>$<span id="BookTotal">0.00</span></span>
-                        </div>
-                    </div>
-                    <div class="row p-2" id="Discount" style="display:none">
-                        <h5 class="col-6">Discount</h5>
-                        <div class="col-6 text-right">
-                            <span><span id="DiscountPercent"></span></span>
-                        </div>
-                    </div>
-                    <div class="row p-2">
-                        <h5 class="col-6">Shipping</h5>
-                        <div class="col-6 text-right">
-                            <span class="text-success">FREE</span>
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row p-2">
-                        <h5 class="col-6">Order Total</h5>
-                        <div class="col-6 text-right">
-                            <span><strong>$<span id="OrderTotal">0.00</span></strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-5">
-                    <div class="col-12">
-                        <input id="Code" type="text" maxlength="10" class="form-control" placeholder="Coupon Code"/>
-                    </div>
-                </div>
-                <div class="row mb-5">
-                    <div class="col-12">
-                        @if (Model.DisplayUser.IsConfirmed)
-                        {
-                            <button id="Checkout" class="btn btn-dark-red text-white btn-lg btn-block">Checkout</button>
                         }
-                        else
-                        {
-                            <h5 class="text-danger font-weight-bold">Please verify email address</h5>
-                            <button class="btn btn-dark-red text-white btn-lg btn-block disabled">Checkout</button>
-                        }
+                    </div>
+                </div>
+                <div class="col-4 mt-5">
+                    <div class="card w-100 p-2">
+                        <h3>Summary</h3>
+                        <hr />
+                        <div class="row p-2">
+                            <h5 class="col-6">Book Total</h5>
+                            <div class="col-6 text-right">
+                                <span>$<span id="BookTotal">0.00</span></span>
+                            </div>
+                        </div>
+                        <div class="row p-2" id="Discount" style="display:none">
+                            <h5 class="col-6">Discount</h5>
+                            <div class="col-6 text-right">
+                                <span><span id="DiscountPercent"></span></span>
+                            </div>
+                        </div>
+                        <div class="row p-2">
+                            <h5 class="col-6">Shipping</h5>
+                            <div class="col-6 text-right">
+                                <span class="text-success">FREE</span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row p-2">
+                            <h5 class="col-6">Order Total</h5>
+                            <div class="col-6 text-right">
+                                <span><strong>$<span id="OrderTotal">0.00</span></strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <input id="Code" type="text" maxlength="10" class="form-control" placeholder="Coupon Code" />
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            @if (Model.DisplayUser.IsConfirmed)
+                            {
+                                <button id="Checkout" class="btn btn-dark-red text-white btn-lg btn-block">Checkout</button>
+                            }
+                            else
+                            {
+                                <h5 class="text-danger font-weight-bold">Please verify email address</h5>
+                                <button class="btn btn-dark-red text-white btn-lg btn-block disabled">Checkout</button>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
+    <script>
     var callID = 0;
 
     $(document).ready(function () {
@@ -350,7 +351,7 @@
             }
         });
     }
-</script>
+    </script>
 
 }
 

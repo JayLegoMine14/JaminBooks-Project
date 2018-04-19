@@ -13,7 +13,7 @@ namespace JaminBooks.Model
         public int PublisherID { private set; get; } = -1;
         public string PublisherName;
         public Address Address;
-        public Phone Phone;       
+        public Phone Phone;
         public string ContactFirstName;
         public string ContactLastName;
         public bool IsDeleted;
@@ -53,8 +53,8 @@ namespace JaminBooks.Model
         {
             this.PublisherID = PublisherID;
             this.PublisherName = PublisherName;
-            this.Address = new Address (AddressID);
-            this.Phone = new Phone (PhoneID);
+            this.Address = new Address(AddressID);
+            this.Phone = new Phone(PhoneID);
             this.ContactFirstName = ContactFirstName;
             this.ContactLastName = ContactLastName;
             this.IsDeleted = IsDeleted;

@@ -63,7 +63,7 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspSavePromotion",
                 new Param("PromotionID", PromotionID),
-                new Param("StartDate", StartDate), 
+                new Param("StartDate", StartDate),
                 new Param("EndDate", EndDate),
                 new Param("PercentDiscount", PercentDiscount),
                 new Param("Total", Total ?? SqlDecimal.Null),

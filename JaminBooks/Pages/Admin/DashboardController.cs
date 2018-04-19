@@ -16,15 +16,15 @@ namespace JaminBooks.Pages.Admin
         public IActionResult LoadSalesByCategory()
         {
             Dictionary<string, string> fields = AJAX.GetFields(Request);
-            DataTable result = SQL.Execute("uspGetSalesByCategory", 
-                new Param("BeginDate", DateTime.Parse(fields["start"]).Date), 
+            DataTable result = SQL.Execute("uspGetSalesByCategory",
+                new Param("BeginDate", DateTime.Parse(fields["start"]).Date),
                 new Param("EndDate", DateTime.Parse(fields["end"]).Date));
 
             List<object[]> columns = new List<object[]>();
             int index = 0;
-            foreach(DataRow dr in result.Rows)
+            foreach (DataRow dr in result.Rows)
             {
-                columns.Add(new object[] { dr["CategoryName"], (int)dr["Quantity"]});
+                columns.Add(new object[] { dr["CategoryName"], (int)dr["Quantity"] });
             }
             return new JsonResult(columns);
         }
@@ -41,7 +41,7 @@ namespace JaminBooks.Pages.Admin
 
             List<object[]> columns = new List<object[]>();
             int row = 0;
-            for(DateTime d = Start; d <= End.Date; d = d.AddDays(1))
+            for (DateTime d = Start; d <= End.Date; d = d.AddDays(1))
             {
                 if (result.Rows.Count > row && ((DateTime)result.Rows[row]["Date"]).Date == d.Date)
                 {

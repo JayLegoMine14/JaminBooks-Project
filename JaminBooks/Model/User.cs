@@ -82,7 +82,8 @@ namespace JaminBooks.Model
             }
         }
 
-        public List<Address> Addresses {
+        public List<Address> Addresses
+        {
             get
             {
                 return Address.GetAddresses(this.UserID);
@@ -119,19 +120,19 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspGetUserByID", new Param("UserID", UserID));
 
-            if(dt.Rows.Count > 0)
+            if (dt.Rows.Count > 0)
             {
                 this.UserID = UserID;
-                this.FirstName = (String) dt.Rows[0]["FirstName"];
-                this.LastName = (String) dt.Rows[0]["LastName"]; 
-                this.CreationDate = (DateTime) dt.Rows[0]["CreationDate"];
-                this.Password = (String) dt.Rows[0]["Password"];
-                this.Email = (String) dt.Rows[0]["Email"];
-                this.IsDeleted = (Boolean) dt.Rows[0]["IsDeleted"];
-                this.IsAdmin = (Boolean) dt.Rows[0]["IsAdmin"];
+                this.FirstName = (String)dt.Rows[0]["FirstName"];
+                this.LastName = (String)dt.Rows[0]["LastName"];
+                this.CreationDate = (DateTime)dt.Rows[0]["CreationDate"];
+                this.Password = (String)dt.Rows[0]["Password"];
+                this.Email = (String)dt.Rows[0]["Email"];
+                this.IsDeleted = (Boolean)dt.Rows[0]["IsDeleted"];
+                this.IsAdmin = (Boolean)dt.Rows[0]["IsAdmin"];
                 this.IsConfirmed = (Boolean)dt.Rows[0]["IsConfirmed"];
                 this.ConfirmationCode = dt.Rows[0]["ConfirmationCode"] == DBNull.Value ? null : (String)dt.Rows[0]["ConfirmationCode"];
-                this.Icon = dt.Rows[0]["Icon"] == DBNull.Value ? null : (byte[]) dt.Rows[0]["Icon"];
+                this.Icon = dt.Rows[0]["Icon"] == DBNull.Value ? null : (byte[])dt.Rows[0]["Icon"];
             }
             else
             {
@@ -139,8 +140,8 @@ namespace JaminBooks.Model
             }
         }
 
-        private User(int UserID, string FirstName, string LastName, DateTime CreationDate, 
-            string Password, string Email, bool IsDeleted, bool IsAdmin, bool IsConfirmed, 
+        private User(int UserID, string FirstName, string LastName, DateTime CreationDate,
+            string Password, string Email, bool IsDeleted, bool IsAdmin, bool IsConfirmed,
             string ConfirmationCode, byte[] Icon)
         {
             this.UserID = UserID;
@@ -158,7 +159,7 @@ namespace JaminBooks.Model
 
         public void Save()
         {
-            DataTable dt = SQL.Execute("uspSaveUser", 
+            DataTable dt = SQL.Execute("uspSaveUser",
                 new Param("UserID", UserID),
                 new Param("FirstName", FirstName),
                 new Param("LastName", LastName),
@@ -171,7 +172,7 @@ namespace JaminBooks.Model
                 new Param("Icon", Icon ?? SqlBinary.Null));
 
             if (dt.Rows.Count > 0)
-                UserID = (int) dt.Rows[0]["UserID"];
+                UserID = (int)dt.Rows[0]["UserID"];
         }
 
         public void Delete()

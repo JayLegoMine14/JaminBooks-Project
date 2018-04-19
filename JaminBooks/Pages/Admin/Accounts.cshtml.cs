@@ -19,7 +19,7 @@ namespace JaminBooks.Pages.Admin
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
-            if(CurrentUser == null || !CurrentUser.IsAdmin)
+            if (CurrentUser == null || !CurrentUser.IsAdmin)
             {
                 Response.Redirect("/");
             }

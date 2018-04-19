@@ -49,8 +49,10 @@ namespace JaminBooks.Model
         private string _CVC;
         private string _Number;
 
-        public User User {
-            get {
+        public User User
+        {
+            get
+            {
                 return new User(UserID);
             }
             set
@@ -61,12 +63,14 @@ namespace JaminBooks.Model
 
         private int UserID = -1;
 
-        public Card() {
+        public Card()
+        {
             IsEncrypted = false;
             IsHashed = false;
         }
 
-        public Card(int CardID) {
+        public Card(int CardID)
+        {
             DataTable dt = SQL.Execute("uspGetCardByID", new Param("CardID", CardID));
 
             if (dt.Rows.Count > 0)

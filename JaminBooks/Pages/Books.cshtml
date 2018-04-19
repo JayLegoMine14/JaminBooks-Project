@@ -133,7 +133,7 @@
                             <div class="col-12">
                                 <select id="SortType" class="form-control">
                                     <option value="1">Popularity</option>
-                                    <option value="2">Relavence</option>
+                                    <option value="2">Relevance</option>
                                     <option value="3">Price: Low to High</option>
                                     <option value="4">Price: High to Low</option>
                                     <option value="5">New to Old</option>
@@ -175,7 +175,10 @@
                 </div>
                 <div class="col-8">
                     <span id="BookID" class="d-none">-1</span>
-                    <h2 id="BookTitle">Title</h2>
+                    <div class="float-right">
+                        <button id="AddToBookshelf" class="btn btn-warning"><i class="fas fa-star"></i></button>
+                    </div>
+                    <h2 id="BookTitle" style="margin-right:80px">Title</h2>
                     <h4 id="BookAuthor">Author</h4>
                     <h3>$<span id="BookPrice">0.00</span> <span class="ml-3 oldprice text-muted">$<span id="BookOldPrice">0.00</span></span></h3>
                     <div id="Rating">
@@ -232,28 +235,28 @@
                     <div id="Ratings" class="mt-3">
                         <h3>Reviews</h3>
                         @if (Model.CurrentUser != null && Model.CurrentUser.IsConfirmed)
-        {
-                <div class="col-12">
-                    <span id="RatingStars">
-                        <span class="star-overlay"></span>
-                        <i class="fas fa-star"></i>
-                        <span class="star-overlay"></span>
-                        <i class="far fa-star"></i>
-                        <span class="star-overlay"></span>
-                        <i class="far fa-star"></i>
-                        <span class="star-overlay"></span>
-                        <i class="far fa-star"></i>
-                        <span class="star-overlay"></span>
-                        <i class="far fa-star"></i>
-                    </span>
-                    <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
-                    <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
-                </div>
-}
-else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
-{
-                <h5 class="text-danger font-weight-bold">Verify email address to write reviews.</h5>
-}
+                        {
+                            <div class="col-12">
+                                <span id="RatingStars">
+                                    <span class="star-overlay"></span>
+                                    <i class="fas fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                </span>
+                                <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                                <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
+                            </div>
+                        }
+                        else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
+                        {
+                            <h5 class="text-danger font-weight-bold">Verify email address to write reviews.</h5>
+                        }
                         <div id="RatingMessages" class="mt-3"></div>
                         <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
                             <div class="col-12">
@@ -343,6 +346,43 @@ else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
 
             $("#BookCat option:selected").hide();
             $("#BookCat").val(-1);
+        });
+
+        $("#AddToBookshelf").click(function () {
+            $.confirm({
+                title: 'Place on Bookshelf',
+                icon: 'fas fa-star',
+                content: 'Would you like to place this book on your bookshelf?',
+                type: 'orange',
+                buttons: {
+                    yes: {
+                        action: function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "/Model/AddBookToBookShelf",
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("XSRF-TOKEN",
+                                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                                },
+                                data: JSON.stringify({
+                                    ID: $("#BookID").text()
+                                }),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function () {
+                                    $("#AddToBookshelf").fadeOut();
+                                },
+                                failure: function (response) {
+                                    location.href = "\Error"
+                                }
+                            });
+                        }
+                    },
+                    no: function () { }
+                }
+            });
+            event.stopPropagation();
+            return false;
         });
 
         $("#AddToCart").click(function () {
@@ -510,7 +550,8 @@ else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
                     bookcard += 'data-publisher="' + book.Publisher.PublisherName + '"'
                     bookcard += 'data-discount="' + book.PercentDiscount + '"'
                     bookcard += 'data-oldprice="' + book._Price.toFixed(2) + '"'
-                    bookcard += '> '
+                    bookcard += 'data-on-bookshelf="' + (response[3].indexOf(book.BookID) > -1) + '"'
+                    bookcard += '>'
                     bookcard += '<img class="card-img" src="' + book.LoadImage + '">'
                     bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
                     if (book.Quantity == 0) bookcard += '<h5 class="card-title"><span class="badge badge-danger">Out Of Stock</span></h5>'
@@ -520,7 +561,7 @@ else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
                     if (book.PercentDiscount == 0) {
                         bookcard += '<h5 class="card-text mt-4">$' + book.Price.toFixed(2);  + '</h5>'
                     } else {
-                        bookcard += '<h5 class="card-text mt-4 position-relative">$' + book.Price.toFixed(2); 
+                        bookcard += '<h5 class="card-text mt-4 position-relative">$' + book.Price.toFixed(2);
                         bookcard += '<span class="overlay-oldprice">$' + book._Price.toFixed(2);  + '</span>';
                         bookcard += '</h5>'
                     }
@@ -561,6 +602,10 @@ else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
         $("#BookImage").attr("src", book.find("img").attr("src"))
         $("#BookID").text(book.data("id"));
         $("#BookTitle").text(book.data("title"));
+
+        if ($("UserID").text() == "-1" || book.data("on-bookshelf"))
+            $("#AddToBookshelf").hide();
+        else $("#AddToBookshelf").show();
 
         if (book.data("discount") > 0) {
             $("#BookPrice").text(book.data("price"));

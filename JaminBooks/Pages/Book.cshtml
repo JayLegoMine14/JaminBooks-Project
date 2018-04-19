@@ -304,21 +304,24 @@
                     </div>
                     <div class="col-8">
                         <span id="BookID" class="d-none">@Model.Book.BookID</span>
-                        <h2 id="BookTitle">@Model.Book.Title</h2>
+                        <div class="float-right">
+                            @if (Model.CurrentUser.GetBookShelf().All(b => b.BookID != Model.Book.BookID))
+                            {
+                                <button id="AddToBookshelf" class="btn btn-warning"><i class="fas fa-star"></i></button>
+                            }
+                        </div>
+                        <h2 id="BookTitle" style="margin-right:80px">@Model.Book.Title</h2>
                         <h4 id="BookAuthor">@(string.Join(",", Model.Book.Authors.Select(a => string.Format("{0} {1}", a.FirstName, a.LastName))))</h4>
                         <h3 class="@(Model.Book.PercentDiscount > 0 ? "text-success" : "")">
-                            $<span id="BookPrice">@Model.Book.Price.ToString("0.00")</span> 
-                                @if (Model.Book.PercentDiscount > 0)
-                                {
+                            $<span id="BookPrice">@Model.Book.Price.ToString("0.00")</span>
+                            @if (Model.Book.PercentDiscount > 0)
+                            {
                                 <span class="ml-3 oldprice text-muted">$<span id="BookOldPrice">@Model.Book._Price.ToString("0.00")</span></span>
                                 <span class="ml-3 text-dark" style="font-size:.6em">(@Model.Book.PercentDiscount% Off until @Model.Promo.EndDate.ToString("M/d/yyyy"))</span>
-                                }
+                            }
                         </h3>
                         <div id="Rating">
                             <span>
-                                @{
-                                    var rating = Model.Book.Rating;
-                                }
                                 @for (int i = 0; i < Model.Book.Rating; i++)
                                 {
                                     <i class="fas fa-star"></i>
@@ -373,18 +376,18 @@
                                             <h6>@Model.Book.Publisher.Address.Line1</h6>
 
                                             @if (Model.Book.Publisher.Address.Line2 != null)
-    {
-                                        <h6>@Model.Book.Publisher.Address.Line2</h6>
-}
+                                            {
+                                                <h6>@Model.Book.Publisher.Address.Line2</h6>
+                                            }
 
                                             @if (Model.Book.Publisher.Address.State != null)
-    {
-                                        <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.State @Model.Book.Publisher.Address.ZIP</h6>
-}
-else
-{
-                                        <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.Country @Model.Book.Publisher.Address.ZIP</h6>
-}
+                                            {
+                                                <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.State @Model.Book.Publisher.Address.ZIP</h6>
+                                            }
+                                            else
+                                            {
+                                                <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.Country @Model.Book.Publisher.Address.ZIP</h6>
+                                            }
                                         </div>
                                     }
                                 </div>
@@ -402,21 +405,21 @@ else
                                         </div>
                                     </div>
                                     @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
-    {
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label font-weight-bold">Publisher Contact:</label>
-                                    <div class="col-8">
-                                        <input id="PublisherContact" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.FullName">
-                                    </div>
-                                </div>
+                                    {
+                                        <div class="form-group row">
+                                            <label class="col-4 col-form-label font-weight-bold">Publisher Contact:</label>
+                                            <div class="col-8">
+                                                <input id="PublisherContact" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.FullName">
+                                            </div>
+                                        </div>
 
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label font-weight-bold">Publisher Number:</label>
-                                    <div class="col-8">
-                                        <input id="PublisherNumber" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.Phone.Number">
-                                    </div>
-                                </div>
-}
+                                        <div class="form-group row">
+                                            <label class="col-4 col-form-label font-weight-bold">Publisher Number:</label>
+                                            <div class="col-8">
+                                                <input id="PublisherNumber" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.Phone.Number">
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -424,28 +427,28 @@ else
                         <div id="Ratings" class="mt-3">
                             <h3>Reviews</h3>
                             @if (Model.CurrentUser != null && Model.CurrentUser.IsConfirmed)
-    {
-                        <div class="col-12">
-                            <span id="RatingStars">
-                                <span class="star-overlay"></span>
-                                <i class="fas fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                            </span>
-                            <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
-                            <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
-                        </div>
+                            {
+                                <div class="col-12">
+                                    <span id="RatingStars">
+                                        <span class="star-overlay"></span>
+                                        <i class="fas fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                    </span>
+                                    <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                                    <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
+                                </div>
                             }
                             else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
                             {
-                        <h5 class="text-danger font-weight-bold">Verify email address to write reviews.</h5>
-}
+                                <h5 class="text-danger font-weight-bold">Verify email address to write reviews.</h5>
+                            }
                             <div id="RatingMessages" class="mt-3"></div>
                             <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
                                 <div class="col-12">
@@ -563,6 +566,44 @@ else
                 }
             });
         });
+
+        $("#AddToBookshelf").click(function () {
+            $.confirm({
+                title: 'Place on Bookshelf',
+                icon: 'fas fa-star',
+                content: 'Would you like to place this book on your bookshelf?',
+                type: 'orange',
+                buttons: {
+                    yes: {
+                        action: function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "/Model/AddBookToBookShelf",
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("XSRF-TOKEN",
+                                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                                },
+                                data: JSON.stringify({
+                                    ID: $("#BookID").text()
+                                }),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function () {
+                                    $("#AddToBookshelf").fadeOut();
+                                },
+                                failure: function (response) {
+                                    location.href = "\Error"
+                                }
+                            });
+                        }
+                    },
+                    no: function () { }
+                }
+            });
+            event.stopPropagation();
+            return false;
+        });
+
     });
 </script>
 @await Html.PartialAsync("_Authentication")

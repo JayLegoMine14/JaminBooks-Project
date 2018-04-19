@@ -37,7 +37,7 @@ namespace JaminBooks.Pages.Admin
             decimal price = Convert.ToDecimal(Request.Form["Price"]);
             decimal cost = Convert.ToDecimal(Request.Form["Cost"]);
             int quantity = Convert.ToInt32(Request.Form["Quantity"]);
-            
+
 
             Book b = new Book(id);
             b.Title = title;

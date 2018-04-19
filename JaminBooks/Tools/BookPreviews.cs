@@ -25,7 +25,7 @@ namespace JaminBooks.Tools
             if (u != null)
             {
                 DataTable results = SQL.Execute("uspGetReccomended", new Param("UserID", u.UserID));
-                if(results.Rows.Count > 0)
+                if (results.Rows.Count > 0)
                 {
                     return new Book((int)results.Rows[0]["BookID"]);
                 }

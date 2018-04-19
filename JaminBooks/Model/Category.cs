@@ -20,7 +20,7 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspGetCategoryByID", new Param("CategoryID", CategoryID));
 
-            if(dt.Rows.Count > 0)
+            if (dt.Rows.Count > 0)
             {
                 this.CategoryID = CategoryID;
                 this.CategoryName = (String)dt.Rows[0]["CategoryName"];
@@ -96,7 +96,7 @@ namespace JaminBooks.Model
                     ));
             return categories;
         }
-            
+
 
     }
 }

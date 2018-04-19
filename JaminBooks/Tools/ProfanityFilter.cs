@@ -15,7 +15,7 @@ namespace JaminBooks.Tools
         {
             string[] words = s.Split(" ");
             int index = 0;
-            foreach(string w in words)
+            foreach (string w in words)
             {
                 string word = new string(w.ToLower().Where(c => (char.IsLetterOrDigit(c))).ToArray());
                 if (IsProfane(word))

@@ -74,7 +74,7 @@ namespace JaminBooks.Model
                         }
                     }
 
-                    return "/images/temp/" + filename;               
+                    return "/images/temp/" + filename;
                 }
             }
         }
@@ -107,7 +107,7 @@ namespace JaminBooks.Model
         {
             get
             {
-                if(LoadPublisher)
+                if (LoadPublisher)
                     return new Publisher(PublisherID);
                 else
                 {
@@ -173,7 +173,7 @@ namespace JaminBooks.Model
 
         public void Save()
         {
-            DataTable dt = SQL.Execute("uspSaveBook", 
+            DataTable dt = SQL.Execute("uspSaveBook",
                 new Param("Title", Title),
                 new Param("BookID", BookID),
                 new Param("PublicationDate", PublicationDate),
@@ -216,7 +216,7 @@ namespace JaminBooks.Model
 
         public static List<Book> GetBookShelf(User user)
         {
-            return GetBooks(SQL.Execute("uspGetBooks", new Param("UserID", user.UserID)));
+            return GetBooks(SQL.Execute("uspGetBookShelf", new Param("UserID", user.UserID)));
         }
 
         public static List<Book> GetBooks()
@@ -258,7 +258,7 @@ namespace JaminBooks.Model
                     (decimal)dr["Cost"],
                     (int)dr["Quantity"],
                     (bool)dr["IsDeleted"],
-                    (dr["BookImage"] != DBNull.Value ? (byte[]) dr["BookImage"] : new byte[1])));
+                    (dr["BookImage"] != DBNull.Value ? (byte[])dr["BookImage"] : new byte[1])));
             return books;
         }
     }

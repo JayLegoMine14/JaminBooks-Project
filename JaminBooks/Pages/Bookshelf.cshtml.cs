@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace JaminBooks.Pages
 {
-    public class AccountModel : PageModel
+    public class BookshelfModel : PageModel
     {
         public User CurrentUser;
         public User DisplayUser;
+        public List<Book> Bookshelf;
 
         public void OnGet(int? id)
         {
@@ -27,8 +28,9 @@ namespace JaminBooks.Pages
                     DisplayUser = new User(id.Value);
                 else
                     DisplayUser = CurrentUser;
-            }
 
+                Bookshelf = DisplayUser.GetBookShelf();
+            }
         }
     }
 }

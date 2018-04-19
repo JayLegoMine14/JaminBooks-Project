@@ -69,12 +69,12 @@ namespace JaminBooks.Pages.Admin
                                     switch (comp)
                                     {
                                         case "eq":
-                                            holder = searchItems.Where(o => 
+                                            holder = searchItems.Where(o =>
                                             o.OrderID.ToString() == val
                                             ).ToList();
                                             break;
                                         case "gt":
-                                            holder = searchItems.Where(o => 
+                                            holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.OrderID > value
                                             ).ToList();
                                             break;
@@ -1480,7 +1480,7 @@ namespace JaminBooks.Pages.Admin
                         switch (sortOrder)
                         {
                             case 1:
-                                itemsToSort.Sort((a, b) => a.HasIcon ? 0 : -1 );
+                                itemsToSort.Sort((a, b) => a.HasIcon ? 0 : -1);
                                 break;
                             case -1:
                                 itemsToSort.Sort((a, b) => b.HasIcon ? 0 : -1);
@@ -1544,8 +1544,8 @@ namespace JaminBooks.Pages.Admin
                     items.Add(new
                     {
                         ID = user.UserID,
-                        Icon = "<div class='icon-div'>" 
-                        + "<img class='userIcon' src='" + user.LoadImage + "' />" 
+                        Icon = "<div class='icon-div'>"
+                        + "<img class='userIcon' src='" + user.LoadImage + "' />"
                         + "</div>",
                         user.Email,
                         Name = user.FullName,

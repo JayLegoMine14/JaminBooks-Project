@@ -62,7 +62,7 @@ namespace JaminBooks.Model
                 this.Hidden = (bool)dt.Rows[0]["Hidden"];
 
                 DataTable flags = SQL.Execute("uspGetFlagsByRating", new Param("RatingID", RatingID));
-                foreach(DataRow dr in flags.Rows)
+                foreach (DataRow dr in flags.Rows)
                 {
                     this.Flags.Add((int)dr["UserID"]);
                 }

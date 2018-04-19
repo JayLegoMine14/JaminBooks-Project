@@ -18,7 +18,7 @@ namespace JaminBooks.Model
         public string Country;
         public string ZIP;
 
-        public Address() {}
+        public Address() { }
 
         public Address(int AddressID)
         {
@@ -40,7 +40,7 @@ namespace JaminBooks.Model
             }
         }
 
-        private Address (int AddressID, string Line1, string Line2, string City, string State, string Country, string ZIP)
+        private Address(int AddressID, string Line1, string Line2, string City, string State, string Country, string ZIP)
         {
             this.AddressID = AddressID;
             this.Line1 = Line1;

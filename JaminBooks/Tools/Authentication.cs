@@ -17,16 +17,16 @@ namespace JaminBooks.Tools
 {
     public class Authentication
     {
-       public static string Email;
-       public static string Password;
-       public static string Name;
-       static Random RANDOM = new Random();
+        public static string Email;
+        public static string Password;
+        public static string Name;
+        static Random RANDOM = new Random();
 
-       public static User GetCurrentUser(HttpContext context)
-       {
+        public static User GetCurrentUser(HttpContext context)
+        {
             int? ID = context.Session.GetInt32("UserID");
             return ID == null ? null : new User(ID.Value);
-       }
+        }
 
         public static void LogoutCurrentUser(HttpContext context)
         {
@@ -48,7 +48,7 @@ namespace JaminBooks.Tools
         public static bool EmailExistsWithException(HttpRequest request)
         {
             Dictionary<string, string> user = AJAX.GetFields(request);
-            return new User(Convert.ToInt32(user["ID"])).Email != user["Email"] 
+            return new User(Convert.ToInt32(user["ID"])).Email != user["Email"]
                 && User.Exists(user["Email"]);
         }
 
@@ -56,11 +56,11 @@ namespace JaminBooks.Tools
         {
             Dictionary<string, string> user = AJAX.GetFields(request);
             int? UserID;
-            if (User.Exists(user["Email"], Hash(user["Password"]), out UserID) 
+            if (User.Exists(user["Email"], Hash(user["Password"]), out UserID)
                 && !new User(UserID.Value).IsDeleted)
             {
                 request.HttpContext.Session.SetInt32("UserID", UserID.Value);
-                return new bool[] { true, new User(UserID.Value).IsAdmin};
+                return new bool[] { true, new User(UserID.Value).IsAdmin };
             }
             else return new bool[] { false };
         }
@@ -176,7 +176,8 @@ namespace JaminBooks.Tools
                     smtp.Send(message);
                     return true;
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return false;
             }

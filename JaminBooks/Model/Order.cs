@@ -14,7 +14,7 @@ namespace JaminBooks.Model
         public int OrderID { private set; get; } = -1;
         public DateTime OrderDate { private set; get; }
         public DateTime? RefundDate = null;
-        public DateTime? FulfilledDate =  null;
+        public DateTime? FulfilledDate = null;
         public int PercentDiscount;
         public Card Card;
         public Address Address;
@@ -55,7 +55,7 @@ namespace JaminBooks.Model
             get
             {
                 List<int> children = new List<int>();
-                foreach(DataRow dr in SQL.Execute("uspGetChildren", new Param("OrderID", this.OrderID)).Rows)
+                foreach (DataRow dr in SQL.Execute("uspGetChildren", new Param("OrderID", this.OrderID)).Rows)
                 {
                     children.Add((int)dr["OrderID"]);
                 }
@@ -65,7 +65,8 @@ namespace JaminBooks.Model
 
         public Order() { }
 
-        public Order(int OrderID) {
+        public Order(int OrderID)
+        {
             DataTable dt = SQL.Execute("uspGetOrderByID", new Param("OrderID", OrderID));
 
             if (dt.Rows.Count > 0)
@@ -80,7 +81,7 @@ namespace JaminBooks.Model
                 this.ParentOrderID = dt.Rows[0]["ParentOrderID"] == DBNull.Value ? null : (int?)dt.Rows[0]["ParentOrderID"];
 
                 DataTable books = SQL.Execute("uspGetOrderBooksByID", new Param("OrderID", OrderID));
-                foreach(DataRow book in books.Rows)
+                foreach (DataRow book in books.Rows)
                 {
                     Books.Add(new Book((int)book["BookID"]),
                         new { Price = (decimal)book["Price"], Quantity = (int)book["Quantity"], Cost = (decimal)book["Cost"] });
@@ -92,7 +93,7 @@ namespace JaminBooks.Model
             }
         }
 
-        public Order (int OrderID, DateTime OrderDate, int CardID, int AddressID, int PercentDiscount, DateTime? RefundDate, DateTime? FulfilledDate, int? ParentOrderID)
+        public Order(int OrderID, DateTime OrderDate, int CardID, int AddressID, int PercentDiscount, DateTime? RefundDate, DateTime? FulfilledDate, int? ParentOrderID)
         {
             this.OrderID = OrderID;
             this.OrderDate = OrderDate;
@@ -124,26 +125,26 @@ namespace JaminBooks.Model
                new Param("CardID", Card.CardID),
                new Param("AddressID", Address.AddressID),
                new Param("FulfilledDate", FulfilledDate ?? SqlDateTime.Null),
-               new Param("RefundDate", RefundDate ?? SqlDateTime.Null), 
+               new Param("RefundDate", RefundDate ?? SqlDateTime.Null),
                new Param("ParentOrderID", ParentOrderID ?? SqlInt32.Null));
 
             var oldID = OrderID;
             if (dt.Rows.Count > 0)
                 OrderID = (int)dt.Rows[0]["OrderID"];
 
-            if(oldID != OrderID)
-                foreach(Book b in Books.Keys)
-                   SQL.Execute("uspSaveOrderBooks",
-                   new Param("OrderID", OrderID),
-                   new Param("BookID", b.BookID),
-                   new Param("Price", Books[b].Price),
-                   new Param("Quantity", Books[b].Quantity),
-                   new Param("Cost", Books[b].Cost));
+            if (oldID != OrderID)
+                foreach (Book b in Books.Keys)
+                    SQL.Execute("uspSaveOrderBooks",
+                    new Param("OrderID", OrderID),
+                    new Param("BookID", b.BookID),
+                    new Param("Price", Books[b].Price),
+                    new Param("Quantity", Books[b].Quantity),
+                    new Param("Cost", Books[b].Cost));
         }
 
         public override bool Equals(object obj)
         {
-            if(obj is Order)
+            if (obj is Order)
                 return this.OrderID == ((Order)obj).OrderID;
             else
                 return false;

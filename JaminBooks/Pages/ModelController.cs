@@ -234,7 +234,7 @@ namespace JaminBooks.Pages
 
                 foreach (JArray book in books.Children<JArray>())
                 {
-                    int BookID = (int) book[0];
+                    int BookID = (int)book[0];
                     int? Quantity = (int?)book[1];
                     if (!Quantity.HasValue) Quantity = 0;
 
@@ -247,7 +247,7 @@ namespace JaminBooks.Pages
                 if (!String.IsNullOrEmpty(code))
                 {
                     Discount = Promotions.GetDiscount(code);
-                    if(Discount > 0) codeWorks = true;
+                    if (Discount > 0) codeWorks = true;
                 }
 
                 var totalDiscount = Promotions.GetDiscount(BookTotal);
@@ -425,7 +425,7 @@ namespace JaminBooks.Pages
 
                 Rating r = id != -1 ? new Rating(id) : new Rating();
 
-                if(id == -1)
+                if (id == -1)
                 {
                     r.UserID = user.UserID;
                     r.BookID = Convert.ToInt32(fields["BookID"]);
@@ -468,16 +468,17 @@ namespace JaminBooks.Pages
             if (currentUser.IsAdmin)
             {
                 List<string> titles = new List<string>();
-                foreach(KeyValuePair<Book, dynamic> book in o.Books){
+                foreach (KeyValuePair<Book, dynamic> book in o.Books)
+                {
                     if (book.Key.Quantity < book.Value.Quantity)
                         titles.Add(book.Key.Title);
                 }
 
-                if(o.Children.Count == 2)
+                if (o.Children.Count == 2)
                 {
                     return new JsonResult(new object[] { 0 });
                 }
-                else if(titles.Count > 0)
+                else if (titles.Count > 0)
                 {
                     return new JsonResult(new object[] { 1, titles });
                 }
@@ -489,8 +490,8 @@ namespace JaminBooks.Pages
                     o.ParentOrderID = oldID;
                     o.PercentDiscount = 100;
                     o.Save();
-                    return new JsonResult( new object[] { 2, o.OrderID });
-                } 
+                    return new JsonResult(new object[] { 2, o.OrderID });
+                }
             }
             return new JsonResult("");
         }
@@ -592,7 +593,7 @@ namespace JaminBooks.Pages
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
             if (currentUser.IsAdmin)
             {
-               int id = Convert.ToInt32(fields["ID"]);
+                int id = Convert.ToInt32(fields["ID"]);
                 Promotion p = id != -1 ? new Promotion(id) : new Promotion();
 
                 p.Total = fields["Total"] == null ? null : (decimal?)Convert.ToDecimal(fields["Total"]);
@@ -613,7 +614,7 @@ namespace JaminBooks.Pages
             Dictionary<string, string> fields = AJAX.GetFields(Request);
 
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
-            if ( currentUser.IsAdmin)
+            if (currentUser.IsAdmin)
             {
                 Promotion p = new Promotion(Convert.ToInt32(fields["ID"]));
                 p.Delete();
@@ -683,7 +684,7 @@ namespace JaminBooks.Pages
             if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
             {
                 byte[] blob = Convert.FromBase64String(fields["Icon"]);
-                    
+
                 user.Icon = blob;
                 user.Save();
             }
@@ -695,7 +696,7 @@ namespace JaminBooks.Pages
         {
             User u = Authentication.GetCurrentUser(HttpContext);
 
-            if(u == null)
+            if (u == null)
             {
                 return new JsonResult(JsonConvert.SerializeObject(0));
             }
@@ -716,19 +717,21 @@ namespace JaminBooks.Pages
         }
 
         [Route("Model/AddBookToBookShelf")]
-        public void AddBookToBookShelf()
-        {
-            User u = Authentication.GetCurrentUser(HttpContext);         
-            Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
-            u.AddBookToBookShelf(Convert.ToInt32(fields["BookID"]));
-        }
-
-        [Route("Model/RemoveBookFromBookShelf")]
-        public void RemoveBookFromBookShelf()
+        public IActionResult AddBookToBookShelf()
         {
             User u = Authentication.GetCurrentUser(HttpContext);
             Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
-            u.RemoveBookFromBookShelf(Convert.ToInt32(fields["BookID"]));
+            u.AddBookToBookShelf(Convert.ToInt32(fields["ID"]));
+            return new JsonResult("");
+        }
+
+        [Route("Model/RemoveBookFromBookShelf")]
+        public IActionResult RemoveBookFromBookShelf()
+        {
+            User u = Authentication.GetCurrentUser(HttpContext);
+            Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
+            u.RemoveBookFromBookShelf(Convert.ToInt32(fields["ID"]));
+            return new JsonResult("");
         }
 
         [Route("Model/GetRatings")]
@@ -754,7 +757,8 @@ namespace JaminBooks.Pages
             int[] categories = ((JArray)fields["Cats"]).Select(j => (int)j).ToArray();
 
             String searchProcedure = "uspSearchBookByAll";
-            switch (searchtype) {
+            switch (searchtype)
+            {
                 case 1:
                     searchProcedure = "uspSearchBookByAll";
                     break;
@@ -781,7 +785,7 @@ namespace JaminBooks.Pages
             List<Book> books = Book.GetBooks(bookresults);
 
             //This needs to get all books that have at least one cat in the cat list
-            if(categories.Count() > 0)
+            if (categories.Count() > 0)
                 books = books.Where(b => b.Categories.Any(c => categories.Contains(c.CategoryID))).ToList();
 
             switch (sorttype)
@@ -816,7 +820,10 @@ namespace JaminBooks.Pages
                 book.Cost = 0;
             }
 
-            return new JsonResult(JsonConvert.SerializeObject(new object[] { fields["CallID"], count, books }));
+            User u = Authentication.GetCurrentUser(HttpContext);
+            List<int> bookshelf = u == null ? new List<int>() : u.GetBookShelf().Select(b => b.BookID).ToList();
+
+            return new JsonResult(JsonConvert.SerializeObject(new object[] { fields["CallID"], count, books, bookshelf }));
         }
     }
 }
