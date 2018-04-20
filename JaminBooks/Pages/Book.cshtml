@@ -305,7 +305,7 @@
                     <div class="col-8">
                         <span id="BookID" class="d-none">@Model.Book.BookID</span>
                         <div class="float-right">
-                            @if (Model.CurrentUser.GetBookShelf().All(b => b.BookID != Model.Book.BookID))
+                            @if (Model.CurrentUser != null && Model.CurrentUser.GetBookShelf().All(b => b.BookID != Model.Book.BookID))
                             {
                                 <button id="AddToBookshelf" class="btn btn-warning"><i class="fas fa-star"></i></button>
                             }

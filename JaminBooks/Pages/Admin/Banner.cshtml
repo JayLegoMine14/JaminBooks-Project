@@ -1,0 +1,253 @@
+﻿@page
+@model JaminBooks.Pages.Admin.BannerModel
+@{
+    ViewData["Title"] = "Banner";
+    Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+}
+
+<script src="~/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="~/css/jquery-ui.min.css" />
+<link rel="stylesheet" href="~/css/jquery-ui.structure.min.css" />
+<link rel="stylesheet" href="~/css/jquery-ui.theme.min.css" />
+
+<style>
+    #Banners {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    .carousel-item{
+        display: block !important;
+    }
+    .slide{
+        margin: 20px;
+    }
+    .remove{
+        position: absolute;
+        bottom: 0px;
+        right:0px;
+    }
+</style>
+
+<div class="container body-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-10 offset-1" style="min-height:90vh">
+                <div class="row">
+                    <div class="col-12 text-center mt-3 mb-3">
+                        <h2>Home Page Banners</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mt-2 mb-2">
+                        <button id="AddBanner" class="btn btn-primary">Add Banner <i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <ul id="Banners">
+                        @foreach (Model.Banner b in Model.Banners)
+                        {
+                            <li class="ui-state-default slide" data-id="@b.BannerID">
+                                <div class="carousel-item">
+                                    <img src="@b.LoadImage" class="d-block w-100" />
+                                    <div class="carousel-caption" role="option">
+                                        @if(b.URL != null)
+                                        {
+                                        <a class="btn btn-lg btn-dark-red text-white" href="@b.URL">
+                                            Shop Now
+                                        </a>
+                                        }
+                                    </div>
+                                    <button class="btn btn-sm btn-danger remove text-white" onclick="removeBanner(this)">
+                                        Remove
+                                    </button>
+                                </div>
+                            </li>
+                         }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="BannerModal" data-id="-1" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="custom-file">
+                                    <div class="input-group mb-3">
+                                        <input type="file" class="custom-file-input" id="Image">
+                                        <label class="custom-file-label" for="Image">
+                                            Choose banner image...
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <input id="URL" type="text" placeholder="Button URL..." class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 offset-3 text-center">
+                        <input id="SaveBanner" type="submit" value="Add Banner" class="btn btn-primary btn-block">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#Banners").sortable({
+            update: reorderBanners
+        });
+        $("#Banners").disableSelection();
+
+        $("#AddBanner").click(function () {
+            $("#BannerModal").modal("show");
+        });
+
+        $('#Image').change(function () {
+            var filename = $(this).val().split('\\').pop();
+            $(".custom-file-label").html(filename);
+        });
+
+        $("#SaveBanner").click(function () {
+            $(".custom-file-label").removeAttr("style");
+            if (document.getElementById("Image").files.length == 0) {
+                $(".custom-file-label").css("border-color", "red");
+                return false;
+            }
+
+            var canvas = document.createElement("canvas");
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var img = new Image();
+                img.onload = function () {
+                    canvas.width = 1140
+                    canvas.height = 360
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    $("#Image").get(0).src = canvas.toDataURL('image/png');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Model/AddBanner",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify({
+                            Image: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, ''),
+                            URL: $("#URL").val(),
+                            Order: $(".slide").length
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            var banner = "";
+                            banner += '<li class="ui-state-default slide" data-id=' + response  + '>'
+                            banner += '    <div class="carousel-item">'
+                            banner += '        <img src="' + canvas.toDataURL('image/png') + '" class="d-block w-100" />'
+                            banner += '       <div class="carousel-caption" role="option">'
+                            if ($("#URL").val() != "") {
+                                banner += '            <a class="btn btn-lg btn-dark-red text-white" href="' + $("#URL").val() + '">'
+                                banner += '                Shop Now'
+                                banner += '        </a>'
+                            }
+                            banner += '        </div>'
+                            banner += '        <button class="btn btn-sm btn-danger remove text-white">'
+                            banner += '            Remove'
+                            banner += '    </button>'
+                            banner += '    </div>'
+                            banner += '</li>'
+
+                            $("#Banners").append(banner);
+                            $("#BannerModal").modal("hide");
+                            $("#Image").val("");
+                            $("#URL").val("");
+
+                        },
+                        failure: function (response) {
+                            location.href = "\Error"
+                        }
+                    });
+                }
+                img.src = reader.result;
+            }
+            reader.readAsDataURL($("#Image").get(0).files[0]);
+        });
+    });
+
+    function reorderBanners() {
+        var ids = [];
+        $(".slide").each(function () { ids.push("" + $(this).data("id")) })
+        $.ajax({
+            type: "POST",
+            url: "/Model/OrderBanners",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify({
+                Order: JSON.stringify(ids)
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            failure: function (response) {
+                location.href = "\Error"
+            }
+        });
+    }
+
+    function removeBanner(button) {
+        var banner = $(button).parents(".slide");
+        $.confirm({
+            title: 'Remove Banner',
+            content: 'Would you like to remove this banner?',
+            type: 'red',
+            buttons: {
+                yes: {
+                    action: function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Model/RemoveBanner",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            data: JSON.stringify({
+                                ID: banner.data("id")
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function () {
+                                banner.fadeOut(function () {
+                                    banner.remove();
+                                });
+                                reorderBanners();
+                            },
+                            failure: function (response) {
+                                location.href = "\Error"
+                            }
+                        });
+                    }
+                },
+                no: function () { }
+            }
+        });
+    }
+</script>
+
+

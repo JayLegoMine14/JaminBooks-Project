@@ -316,3 +316,44 @@ input[type=checkbox].sleek-checkbox {
         display: none;
     }
 }
+
+@media screen and (max-width: 767px) {
+    html {
+        font-size: .7rem;
+    }
+    .brand-name{
+        max-width: 300px;
+    }
+}
+
+@media screen and (max-width: 467px) {
+    .brand-name {
+        width: 200px;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .brand-name {
+        width: 150px;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 335px) {
+    .brand-name {
+        display:none;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    html {
+        font-size: .8rem;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    html {
+        font-size: .8rem;
+    }
+}

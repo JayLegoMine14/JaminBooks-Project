@@ -10,14 +10,19 @@ namespace JaminBooks.Tools
 {
     public class BookPreviews
     {
-        public static Book GetBestSeller()
+        public static List<Book> GetBestSellers()
         {
-            return new Book((int)SQL.Execute("uspGetBestSeller").Rows[0]["BookID"]);
+            return Book.GetBooks(SQL.Execute("uspGetAlltimeBestSellers"));
         }
 
-        public static Book GetMostPopular()
+        public static List<Book> GetMostPopular()
         {
-            return new Book((int)SQL.Execute("uspGetMostPopular").Rows[0]["BookID"]);
+            return Book.GetBooks(SQL.Execute("uspGetMostPopular"));
+        }
+
+        public static List<Book> GetSales()
+        {
+            return Book.GetBooks(SQL.Execute("uspGetSales"));
         }
 
         public static Book GetReccomended(User u)
@@ -29,9 +34,9 @@ namespace JaminBooks.Tools
                 {
                     return new Book((int)results.Rows[0]["BookID"]);
                 }
-                else return GetMostPopular();
+                else return GetMostPopular()[0];
             }
-            else return GetMostPopular();
+            else return GetMostPopular()[0];
         }
     }
 }

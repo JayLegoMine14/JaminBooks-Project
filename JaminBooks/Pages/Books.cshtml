@@ -52,6 +52,32 @@
         margin-top: 0;
     }
 
+    .auto-complete {
+        position: absolute;
+        margin-top: 38px;
+        width: 83%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        z-index: 1000;
+        padding: 10px;
+        background-color: white;
+    }
+
+        .auto-complete .item .value {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            border-radius: 2px;
+        }
+
+    .auto-complete .item{
+        transition: .2s;
+    }
+
+        .auto-complete .item.active .value,
+        .auto-complete .item:hover .value {
+            background-color: #ddd;
+        }
+
     #BookView {
         position: fixed;
         top: 0;
@@ -92,6 +118,7 @@
         <div class="form-group">
             <div class="input-group mt-3">
                 <input type="text" id="Search" class="form-control" placeholder="Search...">
+                <div id="AutoComplete" class="auto-complete" style="display:none"></div>
                 <div class="input-group-append">
                     <select id="SearchType" class="form-control">
                         <option value="1">General</option>
@@ -134,6 +161,7 @@
                                 <select id="SortType" class="form-control">
                                     <option value="1">Popularity</option>
                                     <option value="2">Relevance</option>
+                                    <option value="7">Sales and Deals</option>
                                     <option value="3">Price: Low to High</option>
                                     <option value="4">Price: High to Low</option>
                                     <option value="5">New to Old</option>
@@ -453,6 +481,30 @@
             loadBooks(true);
         });
 
+        $("#Search").keyup(function (event) {
+            if (event.which == 40) {
+                var next = $(".auto-complete .item.active");
+                next.removeClass("active");
+                if (next.length > 0) {
+                    next.next(".item").addClass("active");
+                } else {
+                    $(".auto-complete .item").first().addClass("active");
+                }
+            } else if (event.which == 38) {
+                var next = $(".auto-complete .item.active");
+                next.removeClass("active");
+                if (next.length > 0) {
+                    next.prev(".item").addClass("active");
+                }
+            } else if (event.which == 13) {
+                var next = $(".auto-complete .item.active");
+                if (next.length > 0) {
+                    $("#Search").val(next.text());
+                    loadBooks(true);
+                }
+            }
+        });
+
         $(window).scroll(function () {
             if ($("#Books .book").last().isInViewport()) {
                 loadBooks(false);
@@ -490,8 +542,10 @@
         }
 
         if (loading || loaded) return;
-        loading = true;
-        if(!reset) $("#LoadIcon").show();
+        if (!reset) {
+            loading = true;
+            $("#LoadIcon").show();
+        }
         var count = 10;
 
         var cats = [];
@@ -510,6 +564,7 @@
         $.ajax({
             type: "POST",
             url: "Model/LoadBooks",
+            async: true,
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -522,6 +577,24 @@
                 if (response[0] < callID) return;
 
                 if (reset) $("#Books").empty();
+                if (data.Search != "" && response[4].length > 0) {
+                    $("#AutoComplete").show();
+                    $("#AutoComplete").empty();
+                    var regex = new RegExp(data.Search, "gi");
+                    response[4].forEach(function (match) {
+                        if ($("#Search").val() == match) return;
+                        $("#AutoComplete").append("<div class='row item'><div class='col-12'><div class='value'>"
+                            + match.replace(regex, "<b>$&</b>") + "</div></div></div>");
+                    });
+                    $("#AutoComplete .item").click(function () {
+                        $("#Search").val($(this).text());
+                        loadBooks(true);
+                    });
+                    if ($("#AutoComplete .item").length == 0)
+                        $("#AutoComplete").hide();
+                } else {
+                    $("#AutoComplete").hide();
+                }
 
                 response[2].forEach(function (book) {
 
@@ -603,7 +676,7 @@
         $("#BookID").text(book.data("id"));
         $("#BookTitle").text(book.data("title"));
 
-        if ($("UserID").text() == "-1" || book.data("on-bookshelf"))
+        if ($("#UserID").text() == "-1" || book.data("on-bookshelf"))
             $("#AddToBookshelf").hide();
         else $("#AddToBookshelf").show();
 

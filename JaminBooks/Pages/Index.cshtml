@@ -20,6 +20,25 @@
     #main > div.pl-3 {
         padding-left: 0 !important;
     }
+    .bottom {
+        position: absolute;
+        bottom: 15px;
+        width: 120px;
+        left: calc(50% - 67px);
+    }
+    .holder {
+        overflow: hidden;
+        height: 74%;
+    }
+    .oldprice {
+        text-decoration: line-through;
+        position: absolute;
+        bottom: -20px;
+        left: 20px;
+        color: #aaa;
+        font-size: smaller;
+    }
+    
 </style>
 
 <div>
@@ -27,66 +46,152 @@
 
     <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
         <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
+            @for(int i = 0; i < Model.Banners.Count; i++)
+            {
+                <li data-target="#myCarousel" data-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
+            }
         </ol>
         <div class="carousel-inner" role="listbox">
-            <div class="carousel-item active">
-                <img src="~/images/banner1.png" alt="Free Eats" class="d-block w-100" />
-                <div class="carousel-caption" role="option">
-                    <a class="btn btn-lg btn-primary" href="#">
-                        Shop Now
-                    </a>
+            @foreach(Model.Banner b in Model.Banners)
+            {
+                <div class="carousel-item @(Model.Banners.IndexOf(b) == 0 ? "active" : "" )">
+                    <img src="@b.LoadImage" class="d-block w-100" />
+                    <div class="carousel-caption" role="option">
+                        @if(b.URL != null)
+                        {
+                        <a class="btn btn-lg btn-primary" href="@b.URL">
+                            Shop Now
+                        </a>
+                        }
+                    </div>
                 </div>
-            </div>
-            <div class="carousel-item">
-
-                <img src="~/images/banner2.png" alt="Love, Elliot" class="d-block w-100" />
-                <div class="carousel-caption" role="option">
-                    <a class="btn btn-lg btn-success" href="#">
-                        Shop Now
-                    </a>
-                </div>
-            </div>
+            }
         </div>
     </div>
 
     <div class="row mt-4">
-        <div class="col-md-4">
-            <h2 class="text-center">Recommended</h2>
-            <div class="card">
-                <img src="@Model.Reccomended.LoadImage" alt="@Model.Reccomended.Title">
-                <div class="card-container">
-                    <h4><b>@Model.Reccomended.Title</b></h4>
-                    <a class="btn btn-lg btn-success" href="\Book?id=@Model.Reccomended.BookID">
-                        Shop Now
-                    </a>
-                </div>
-            </div>
+        <div class="col-11 offset-1">
+            <h3>Sales</h3>
         </div>
-        <div class="col-md-4">
-            <h2 class="text-center">Best Seller</h2>
-            <div class="card">
-                <img src="@Model.BestSeller.LoadImage" alt="@Model.BestSeller.Title">
-                <div class="card-container">
-                    <h4><b>@Model.BestSeller.Title</b></h4>
-                    <a class="btn btn-lg btn-success" href="\Book?id=@Model.BestSeller.BookID">
-                        Shop Now
-                    </a>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-10 offset-1 row">
+        @foreach (Model.Book b in Model.OnSale)
+        {
+            <div class="col-12 col-lg-4 col-md-6 col-sm-12">
+                <div class="card w-100">
+                    <div class="row">
+                        <div class="col-6 pr-0">
+                            <img src="@b.LoadImage" alt="@b.Title">
+                        </div>
+                        <div class="col-6 p-2 pr-3 card-body">
+                            <div class="holder">
+                                <h5 class="title mb-1"><b>@b.Title</b></h5>
+                                @if(b.PercentDiscount > 0)
+                                {
+                                <h2 class="text-danger mb-1"><b>@b.PercentDiscount</b>% <span class="h4">OFF</span></h2>
+                                }
+                                <h5 class="card-text position-relative ml-2">
+                                        $@b.Price.ToString("0.00")
+                                        @if (b.PercentDiscount > 0)
+                                        {
+                                            <span class="oldprice">$@b._Price.ToString("0.00")</span>
+                                        }
+                                    </h5>
+                            </div>
+                            <a class="btn btn-success bottom" href="\Book?id=@b.BookID">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
+        }
         </div>
-        <div class="col-md-4">
-            <h2 class="text-center">Popular</h2>
-            <div class="card">
-                <img src="@Model.MostPopular.LoadImage" alt="@Model.MostPopular.Title">
-                <div class="card-container">
-                    <h4><b>@Model.MostPopular.Title</b></h4>
-                    <a class="btn btn-lg btn-success" href="\Book?id=@Model.MostPopular.BookID">
-                        Shop Now
-                    </a>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-11 offset-1">
+            <h3>Most Popular</h3>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-10 offset-1 row">
+        @foreach (Model.Book b in Model.MostPopular)
+        {
+            <div class="col-12 col-lg-4 col-md-6 col-sm-12">
+                <div class="card w-100">
+                    <div class="row">
+                        <div class="col-6 pr-0">
+                            <img src="@b.LoadImage" alt="@b.Title">
+                        </div>
+                        <div class="col-6 p-2 pr-3">
+                             <div class="holder">
+                                <h5 class="title mb-1"><b>@b.Title</b></h5>
+                                @if(b.PercentDiscount > 0)
+                                {
+                                <h2 class="text-danger mb-1"><b>@b.PercentDiscount</b>% <span class="h4">OFF</span></h2>
+                                }
+                                <h5 class="card-text position-relative ml-2">
+                                        $@b.Price.ToString("0.00")
+                                        @if (b.PercentDiscount > 0)
+                                        {
+                                            <span class="oldprice">$@b._Price.ToString("0.00")</span>
+                                        }
+                                    </h5>
+                            </div>
+                            <a class="btn btn-success bottom" href="\Book?id=@b.BookID">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
+        }
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-11 offset-1">
+            <h3>Best Sellers</h3>
+        </div>
+    </div>
+
+    <div class="row mt-4 mb-5">
+        <div class="col-10 offset-1 row">
+        @foreach (Model.Book b in Model.BestSellers)
+        {
+            <div class="col-12 col-lg-4 col-md-6 col-sm-12">
+                <div class="card w-100">
+                    <div class="row">
+                        <div class="col-6 pr-0">
+                            <img src="@b.LoadImage" alt="@b.Title">
+                        </div>
+                        <div class="col-6 p-2 pr-3">
+                             <div class="holder">
+                                <h5 class="title mb-1"><b>@b.Title</b></h5>
+                                @if(b.PercentDiscount > 0)
+                                {
+                                <h2 class="text-danger mb-1"><b>@b.PercentDiscount</b>% <span class="h4">OFF</span></h2>
+                                }
+                                <h5 class="card-text position-relative ml-2">
+                                        $@b.Price.ToString("0.00")
+                                        @if (b.PercentDiscount > 0)
+                                        {
+                                            <span class="oldprice">$@b._Price.ToString("0.00")</span>
+                                        }
+                                    </h5>
+                            </div>
+                            <a class="btn btn-success bottom" href="\Book?id=@b.BookID">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
         </div>
     </div>
 </div>
