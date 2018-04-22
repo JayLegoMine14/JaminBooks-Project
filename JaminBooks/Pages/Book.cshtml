@@ -45,6 +45,21 @@
         right: 30px;
         width: 500px;
     }
+
+    @@media screen and (max-width: 990px) {
+        #BookImage {
+            left: -95px;
+        }
+    }
+
+    @@media screen and (max-width: 766px) {
+        #BookImage {
+            left: 80px;
+        }
+        #BookViewBody {
+            width: 100%
+        }
+    }
 </style>
 
 <span class="d-none" id="UserID">@(Model.CurrentUser == null ? -1 : Model.CurrentUser.UserID)</span>
@@ -295,14 +310,14 @@
             <img id="BookImage" src="@Model.Book.LoadImage" />
             <div class="container" style="overflow:auto;">
                 <div class="row mt-3">
-                    <div class="col-3">
+                    <div class="col-lg-3 col-md-3 col-12">
                         <div style="margin-top: 320px">
                             @{ var count = Model.Book.Quantity; }
                             <h5 class="w-75 ml-4 text-center"><span id="BookQuantity" class="@(count <= 5 ? "text-danger" : "")">@(@Model.Book.IsDeleted ? "Removed From Stock" : count == 0 ? "Out Of Stock" : (count <= 5 ? "Only " : "") + count + " In Stock")</span></h5>
-                            <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mt-2 w-75" @(count == 0 ? "disabled" : "")>Add to Cart</button>
+                            <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mb-2 mt-2 w-75" @(count == 0 ? "disabled" : "")>Add to Cart</button>
                         </div>
                     </div>
-                    <div class="col-8">
+                    <div class="col-lg-8 col-md-8 col-12">
                         <span id="BookID" class="d-none">@Model.Book.BookID</span>
                         <div class="float-right">
                             @if (Model.CurrentUser != null && Model.CurrentUser.GetBookShelf().All(b => b.BookID != Model.Book.BookID))

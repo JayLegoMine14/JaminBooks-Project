@@ -61,7 +61,7 @@
                         <div class="col-12 text-center" style="height: 75vh">
                             <h3 class="mt-5">Nothing Here Yet</h3>
                             <div class="row mb-5">
-                                <div class="col-4 offset-4">
+                                <div class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-10 offset-1">
                                     <a href="\Books" class="btn btn-dark-red text-white btn-lg btn-block">Continue Shopping</a>
                                 </div>
                             </div>
@@ -83,14 +83,22 @@
                             <div class="col-2 text-center">
                                 <h4>$@o.Total.ToString("0.00")</h4>
                             </div>
-                            <div class="col-2 text-center">
+                            <div class="col-3 text-center">
                                 @if (!o.IsFulfilled)
                                 {
                                     <h4><span class="badge badge-info">Processing...</span></h4>
                                 }
                                 else
                                 {
-                                    <h4><span class="badge badge-success">Shipped</span></h4>
+                                    @if (o.Children.Count > 0)
+                                    {
+                                        <h4><span class="badge badge-warning">Reshipped</span></h4>
+                                    }
+                                    else
+                                    {
+                                        <h4><span class="badge badge-success">Shipped</span></h4>
+
+                                    }
                                 }
                             </div>
                             <div class="col-2 text-center">

@@ -28,12 +28,12 @@
                             <h2>Book Reviews</h2>
                         </div>
                     </div>
-                    @if (Model.DisplayUser.Orders.Count == 0)
+                    @if (Model.Ratings.Count == 0)
                     {
                         <div class="col-12 text-center" style="height: 75vh">
                             <h3 class="mt-5">Nothing Here Yet</h3>
                             <div class="row mb-5">
-                                <div class="col-4 offset-4">
+                                <div class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-10 offset-1">
                                     <a href="\Books" class="btn btn-dark-red text-white btn-lg btn-block">Continue Shopping</a>
                                 </div>
                             </div>
@@ -42,7 +42,7 @@
                     else
                     {
 
-                        Model.User user = new Model.User(Model.Ratings[0].UserID);
+                        Model.User user = Model.Ratings.Count > 0 ? new Model.User(Model.Ratings[0].UserID) : Model.CurrentUser;
                         var image = user.LoadImage;
                         var username = user.FullName;
 

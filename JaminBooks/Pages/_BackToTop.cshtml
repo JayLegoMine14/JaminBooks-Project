@@ -1,0 +1,28 @@
+﻿<style>
+    .back-to-top{
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+</style>
+
+<button id="BackToTop" class="btn btn-dark-red btn-lg back-to-top text-white" style="display:none">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
+<script>
+    $(function () {
+        $(".back-to-top").click(function () {
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            return false;
+        });
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > 500) {
+                $(".back-to-top").fadeIn();
+            } else {
+                $(".back-to-top").fadeOut();
+            }
+        });
+    });
+</script>

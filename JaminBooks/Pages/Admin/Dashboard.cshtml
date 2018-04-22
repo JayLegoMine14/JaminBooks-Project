@@ -30,7 +30,7 @@
                     <div class="card-body pb-0">
                         <h6 class="card-title mb-4">Gross Profit</h6>
                         <h3 class="card-text text-center">$@(((decimal)Model.Fields["GrossProfit"]).ToString("0.00"))</h3>
-                        <h5 class="card-text text-center">@(((((decimal)Model.Fields["GrossProfit"]) / ((decimal)Model.Fields["TotalSales"])) * 100m).ToString("0.00"))%</h5>
+                        <h5 class="card-text text-center">@( ((decimal)Model.Fields["TotalSales"]) != 0 ? ((((decimal)Model.Fields["GrossProfit"]) / ((decimal)Model.Fields["TotalSales"]) * 100m).ToString("0.00")) : "0")%</h5>
                     </div>
                 </div>
             </div>
@@ -127,7 +127,7 @@
                 <div class="card w-100">
                     <div class="card-body">
                         <p class="card-text row align-items-center">
-                            <span class="h3 col-2 pr-1">@Model.Fields["ReshippedOrders"]</span>
+                            <span class="h3 col-2 pr-1">@Model.ReshippedOrders</span>
                             <span class="col-7 pl-0">Reshipped orders</span>
                             <a href="Orders?query=IsReshipped eq true" class="btn btn-primary btn-sm">View</a>
                         </p>

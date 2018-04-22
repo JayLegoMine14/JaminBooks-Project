@@ -29,7 +29,7 @@
         padding: 20px;
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: center;
         flex-wrap: wrap;
     }
 
@@ -69,14 +69,14 @@
             border-radius: 2px;
         }
 
-    .auto-complete .item{
-        transition: .2s;
-    }
-
-        .auto-complete .item.active .value,
-        .auto-complete .item:hover .value {
-            background-color: #ddd;
+        .auto-complete .item {
+            transition: .2s;
         }
+
+            .auto-complete .item.active .value,
+            .auto-complete .item:hover .value {
+                background-color: #ddd;
+            }
 
     #BookView {
         position: fixed;
@@ -114,7 +114,7 @@
 <span class="d-none" id="UserID">@(Model.CurrentUser == null ? -1 : Model.CurrentUser.UserID)</span>
 <span class="d-none" id="UserIsAdmin">@(Model.CurrentUser == null ? false : Model.CurrentUser.IsAdmin)</span>
 <div id="SearchBar" class="row">
-    <div class="col-6 offset-4">
+    <div class="col-lg-6 offset-lg-4 col-md-6 offset-md-4 col-10 offset-1">
         <div class="form-group">
             <div class="input-group mt-3">
                 <input type="text" id="Search" class="form-control" placeholder="Search...">
@@ -133,7 +133,7 @@
     </div>
 </div>
 <div class="row">
-    <div id="Sidebar" class="col-2">
+    <div id="Sidebar" class="col-lg-2 col-md-2 col-xs-12">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -174,7 +174,7 @@
             </div>
         </div>
     </div>
-    <div class="col-10">
+    <div class="col-lg-10 col-md-10 col-12">
         <div class="row">
             <div id="Books" class="col-12">
 
@@ -195,13 +195,13 @@
         <img id="BookImage" src="" />
         <div class="container" style="overflow:auto;">
             <div class="row mt-3">
-                <div class="col-3">
+                <div class="col-lg-3 col-md-3 col-12">
                     <div style="margin-top: 320px">
                         <h5 class="w-75 ml-4 text-center"><span id="BookQuantity">0</span></h5>
-                        <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mt-2 w-75">Add to Cart</button>
+                        <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mt-2 mb-2 w-75">Add to Cart</button>
                     </div>
                 </div>
-                <div class="col-8">
+                <div class="col-lg-8 col-md-8 col-12">
                     <span id="BookID" class="d-none">-1</span>
                     <div class="float-right">
                         <button id="AddToBookshelf" class="btn btn-warning"><i class="fas fa-star"></i></button>
@@ -481,6 +481,16 @@
             loadBooks(true);
         });
 
+        $("#Search").focusout(function () {
+            if ($(e.target).hasClass("item")) return;
+            $("#AutoComplete").hide();
+        });
+
+        $("#Search").focusin(function () {
+            if ($(".auto-complete .item").length > 0)
+                $("#AutoComplete").show();
+        });
+
         $("#Search").keyup(function (event) {
             if (event.which == 40) {
                 var next = $(".auto-complete .item.active");
@@ -586,7 +596,7 @@
                         $("#AutoComplete").append("<div class='row item'><div class='col-12'><div class='value'>"
                             + match.replace(regex, "<b>$&</b>") + "</div></div></div>");
                     });
-                    $("#AutoComplete .item").click(function () {
+                    $("#AutoComplete .item").click(function (event) {
                         $("#Search").val($(this).text());
                         loadBooks(true);
                     });
@@ -775,5 +785,6 @@
 
 </script>
 
+@await Html.PartialAsync("_BackToTop")
 @await Html.PartialAsync("_Ratings")
 @await Html.PartialAsync("_Authentication")

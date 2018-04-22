@@ -237,7 +237,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                         case "gt":
                                             holder = searchItems.Where(o =>
-                                            !Int32.TryParse(val, out itemCount) ? false : o.Books.Count > count
+                                            !Int32.TryParse(val, out itemCount) ? false : o.Books.Count > itemCount
                                             ).ToList();
                                             break;
                                         case "lt":
@@ -964,7 +964,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                         case "gt":
                                             holder = searchItems.Where(o =>
-                                            !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count > count
+                                            !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count > itemCount
                                             ).ToList();
                                             break;
                                         case "lt":
@@ -1903,7 +1903,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                         case "gt":
                                             holder = searchItems.Where(o =>
-                                            !Int32.TryParse(val, out quan) ? false : o.Quantity > count
+                                            !Int32.TryParse(val, out quan) ? false : o.Quantity > quan
                                             ).ToList();
                                             break;
                                         case "lt":

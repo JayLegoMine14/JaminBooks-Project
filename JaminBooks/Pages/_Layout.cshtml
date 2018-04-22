@@ -70,7 +70,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="Navbar">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav mr-auto pr-3">
                     <li class="nav-item ml-2"><a class="nav-link home" asp-page="/Index">Home</a></li>
                     <li class="nav-item ml-2"><a class="nav-link books" asp-page="/Books">Books</a></li>
                     @if (Convert.ToBoolean(ViewData["IsLoggedIn"]))
@@ -122,23 +122,34 @@
 
     @RenderBody()
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
-                    <ul class="list-unstyled list-inline social text-center">
-                        <li class="list-inline-item"><a><i class="fab fa-facebook-square"></i></a></li>
-                        <li class="list-inline-item"><a><i class="fab fa-twitter-square"></i></a></li>
-                        <li class="list-inline-item"><a><i class="fas fa-envelope"></i></a></li>
-                    </ul>
-                </div>
+        <div class="row">
+            <div class="col-2 offset-3 p-3">
+                <h5 class="text-white">Website Info</h5>
                 <hr />
+                <p><a href="About">About Us</a></p>
+                <p><a href="Terms">Terms of Service</a></p>
+                <p><a href="PrivacyPolicy">Privacy Policy</a></p>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 text-center white-text">
-                    <p>&copy James And Michael</p>
-                </div>
+            <div class="col-2 p-3">
+                <h5 class="text-white">Links</h5>
                 <hr />
+                <p><a href="Index">Home</a></p>
+                <p><a href="Books">Books</a></p>
             </div>
+            <div class="col-2 p-3">
+                <ul class="list-unstyled list-inline social text-center">
+                    <li class="list-inline-item"><a><i class="fab fa-facebook-square"></i></a></li>
+                    <li class="list-inline-item"><a><i class="fab fa-twitter-square"></i></a></li>
+                    <li class="list-inline-item"><a href="mailto:jaminbooksnoreply@gmail.com"<i class="fas fa-envelope"></i></a></li>
+                </ul>
+            </div>
+            <hr />
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 text-center white-text">
+                <p class="mt-2">&copy @(DateTime.Now.ToString("yyyy")) James And Michael</p>
+            </div>
+            <hr />
         </div>
     </footer>
 </body>
