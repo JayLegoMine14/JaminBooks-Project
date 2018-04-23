@@ -110,12 +110,12 @@ namespace JaminBooks.Model
 
         public static List<Publisher> GetPublishers()
         {
-            DataTable dt = SQL.Execute("uspAllGetPublishers");
+            DataTable dt = SQL.Execute("uspGetAllPublishers");
             List<Publisher> publishers = new List<Publisher>();
             foreach (DataRow dr in dt.Rows)
                 publishers.Add(new Publisher(
                     (int)dr["PublisherID"],
-                    (String)dr["PulisherName"]
+                    (String)dr["PublisherName"]
                     ));
             return publishers;
         }
