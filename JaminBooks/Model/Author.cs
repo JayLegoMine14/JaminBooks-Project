@@ -88,7 +88,7 @@ namespace JaminBooks.Model
             return authors;
         }
 
-        public static List<Author> GetAllAuthors()
+        public static List<Author> GetAuthors()
         {
             DataTable dt = SQL.Execute("uspGetAllAuthors");
             List<Author> authors = new List<Author>();
