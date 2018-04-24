@@ -639,7 +639,7 @@ namespace JaminBooks.Pages
         public IActionResult SaveBook()
         {
             Dictionary<string, string> fields = AJAX.GetFields(Request);
-           Model.Book book = Convert.ToInt32(fields["BookID"]) == -1 ? new Book() : new Book(Convert.ToInt32(fields["BookID"]));
+           Model.Book book = new Book();
 
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
             if (currentUser.IsAdmin)
@@ -648,6 +648,8 @@ namespace JaminBooks.Pages
                 int id = Convert.ToInt32(fields["BookID"]);
 
                 Book b = id != -1 ? new Book(id) : new Book();
+
+
 
                 b.Title = fields["Title"];
                 b.PublicationDate = Convert.ToDateTime(fields["PublicationDate"]);
@@ -662,6 +664,7 @@ namespace JaminBooks.Pages
                 b.Description = fields["Description"];
 
                 b.Save();
+
 
                 foreach (Author a in b.Authors) a.Delete();
                 foreach (Category c in b.Categories) c.Delete();
@@ -683,22 +686,44 @@ namespace JaminBooks.Pages
         public IActionResult CreateAuthor()
         {
             Dictionary<string, string> fields = AJAX.GetFields(Request);
-            Model.Author author = Convert.ToInt32(fields["AuthorID"]) == -1 ? new Author() : new Author(Convert.ToInt32(fields["AuthorID"]));
+            Model.Author author = new Author();
 
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
             if (currentUser.IsAdmin)
             {
 
-                int id = Convert.ToInt32(fields["AuthorID"]);
 
-                Author a = id != -1 ? new Author(id) : new Author();
+                Author a = new Author();
 
                 a.FirstName = fields["AFirstName"];
                 a.LastName = fields["ALastName"];
+                a.IsDeleted = false;
 
                 a.Save();
 
                 return new JsonResult(a.AuthorID);
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/CreateCategory")]
+        public IActionResult CreateCategory()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Category category = new Category();
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+
+                Category c = new Category();
+
+                c.CategoryName = fields["CategoryName"];
+                c.IsDeleted = false;
+
+                c.Save();
+
+                return new JsonResult(c.CategoryID);
             }
             return new JsonResult("");
         }

@@ -29,20 +29,8 @@
                     <h2 class="text-center">Create a Book</h2>
                 </div>
             </div>
-            <!--Author creation sufccess modal-->
-            <div class="modal fade" id="AuthorSuccessModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel"> API CODE </h4>
-                        </div>
-                        <div class="modal-body" id="CreationSuccess" style="overflow-x: scroll;">
-                            //ajax success content here.
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+           
             <!--general book information entry-->
             <div class="row">
                 <div class="col-12">
@@ -80,7 +68,6 @@
                             <input id="SaveAuthor" type="button" onclick="unhide(this, 'author'); " value="Add New" class="btn btn-block btn-dark">
                         </div>
                     </div>
-                    <input id="AIsDeleted" type="hidden" name="AIsDeleted" value="@(false)" />
                     <div id="author" class="hidden">
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">First Name</label>
@@ -150,102 +137,10 @@
 
                             </select>
                         </div>
-
-                        <div class="col-4">
-                            <input id="SavePublisher" type="button" onclick="unhide(this, 'publisher'); " value="Add New" class="btn btn-block btn-dark">
-                        </div>
-                    </div>
-
-                    <div id="publisher" class="hidden">
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Publisher Name</label>
-                            <div class="col-9">
-                                <input id="PublisherName" type="text" class="form-control" placeholder="Publisher Name" required name="PubName" />
-                            </div>
-                        </div>
-
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Contact First Name</label>
-                            <div class="col-9">
-                                <input id="CFirstName" type="text" class="form-control" placeholder="First Name" required name="ContactFirst" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Contact Last Name</label>
-                            <div class="col-9">
-                                <input id="CLastName" type="text" class="form-control" placeholder="Last Name" required name="ContactLast" />
-                            </div>
-                        </div>
-
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Phone Number</label>
-                            <div class="col-7">
-                                 <input id="PhoneNumber" type="text" class="form-control" placeholder="Phone Number" required name="Phone" />
-                             </div>
-                                <div class="col-2">
-                                    <select id="PhoneCat" placeholder="Category" class="form-control">
-                                        @foreach (int i in Model.PhoneCategories.Keys)
-                                        {
-                                        @Html.Raw("<option " + " value='" + i + "'>" + Model.PhoneCategories[i] + "</option>");
-                                        }
-                            </select>
-                            </div>
                         </div>
 
 
-                        <!-- address fields -->
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Publisher Address</label>
-                        </div>
 
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Line 1</label>
-                            <div class="col-8">
-                                <input id="Line1" type="text" class="form-control" placeholder="Line 1" required name="AddressLine1" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Line 2</label>
-                            <div class="col-8">
-                                <input id="Line2" type="text" class="form-control" placeholder="Line 2" name="AddressLine2" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">City</label>
-                            <div class="col-8">
-                                <input id="City" type="text" class="form-control" placeholder="City" required name="city" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">State</label>
-                            <div class="col-8">
-                                <input id="State" type="text" class="form-control" placeholder="State" required name="state" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Country</label>
-                            <div class="col-8">
-                                <input id="Country" type="text" class="form-control" placeholder="Country" required name="Country" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">ZIP</label>
-                            <div class="col-8">
-                                <input id="ZIP" type="text" class="form-control" placeholder="ZIP" required name="zip" />
-                            </div>
-                        </div>
-                        
-                        <!--Create new publisher "Save" Button-->
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label"></label>
-                            <div class="col-9">
-                                <button id="CreatePublisher" class="btn btn-block btn-red">Save New Publisher</button>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!--End Publisher sub Entry-->
                     <!--final general entries-->
                     <div class="form-group row">
                         <label class="col-3 col-form-label">ISBN10</label>
@@ -349,16 +244,13 @@
             if (validate()) {
 
                 var data = {
-                    AuthorID: $("#AuthorID").val(),
-                    FirstName: $("#AFirstName").val(),
-                    LastName: $("#ALastName").val(),
-                    IsDeleted: $("#AIsDeleted").val()
-                    
+                    AFirstName: $("#AFirstName").val(),
+                    ALastName: $("#ALastName").val()                
                 }
 
                 $.ajax({
                     type: "POST",
-                    url: "/Model/SaveAuthor/",
+                    url: "/Model/CreateAuthor/",
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("XSRF-TOKEN",
                             $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -369,6 +261,35 @@
                     success: function (response) {
                         
 
+                    },
+                    failure: function (response) {
+                        location.href = "\Error";
+                    }
+                });
+            }
+        });
+
+        $("#CreateCategory").click(function () {
+            if (validate()) {
+
+                var data = {
+
+                    CategoryName: $("#CategoryName").val()
+
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Model/CreateCategory/",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        $("<option selected = 'selected' value='" + c.CategoryID + "'>" + c.CategoryName + "</option>").appendTo("BookCat");
                     },
                     failure: function (response) {
                         location.href = "\Error";

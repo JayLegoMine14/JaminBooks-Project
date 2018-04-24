@@ -12,7 +12,7 @@ namespace JaminBooks.Tools
     {
         public static Book GetBestSeller()
         {
-            return new Book((int)SQL.Execute("uspGetBestSeller").Rows[0]["BookID"]);
+            return new Book((int)SQL.Execute("uspGetAlltimeBestSellers").Rows[0]["BookID"]);
         }
 
         public static Book GetMostPopular()
