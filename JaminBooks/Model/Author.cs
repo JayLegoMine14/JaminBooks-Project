@@ -58,6 +58,9 @@ namespace JaminBooks.Model
                 new Param("LastName", LastName),
                 new Param("IsDeleted", IsDeleted)
                 );
+
+            if (dt.Rows.Count > 0)
+                AuthorID = (int)dt.Rows[0]["AuthorID"];
         }
 
         public void Delete()

@@ -697,11 +697,10 @@ namespace JaminBooks.Pages
 
                 a.FirstName = fields["AFirstName"];
                 a.LastName = fields["ALastName"];
-                a.IsDeleted = false;
 
                 a.Save();
 
-                return new JsonResult(a.AuthorID);
+                return new JsonResult(new object[] { a.AuthorID, a.FullName});
             }
             return new JsonResult("");
         }
@@ -723,7 +722,7 @@ namespace JaminBooks.Pages
 
                 c.Save();
 
-                return new JsonResult(c.CategoryID);
+                return new JsonResult(new object[] { c.CategoryID, c.CategoryName });
             }
             return new JsonResult("");
         }

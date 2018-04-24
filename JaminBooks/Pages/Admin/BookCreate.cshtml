@@ -231,7 +231,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        location.href ='/Book?id=' + response.id;
+                        location.href ='/Book?id=' + response;
                     },
                     failure: function (response) {
                         location.href = "\Error";
@@ -259,8 +259,8 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        
-
+                        $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#Authorlist");
+   
                     },
                     failure: function (response) {
                         location.href = "\Error";
@@ -289,7 +289,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        $("<option selected = 'selected' value='" + c.CategoryID + "'>" + c.CategoryName + "</option>").appendTo("BookCat");
+                        $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#BookCat");
                     },
                     failure: function (response) {
                         location.href = "\Error";

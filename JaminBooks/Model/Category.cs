@@ -46,7 +46,11 @@ namespace JaminBooks.Model
                 new Param("CategoryName", CategoryName),
                 new Param("IsDeleted", IsDeleted)
                 );
+
+            if (dt.Rows.Count > 0)
+                CategoryID = (int)dt.Rows[0]["CategoryID"];
         }
+        
 
         public void Delete()
         {
