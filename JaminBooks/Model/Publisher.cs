@@ -60,12 +60,6 @@ namespace JaminBooks.Model
             this.IsDeleted = IsDeleted;
         }
 
-        private Publisher(int PublisherID, string PublisherName)
-        {
-            this.PublisherID = PublisherID;
-            this.PublisherName = PublisherName;
-        }
-
         public void Save()
         {
             DataTable dt = SQL.Execute("uspSavePublisher",
@@ -74,10 +68,8 @@ namespace JaminBooks.Model
                new Param("AddressID", Address.AddressID),
                new Param("PhoneID", Phone.PhoneID),
                new Param("ContactFirstName", ContactFirstName),
-               new Param("ContactFirstName", ContactFirstName),
+               new Param("ContactLastName", ContactLastName),
                new Param("IsDeleted", IsDeleted));
-
-
 
             if (dt.Rows.Count > 0)
                 PublisherID = (int)dt.Rows[0]["PublisherID"];
@@ -89,7 +81,17 @@ namespace JaminBooks.Model
             IsDeleted = true;
         }
 
-        public int GetBookID()
+        public int GetBooks()
+        {
+            return (int)SQL.Execute("uspGetBooksFromPublisher", new Param("PublisherID", PublisherID)).Rows[0][0];
+        }
+
+        public int GetSales()
+        {
+            return (int)SQL.Execute("uspGetSalesFromPublisher", new Param("PublisherID", PublisherID)).Rows[0][0];
+        }
+
+        public int GetPublisherID()
         {
             DataTable dt = SQL.Execute("uspGetPublisherByID",
                 new Param("PublisherID", PublisherID));
@@ -103,19 +105,45 @@ namespace JaminBooks.Model
             foreach (DataRow dr in dt.Rows)
                 publishers.Add(new Publisher(
                     (int)dr["PublisherID"],
-                    (String)dr["PublisherName"]
+                    (String)dr["PublisherName"],
+                    (int)dr["AddressID"],
+                    (int) dr["PhoneID"],
+                    (String)dr["ContactFirstName"],
+                    (String)dr["ContactLastName"],
+                    (bool)dr["IsDeleted"]
+                    ));
+            return publishers;
+        }
+
+        public static List<Publisher> GetPublishers(DataTable dt)
+        {
+            List<Publisher> publishers = new List<Publisher>();
+            foreach (DataRow dr in dt.Rows)
+                publishers.Add(new Publisher(
+                    (int)dr["PublisherID"],
+                    (String)dr["PublisherName"],
+                    (int)dr["AddressID"],
+                    (int)dr["PhoneID"],
+                    (String)dr["ContactFirstName"],
+                    (String)dr["ContactLastName"],
+                    (bool)dr["IsDeleted"]
                     ));
             return publishers;
         }
 
         public static List<Publisher> GetPublishers()
         {
-            DataTable dt = SQL.Execute("uspAllGetPublishers");
+            DataTable dt = SQL.Execute("uspGetAllPublishers");
             List<Publisher> publishers = new List<Publisher>();
             foreach (DataRow dr in dt.Rows)
                 publishers.Add(new Publisher(
                     (int)dr["PublisherID"],
-                    (String)dr["PulisherName"]
+                    (String)dr["PublisherName"],
+                    (int)dr["AddressID"],
+                    (int)dr["PhoneID"],
+                    (String)dr["ContactFirstName"],
+                    (String)dr["ContactLastName"],
+                    (bool)dr["IsDeleted"]
                     ));
             return publishers;
         }

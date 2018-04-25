@@ -742,6 +742,659 @@ namespace JaminBooks.Pages.Admin
             return new JsonResult("");
         }
 
+        [Route("Search/LoadPublishers")]
+        public IActionResult LoadPublishers()
+        {
+            User CurrentUser = Authentication.GetCurrentUser(HttpContext);
+            if (CurrentUser.IsAdmin)
+            {
+                Dictionary<string, string> fields = AJAX.GetFields(Request);
+                int callID = Convert.ToInt32(fields["CallID"]);
+                int index = Convert.ToInt32(fields["Index"]);
+                int count = Convert.ToInt32(fields["Count"]);
+                bool advanced = Convert.ToBoolean(fields["DoAdvancedSearch"]);
+
+                string search = fields["Search"];
+                int sortType = Convert.ToInt32(fields["SortColumn"]);
+                int sortOrder = Convert.ToInt32(fields["SortOrder"]);
+
+                JArray aSearch = JArray.Parse(fields["AdvancedSearch"]);
+
+                if (search.StartsWith("$"))
+                    search = search.Replace("$", "");
+                else
+                    search = "%" + search.Trim().Replace(" ", "%") + "%";
+
+                List<Publisher> itemsToSort = new List<Publisher>();
+                if (!advanced)
+                {
+                    itemsToSort = Publisher.GetPublishers(SQL.Execute("uspSearchPublisherByAll", new Param("Search", search)));
+                }
+                else
+                {
+                    List<Publisher> all = Publisher.GetPublishers();
+                    List<Publisher> matches = new List<Publisher>();
+                    bool? groupLink = null;
+                    foreach (JArray group in aSearch.Children<JArray>())
+                    {
+
+                        List<Publisher> holder = new List<Publisher>();
+                        List<Publisher> some = new List<Publisher>();
+                        bool? itemLink = null;
+                        foreach (JObject item in group.Children<JObject>())
+                        {
+                            string column = item["Column"].ToString();
+                            string comp = item["Comparison"].ToString();
+                            string val = item["Value"].ToString();
+                            bool? or = (bool?)item["Link"];
+
+                            List<Publisher> searchItems = ((!groupLink.HasValue || groupLink.Value) ? !itemLink.HasValue || itemLink.Value : false) ? all : some.Count > 0 ? some : matches;
+
+                            switch (column)
+                            {
+                                case "PublisherID":
+                                    int value = 0;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherID.ToString() == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out value) ? false : o.PublisherID > value
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out value) ? false : o.PublisherID < value
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out value) ? false : o.PublisherID >= value
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out value) ? false : o.PublisherID <= value
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherID.ToString() != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherID.ToString().Contains(val) || val.Contains(o.PublisherID.ToString())
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "PublisherName":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherName == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherName.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.PublisherName.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherName.CompareTo(val) == 1 || o.PublisherName.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherName.CompareTo(val) == -1 || o.PublisherName.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherName != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.PublisherName.Contains(val) || val.Contains(o.PublisherName)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "FirstName":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactFirstName == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactFirstName.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.ContactFirstName.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactFirstName.CompareTo(val) == 1 || o.ContactFirstName.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactFirstName.CompareTo(val) == -1 || o.ContactFirstName.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactFirstName != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactFirstName.Contains(val) || val.Contains(o.ContactFirstName)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "ContactLastName":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactLastName == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactLastName.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.ContactLastName.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactLastName.CompareTo(val) == 1 || o.ContactLastName.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactLastName.CompareTo(val) == -1 || o.ContactLastName.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactLastName != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.ContactLastName.Contains(val) || val.Contains(o.ContactLastName)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "PhoneNumber":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.Phone.Number == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.Phone.Number.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.Phone.Number.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.Phone.Number.CompareTo(val) == 1 || o.Phone.Number.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.Phone.Number.CompareTo(val) == -1 || o.Phone.Number.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.Phone.Number != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.Phone.Number.Contains(val) || val.Contains(o.Phone.Number)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "City":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.City == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.City.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.Address.City.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.City.CompareTo(val) == 1 || o.Address.City.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.City.CompareTo(val) == -1 || o.Address.City.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.City != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.City.Contains(val) || val.Contains(o.Address.City)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "State":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.State == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.State.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.Address.State.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.State.CompareTo(val) == 1 || o.Address.State.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.State.CompareTo(val) == -1 || o.Address.State.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.State != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.State.Contains(val) || val.Contains(o.Address.State)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "Country":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.Country == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.Country.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.Address.Country.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.Country.CompareTo(val) == 1 || o.Address.Country.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.Country.CompareTo(val) == -1 || o.Address.Country.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.Country != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.Country.Contains(val) || val.Contains(o.Address.Country)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "ZIP":
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.ZIP == val
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.ZIP.CompareTo(val) == 1
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                                o.Address.ZIP.CompareTo(val) == -1
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.ZIP.CompareTo(val) == 1 || o.Address.ZIP.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.ZIP.CompareTo(val) == -1 || o.Address.ZIP.CompareTo(val) == 0
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.ZIP != val
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.Address.ZIP.Contains(val) || val.Contains(o.Address.ZIP)
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "IsDeleted":
+                                    bool deleted = false;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted != deleted
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "Sales":
+                                    int sales = 0;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out sales) ? false : o.GetSales() == sales
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out sales) ? false : o.GetSales() > sales
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out sales) ? false : o.GetSales() < sales
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Int32.TryParse(val, out sales) ? false : o.GetSales() >= sales
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out sales) ? false : o.GetSales() <= sales
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out sales) ? false : o.GetSales() != sales
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.GetSales().ToString().Contains(val) || val.Contains(o.GetSales().ToString())
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                                case "Books":
+                                    int books = 0;
+                                    switch (comp)
+                                    {
+                                        case "eq":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out books) ? false : o.GetBooks() == books
+                                            ).ToList();
+                                            break;
+                                        case "gt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out books) ? false : o.GetBooks() > books
+                                            ).ToList();
+                                            break;
+                                        case "lt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out books) ? false : o.GetBooks() < books
+                                            ).ToList();
+                                            break;
+                                        case "ge":
+                                            holder = searchItems.Where(o =>
+                                           !Int32.TryParse(val, out books) ? false : o.GetBooks() >= books
+                                           ).ToList();
+                                            break;
+                                        case "le":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out books) ? false : o.GetBooks() <= books
+                                            ).ToList();
+                                            break;
+                                        case "nt":
+                                            holder = searchItems.Where(o =>
+                                            !Int32.TryParse(val, out books) ? false : o.GetBooks() != books
+                                            ).ToList();
+                                            break;
+                                        case "lk":
+                                            holder = searchItems.Where(o =>
+                                            o.GetBooks().ToString().Contains(val) || val.Contains(o.GetBooks().ToString())
+                                            ).ToList();
+                                            break;
+                                    }
+                                    break;
+                            }
+
+                            if (!itemLink.HasValue)
+                                some = holder.ToList();
+                            else if (itemLink.Value)
+                                some.AddRange(holder.Where(i => !some.Contains(i)));
+                            else if (!itemLink.Value)
+                                some = holder;
+
+                            itemLink = or;
+                        }
+
+                        if (!groupLink.HasValue)
+                            matches = some.ToList();
+                        else if (groupLink.Value)
+                            matches.AddRange(some.Where(i => !matches.Contains(i)));
+                        else if (!groupLink.Value)
+                            matches = some;
+
+                        groupLink = itemLink;
+                    }
+
+                    itemsToSort = matches;
+                }
+
+                switch (sortType)
+                {
+                    case 1:
+                        switch (sortOrder)
+                        {
+                            case 1:
+                                itemsToSort.Sort((a, b) => a.PublisherID.CompareTo(b.PublisherID));
+                                break;
+                            case -1:
+                                itemsToSort.Sort((a, b) => b.PublisherID.CompareTo(a.PublisherID));
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (sortOrder)
+                        {
+                            case 1:
+                                itemsToSort.Sort((a, b) => a.PublisherName.CompareTo(b.PublisherName));
+                                break;
+                            case -1:
+                                itemsToSort.Sort((a, b) => b.PublisherName.CompareTo(a.PublisherName));
+                                break;
+                        }
+                        break;
+                    case 3:
+                        switch (sortOrder)
+                        {
+                            case 1:
+                                itemsToSort.Sort((a, b) => a.FullName.CompareTo(b.FullName));
+                                break;
+                            case -1:
+                                itemsToSort.Sort((a, b) => b.FullName.CompareTo(a.FullName));
+                                break;
+                        }
+                        break;
+                    case 4:
+                        switch (sortOrder)
+                        {
+                            case 1:
+                                itemsToSort.Sort((a, b) => a.Phone.Number.CompareTo(b.Phone.Number));
+                                break;
+                            case -1:
+                                itemsToSort.Sort((a, b) => b.Phone.Number.CompareTo(a.Phone.Number));
+                                break;
+                        }
+                        break;
+                    case 5:
+                        switch (sortOrder)
+                        {
+                            case 1:
+                                itemsToSort.Sort((a, b) => a.Address.City.CompareTo(b.Address.City));
+                                break;
+                            case -1:
+                                itemsToSort.Sort((a, b) => b.Address.City.CompareTo(a.Address.City));
+                                break;
+                        }
+                        break;
+                    case 6:
+                        switch (sortOrder)
+                        {
+                            case 1:
+                                itemsToSort.Sort((a, b) => a.IsDeleted.CompareTo(b.IsDeleted));
+                                break;
+                            case -1:
+                                itemsToSort.Sort((a, b) => b.IsDeleted.CompareTo(a.IsDeleted));
+                                break;
+                        }
+                        break;
+                }
+
+                var results = itemsToSort.Count;
+                count = itemsToSort.Count - index < count ? itemsToSort.Count - index : count;
+                itemsToSort = itemsToSort.GetRange(index, count);
+
+                List<object> items = new List<object>();
+
+                foreach (Publisher pub in itemsToSort)
+                {
+                    items.Add(new
+                    {
+                        ID = pub.PublisherID,
+                        PublisherName = pub.PublisherName,
+                        ContactName = pub.FullName,
+                        PhoneNumber = pub.Phone.Number,
+                        City = pub.Address.City,
+                        Deleted = pub.IsDeleted
+                    });
+                }
+
+                return new JsonResult(new object[] { callID, count, results, items });
+            }
+            return new JsonResult("");
+        }
+
         [Route("Search/LoadAccounts")]
         public IActionResult LoadAccounts()
         {

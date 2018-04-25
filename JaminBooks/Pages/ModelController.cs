@@ -58,9 +58,45 @@ namespace JaminBooks.Pages
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
             if (currentUser.IsAdmin)
             {
-                book.IsDeleted = false;
-                book.Quantity = 0;
-                book.Save();
+                if (!book.Publisher.IsDeleted)
+                {
+                    book.IsDeleted = false;
+                    book.Quantity = 0;
+                    book.Save();
+                }
+                else
+                {
+                    return new JsonResult(0);
+                }
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/DeletePublisher")]
+        public IActionResult DeletePublisher()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Publisher pub = new Publisher(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                pub.Delete();
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/UndeletePublisher")]
+        public IActionResult UndeletePublisher()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Publisher pub = new Publisher(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                pub.IsDeleted = false;
+                pub.Save();
             }
             return new JsonResult("");
         }
@@ -656,6 +692,43 @@ namespace JaminBooks.Pages
                 p.Save();
 
                 return new JsonResult(new object[] { p.PromotionID });
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/SavePublisher")]
+        public ActionResult SavePublisher()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                int id = Convert.ToInt32(fields["ID"]);
+                Publisher p = id != -1 ? new Publisher(id) : new Publisher();
+
+                p.PublisherName = fields["PublisherName"].ToString();
+                p.ContactFirstName = fields["ContactFirstName"].ToString();
+                p.ContactLastName = fields["ContactLastName"].ToString();
+
+                Phone ph = p.PublisherID == -1 ? new Phone() : new Phone(p.Phone.PhoneID);
+                ph.Number = fields["PhoneNumber"].ToString();
+                ph.Category = fields["PhoneCategory"].ToString();
+                ph.Save();
+
+                p.Phone = ph;
+
+                Address a = p.PublisherID == -1 ? new Address() : new Address(p.Address.AddressID);
+                a.Line1 = fields["Line1"].ToString();
+                a.Line2 = fields["Line2"].ToString();
+                a.City = fields["City"].ToString();
+                a.State = fields["State"].ToString();
+                a.Country = fields["Country"].ToString();
+                a.ZIP = fields["ZIP"].ToString();
+                a.Save();
+
+                p.Address = a;
+                p.Save();
             }
             return new JsonResult("");
         }

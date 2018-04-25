@@ -12,7 +12,8 @@ namespace JaminBooks.Pages.Admin
     public class PublisherModel : PageModel
     {
         public User CurrentUser;
-        public Publisher Publisher; 
+        public Publisher Publisher;
+        public Dictionary<int, string> Categories;
 
         public void OnGet(int? id)
         {
@@ -22,7 +23,8 @@ namespace JaminBooks.Pages.Admin
                 Response.Redirect("/");
             }
 
-            Publisher = id != null ? new Publisher(id.Value) : new Publisher();
+            Publisher = id != null ? new Publisher(id.Value) : null;
+            Categories = Phone.GetPhoneCategories();
         }
     }
 }

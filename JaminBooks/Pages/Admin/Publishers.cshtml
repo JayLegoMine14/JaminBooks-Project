@@ -1,7 +1,7 @@
 ﻿@page
-@model JaminBooks.Pages.Admin.BooksModel
+@model JaminBooks.Pages.Admin.PublishersModel
 @{
-    ViewData["Title"] = "Books";
+    ViewData["Title"] = "Publishers";
     Layout = "~/Pages/Admin/_AdminLayout.cshtml";
 }
 
@@ -17,14 +17,6 @@
 
     #Items {
         min-height: 50vh;
-    }
-
-    .icon-div {
-        width: 50px;
-        height: 50px;
-        overflow: hidden;
-        border-radius: 100px;
-        display: inline-block;
     }
 
     .item {
@@ -104,7 +96,7 @@
         <div class="form-group">
             <div class="input-group mt-3">
                 <div class="input-group-prepend">
-                    <a class="btn btn-primary" href="\Amdin\BookCreate">New Book<i class="fas fa-plus ml-2"></i></a>
+                    <a class="btn btn-primary" href="\Admin\Publisher">New Publisher<i class="fas fa-plus ml-2"></i></a>
                 </div>
                 <input type="text" id="Search" class="form-control" placeholder="Search...">
                 <div class="input-group-append">
@@ -162,7 +154,7 @@
             <div class="col-12 text-center mt-3">
                 <span class="h6 mr-2">Results:</span><span class="badge badge-dark" id="ResultCount">0</span>
             </div>
-            <div id="ItemHeader" class="col-10 offset-1 mt-3">
+            <div id="ItemHeader" class="col-10 offset-1 mt-1">
                 <div class="row">
                     @if (Model.DisplayColumns.Count % 12 != 0)
                     {
@@ -170,11 +162,8 @@
                     }
                     @foreach (String Column in Model.DisplayColumns)
                     {
-                        var width = 1;
-                        if (Column == "Title" || Column == "Authors" || Column == "ISBN 13") { width = 2; }
-
-                        <div class="col-@width text-center">
-                            <h6>@Column</h6>
+                        <div class="col-2 text-center">
+                            <h5>@Column</h5>
                         </div>
                     }
                 </div>
@@ -316,7 +305,7 @@
                 response[3].forEach(function (item) {
                     var row = "";
                     row += '<div class="card item w-100 mb-3">'
-                    row += '<div class="row" onmouseup="switch(event.which) { case 1: location.href =\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'; break; case 2: case 3: window.open(\'/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'); break;}">'
+                    row += '<div class="row" onmouseup="switch(event.which) { case 1: location.href =\'/Admin/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'; break; case 2: case 3: window.open(\'/Admin/@(ViewData["Title"].ToString().TrimEnd('s'))?id=' + item["id"] + '\'); break;}">'
 
                     @if(Model.DisplayColumns.Count % 12 != 0)
                     {
@@ -326,19 +315,17 @@
                     Object.keys(item).forEach(function (key) {
                         if (key != "deleted") {
                             var value = item[key];
-                            var width = 1;
-                            if (key == 'title' || key == 'authors' || key == 'isbn') width = 2;
-                            row += '    <div class="col-' + width + ' text-center font-weight-bold p-2">'
+                            row += '    <div class="col-2 text-center h6 p-2">'
                             row += '        <span>' + value + '</span>'
                             row += '    </div>'
                         }
                     });
 
-                    row += '    <div class="col-1 text-center h6 p-2">'
+                    row += '    <div class="col-2 text-center h6 p-2">'
                     if (item.deleted)
-                        row += '        <button class="btn btn-warning undelete-btn" onmouseup="undeleteBook(event, this)"><i class="fas fa-sign-in-alt"></i></button>'
+                        row += '        <button class="btn btn-warning undelete-btn" onmouseup="undeletePublisher(event, this)"><i class="fas fa-sign-in-alt"></i></button>'
                     else
-                        row += '        <button class="btn btn-danger delete-btn" onmouseup="deleteBook(event, this)"><i class="fas fa-trash"></i></button>'
+                        row += '        <button class="btn btn-danger delete-btn" onmouseup="deletePublisher(event, this)"><i class="fas fa-trash"></i></button>'
                     row += '    </div>'
 
                     row += '</div>'
@@ -359,10 +346,10 @@
         });
     }
 
-    function undeleteBook(event, button) {
+    function undeletePublisher(event, button) {
         $.confirm({
-            title: 'Undelete Book',
-            content: 'Are you sure you want to undelete this book?',
+            title: 'Undelete Publisher',
+            content: 'Are you sure you want to undelete this publisher?',
             type: 'orange',
             buttons: {
                 delete: {
@@ -371,26 +358,18 @@
                     action: function () {
                         $.ajax({
                             type: "POST",
-                            url: "/Model/UndeleteBook",
+                            url: "/Model/UndeletePublisher",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("XSRF-TOKEN",
                                     $('input:hidden[name="__RequestVerificationToken"]').val());
                             },
                             data: JSON.stringify({
-                                ID: $(button).parents(".row").first().find(".col-1").first().text()
+                                ID: $(button).parents(".row").first().find(".col-2").first().text()
                             }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
-                            success: function (code) {
-                                if (code == 0) {
-                                    $.alert({
-                                        title: 'Publisher Deleted',
-                                        content: 'The books publisher has been deleted. Change or undelete the publisher to undelete this book.',
-                                        type: 'red'
-                                    });
-                                } else {
-                                    $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-danger delete-btn" onclick="deleteBook(event, this)"><i class="fas fa-trash"></i></button>');
-                                }
+                            success: function (logout) {
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onclick="deletePublisher(event, this)"><i class="fas fa-trash"></i></button>');
                             },
                             failure: function (response) {
                                 location.href = "\Error"
@@ -405,11 +384,11 @@
         return false;
     }
 
-    function deleteBook(event, button) {
+    function deletePublisher(event, button) {
         $.confirm({
-            title: 'Delete Book',
+            title: 'Delete Publisher',
             icon: 'fas fa-exclamation',
-            content: 'Are you sure you want to delete this book? This will set the quantity in stock equal to zero.',
+            content: 'Are you sure you want to delete this publisher? All books associated with this publisher will also be deleted!',
             type: 'red',
             buttons: {
                 delete: {
@@ -418,18 +397,18 @@
                     action: function () {
                         $.ajax({
                             type: "POST",
-                            url: "/Model/DeleteBook",
+                            url: "/Model/DeletePublisher",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("XSRF-TOKEN",
                                     $('input:hidden[name="__RequestVerificationToken"]').val());
                             },
                             data: JSON.stringify({
-                                ID: $(button).parents(".row").first().find(".col-1").first().text()
+                                ID: $(button).parents(".row").first().find(".col-2").first().text()
                             }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (logout) {
-                                $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-warning undelete-btn" onclick="undeleteBook(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-warning undelete-btn" onclick="undeletePublisher(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
                             },
                             failure: function (response) {
                                 location.href = "\Error"
@@ -588,7 +567,7 @@
         where += '<input id="CheckBox_' + IDCounter + '" type="checkbox" class="form-control sleek-checkbox"/>'
         where += '<label for="CheckBox_' + IDCounter + '"></label>'
         where += '</div>'
-        where += '<select id="Column_' + IDCounter + '" class="form-control col-3 column" onchange="$(this).siblings(\'.value\').val(\'\'); loadItems(true)">'
+        where += '<select id="Column_' + IDCounter + '" class="form-control col-3 column" onchange="$(this).siblings(\'.value\').val(\'\'); updateValueBox(this); search();">'
                 @foreach(KeyValuePair<string, string> Column in Model.SearchColumns.AsEnumerable())
                 {
                     @Html.Raw("where += '<option value=\"" + @Column.Key + "\">" + @Column.Value + "</option>';");
@@ -664,3 +643,4 @@
 </script>
 
 @await Html.PartialAsync("_BackToTop")
+
