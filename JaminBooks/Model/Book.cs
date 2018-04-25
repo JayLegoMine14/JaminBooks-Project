@@ -40,6 +40,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //loads the book image
         public string LoadImage
         {
             get
@@ -66,6 +67,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //creates the list of categories for a book
         public List<Category> Categories
         {
             get
@@ -74,6 +76,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //creates the list of authors for a book
         public List<Author> Authors
         {
             get
@@ -82,6 +85,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //returns the sales for a book
         public int Sales
         {
             get
@@ -90,6 +94,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //Creates a publisher within a book
         public Publisher Publisher
         {
             get
@@ -105,6 +110,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //creates a list of publishers
         public List<Publisher> Publishers
         {
             get
@@ -112,9 +118,11 @@ namespace JaminBooks.Model
                 return Publisher.GetPublishers(this.BookID);
             }
         }
-
+        
+        //book constructor
         public Book() { }
 
+        //data table book constructor
         public Book(int BookID)
         {
             DataTable dt = SQL.Execute("uspGetBookByID", new Param("BookID", BookID));
@@ -143,6 +151,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //private book contructor
         private Book(int BookID, string Title, DateTime PublicationDate, int PublisherID, string ISBN10,
             string ISBN13, string Description, DateTime CopyrightDate, decimal Price, decimal Cost,
             int Quantity, bool IsDeleted, byte[] BookImage)
@@ -164,6 +173,7 @@ namespace JaminBooks.Model
             this.Rating = rating != DBNull.Value ? Convert.ToInt32(rating) : 0;
         }
 
+        //saves a book to the database
         public void Save()
         {
             DataTable dt = SQL.Execute("uspSaveBook", 
@@ -185,6 +195,7 @@ namespace JaminBooks.Model
                 BookID = (int)dt.Rows[0]["BookID"];
         }
 
+        //sets the "isdeleted" value of a book to true without completely deleting it
         public void Delete()
         {
             DataTable dt = SQL.Execute("uspDeleteBook", new Param("BookID", BookID));
@@ -192,21 +203,25 @@ namespace JaminBooks.Model
 
         }
 
+        //adds a publisher to a book
         public void AddPublisher(Publisher p)
         {
             p.AddPublisher(this.BookID);
         }
 
+        //adds an author to a book
         public void AddAuthor(Author a)
         {
             a.AddAuthor(this.BookID);
         }
 
+        //adds a category to a book
         public void AddCategory(Category c)
         {
             c.AddCategory(this.BookID);
         }
 
+        //returns the list of books from the database
         public static List<Book> GetBooks()
         {
             DataTable dt = SQL.Execute("uspGetBooks");
@@ -229,6 +244,7 @@ namespace JaminBooks.Model
             return books;
         }
 
+        //also returns a list of books but stores in the object
         public static List<Book> GetBooks(DataTable dt)
         {
             List<Book> books = new List<Book>();

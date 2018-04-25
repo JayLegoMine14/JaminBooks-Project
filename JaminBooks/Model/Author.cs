@@ -15,6 +15,7 @@ namespace JaminBooks.Model
         public string LastName;
         public bool IsDeleted;
 
+        //concatinates firstname and last name
         public string FullName
         {
             get
@@ -23,8 +24,10 @@ namespace JaminBooks.Model
             }
         }
 
+        //author constructor
         public Author() { }
 
+        //creates the author object
         public Author(int AuthorID)
         {
             DataTable dt = SQL.Execute("uspGetAuthorByID", new Param("AuthorID", AuthorID));
@@ -42,6 +45,7 @@ namespace JaminBooks.Model
             }
         }
 
+        //a reclusive author who doesnt like to share his work
         private Author(int AuthorID, string FirstName, string LastName, bool IsDeleted)
         {
             this.AuthorID = AuthorID;
@@ -50,6 +54,7 @@ namespace JaminBooks.Model
             this.IsDeleted = IsDeleted;
         }
 
+        //save an author
         public void Save()
         {
             DataTable dt = SQL.Execute("uspSaveAuthor",
@@ -63,12 +68,29 @@ namespace JaminBooks.Model
                 AuthorID = (int)dt.Rows[0]["AuthorID"];
         }
 
+        //delete an author relationship from a book
+        public void DeleteAuthorFromBook(int BookID)
+        {
+            DataTable dt = SQL.Execute("uspDeleteAuthorFromBook",
+                new Param("BookID", BookID),
+                new Param("AuthorID", AuthorID)
+                );
+        }
+
+        //Delete all authors not related to a book
+        public void DumpAuthors()
+        {
+            DataTable dt = SQL.Execute("uspDeleteEmptyAuthors");
+        }
+
+        //sets the value of an author deleted to true (unneeded)
         public void Delete()
         {
             DataTable dt = SQL.Execute("uspDeleteAuthor", new Param("AuthorID", AuthorID));
             IsDeleted = true;
         }
 
+        //adds an author to a book
         public void AddAuthor(int BookID)
         {
             DataTable dt = SQL.Execute("uspBookAddAuthor",
@@ -77,6 +99,7 @@ namespace JaminBooks.Model
                 );
         }
 
+        //gets the list of authors related to a book
         public static List<Author> GetAuthors(int BookID)
         {
             DataTable dt = SQL.Execute("uspGetAuthors", new Param("BookID", BookID));

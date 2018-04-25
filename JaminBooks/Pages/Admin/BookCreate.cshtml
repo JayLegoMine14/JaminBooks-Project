@@ -37,7 +37,7 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Title</label>
                         <div class="col-9">
-                            <input id="Title" type="text" class="form-control" placeholder="Title" required maxlength="100" name="Title" value="@(Model.Book == null ? "" : Model.Book.Title )" />
+                            <input id="Title" type="text" maxlength=100 class="form-control" placeholder="Title" required maxlength="100" name="Title" value="@(Model.Book == null ? "" : Model.Book.Title )" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -72,13 +72,13 @@
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">First Name</label>
                             <div class="col-9">
-                                <input id="AFirstName" type="text" class="form-control" placeholder="Author First Name" required name="FName" />
+                                <input id="AFirstName" maxlength=50 type="text" class="form-control" placeholder="Author First Name" required name="FName" />
                             </div>
                         </div>
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">Last Name</label>
                             <div class="col-9">
-                                <input id="ALastName" type="text" class="form-control" placeholder="Author Last Name" required name="LName" />
+                                <input id="ALastName" maxlength=50 type="text" class="form-control" placeholder="Author Last Name" required name="LName" />
                             </div>
                         </div>
                         <div class="form-group row offset-1">
@@ -104,7 +104,7 @@
                             </select>
                         </div>
                         <div class="col-4">
-                            <input id="SaveCategory" type="button" onclick="unhide(this, 'category'); unEdit(this, 'CatList') " value="Add New" class="btn btn-block btn-dark">
+                            <input id="SaveCategory" type="button" onclick="unhide(this, 'category'); " value="Add New" class="btn btn-block btn-dark">
                         </div>
                     </div>
 
@@ -112,7 +112,7 @@
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">Category Name</label>
                             <div class="col-9">
-                                <input id="CategoryName" type="text" class="form-control" placeholder="Category" required name="category" />
+                                <input id="CategoryName" maxlength=50 type="text" class="form-control" placeholder="Category" required name="category" />
                             </div>
                         </div>
 
@@ -130,6 +130,7 @@
                         <label class="col-3 col-form-label">Publisher</label>
                         <div class="col-5">
                             <select id="Publist" class="form-control">
+                                <option>Select Publisher...</option>
                                 @foreach (Model.Publisher p in Model.Publishers)
                 {
                     @Html.Raw("<option " + (Model.Book != null && Model.Book.Publishers.Any(p2 => p2.PublisherID == p.PublisherID) ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
@@ -196,11 +197,45 @@
     </div>
 </div>
 
+<div class="modal fade" id="ConfirmNoQuantity" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label>Confirm</label>
+            </div>
+            <div class="modal-body">
+                <label>Are you sure you want to create a Book with 0 Quantity?</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="Cancel0Q" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a id="Confirm0Q" class="btn btn-danger btn-ok">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ConfirmNoDescription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label>Confirm</label>
+            </div>
+            <div class="modal-body">
+                <label>Are you sure you want to create a Book with no Description?</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="CancelNoD" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a id="ConfirmNoD" class="btn btn-danger btn-ok">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--Script for the buttons-->
 <script>
 
     $(document).ready(function () {
-
+    //save the book
         $("#SaveBook").click(function () {
             if (validate()) {
 
@@ -219,7 +254,7 @@
                     Quantity: $("#Quantity").val(),
                     Description: $("#Description").val()
                 }
-
+                //When done creating the book change to the page of the book
                 $.ajax({
                     type: "POST",
                     url: "/Model/SaveBook",
@@ -239,9 +274,9 @@
                 });
             }
         });
-
+        //create author button click
         $("#CreateAuthor").click(function () {
-            if (validate()) {
+            if (validateAuthor()) {
 
                 var data = {
                     AFirstName: $("#AFirstName").val(),
@@ -259,6 +294,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
+                        unhide(SaveAuthor, 'author');
                         $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#Authorlist");
    
                     },
@@ -270,7 +306,7 @@
         });
 
         $("#CreateCategory").click(function () {
-            if (validate()) {
+            if (validateCategory()) {
 
                 var data = {
 
@@ -289,6 +325,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
+                        unhide(SaveCategory, 'category');
                         $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#BookCat");
                     },
                     failure: function (response) {
@@ -300,11 +337,102 @@
     });
 
 
+    //validation for adding category
+    function validateCategory() {
+        var valid = true;
+        $("#CategoryName").removeAttr("style");
+
+        if ($("#CategoryName").val() == "") {
+            $("#CategoryName").css("border-color", "red");
+            valid = false;
+        }
+        if (["#CatgoryName"].indexOf(BookCat) >= 0) {
+            valid = false;
+        }
+        return valid;
+
+    }
+
+    //validation for adding Author
+    function validateAuthor() {
+        var valid = true;
+        $("#AFirstName").removeAttr("style");
+        $("#ALastName").removeAttr("style");
 
 
 
+        if ($("#AFirstName").val() == "") {
+            $("#AFirstName").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#ALastName").val() == "") {
+            $("#ALastName").css("border-color", "red");
+            valid = false;
+        }
+
+        return valid;
+
+    }
+
+    //validation for creating a book without custom categories or author
     function validate() {
-        return true;
+            var valid = true;
+            $("#Title").removeAttr("style");
+            $("#PublicationDate").removeAttr("style");
+            $("#CopyrightDate").removeAttr("style");
+            $("#Authorlist").removeAttr("style");
+            $("#BookCat").removeAttr("style");
+            $("#Publist").removeAttr("style");
+            $("#isbn10").removeAttr("style");
+            $("#isbn13").removeAttr("style");
+            $("#Cost").removeAttr("style");
+            $("#Price").removeAttr("style");
+            $("#Description").removeAttr("style");
+
+
+            if ($("#Title").val() == "") {
+                $("#Title").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#PublicationDate").val() == "") {
+                $("#PublicationDate").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#CopyrightDate").val() == "") {
+                $("#CopyrightDate").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Authorlist").val() == null) {
+                $("#Authorlist").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#BookCat").val() == null) {
+                $("#BookCat").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Publist").val() == "Select Publisher...") {
+                $("#Publist").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#isbn10").val() == "") {
+                $("#isbn10").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#isbn13").val() == "") {
+                $("#isbn13").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Price").val() == "0.00") {
+                $("#Price").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Cost").val() == "0.00") {
+                $("#Cost").css("border-color", "red");
+                valid = false;
+                }
+            }
+
+            return valid;
 
     }
 </script>
@@ -323,6 +451,8 @@
         }
     }
 
+
+    
 
 
 </script>

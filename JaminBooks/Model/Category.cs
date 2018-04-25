@@ -50,7 +50,20 @@ namespace JaminBooks.Model
             if (dt.Rows.Count > 0)
                 CategoryID = (int)dt.Rows[0]["CategoryID"];
         }
-        
+
+        public void DeleteCategoryFromBook(int BookID)
+        {
+            DataTable dt = SQL.Execute("uspDeleteCategoryFromBook",
+                new Param("BookID", BookID),
+                new Param("CategoryID", CategoryID)
+                );
+        }
+
+        public void DumpCategories()
+        {
+            DataTable dt = SQL.Execute("uspDeleteEmptyAuthors");
+        }
+
 
         public void Delete()
         {

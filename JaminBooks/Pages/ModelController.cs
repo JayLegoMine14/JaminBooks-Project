@@ -635,6 +635,7 @@ namespace JaminBooks.Pages
             return new JsonResult(JsonConvert.SerializeObject(new object[] { fields["CallID"], count, books }));
         }
 
+        //create a new book
         [Route("Model/SaveBook")]
         public IActionResult SaveBook()
         {
@@ -648,6 +649,8 @@ namespace JaminBooks.Pages
                 int id = Convert.ToInt32(fields["BookID"]);
 
                 Book b = id != -1 ? new Book(id) : new Book();
+                Author auth = new Author();
+                Category cat = new Category();
 
 
 
@@ -666,8 +669,8 @@ namespace JaminBooks.Pages
                 b.Save();
 
 
-                foreach (Author a in b.Authors) a.Delete();
-                foreach (Category c in b.Categories) c.Delete();
+                foreach (Author a in b.Authors) a.DeleteAuthorFromBook(id);
+                foreach (Category c in b.Categories) c.DeleteCategoryFromBook(id);
 
                 int[] categories = JsonConvert.DeserializeObject<int[]>(fields["BookCat"]);
                 foreach (int c in categories)
@@ -677,11 +680,17 @@ namespace JaminBooks.Pages
                 foreach (int a in authors)
                     b.AddAuthor(new Author(a));
 
+                //to ensure the cleanliness of the table, all unattended Authors and categories will be removed from the premises
+                auth.DumpAuthors();
+                cat.DumpCategories();
+
+
                 return new JsonResult(b.BookID);
             }
             return new JsonResult("");
         }
 
+        //create new author
         [Route("Model/CreateAuthor")]
         public IActionResult CreateAuthor()
         {
@@ -705,6 +714,7 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        //create category
         [Route("Model/CreateCategory")]
         public IActionResult CreateCategory()
         {
@@ -726,6 +736,17 @@ namespace JaminBooks.Pages
             }
             return new JsonResult("");
         }
+
+
+
+
+
+
+
+
+
+
+
 
         [Route("Model/CreatePublisher")]
         public IActionResult CreatePublisher()
