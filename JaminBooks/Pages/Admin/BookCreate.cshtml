@@ -152,14 +152,11 @@
                                 <option>Select Publisher...</option>
                                 @foreach (Model.Publisher p in Model.Publishers)
                                 {
-                                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Publishers.Any(p2 => p2.PublisherID == p.PublisherID) ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
+                                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Publisher.PublisherID == p.PublisherID ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
                                 }
-
                             </select>
                         </div>
                     </div>
-
-
 
                     <!--final general entries-->
                     <div class="form-group row">
@@ -290,54 +287,25 @@
         $("#SaveBook").click(function () {
             if (validate()) {
 
-                var canvas = document.createElement("canvas");
+                if ($("#customFile").get(0).files.length > 0) {
+                    var canvas = document.createElement("canvas");
 
-                var reader = new FileReader();
-                reader.onload = function (event) {
-                    var img = new Image();
-                    img.onload = function () {
-                        canvas.width = 251;
-                        canvas.height = 400;
-                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        var img = new Image();
+                        img.onload = function () {
+                            canvas.width = 251;
+                            canvas.height = 400;
+                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                        var data = {
-                            BookID: $("#BookID").val(),
-                            Image: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, ''),
-                            Title: $("#Title").val(),
-                            PublicationDate: $("#PublicationDate").val(),
-                            CopyrightDate: $("#CopyrightDate").val(),
-                            Authorlist: JSON.stringify($("#Authorlist").val()),
-                            BookCat: JSON.stringify($("#BookCat").val()),
-                            Publisher: $("#Publist").val(),
-                            ISBN10: $("#isbn10").val(),
-                            ISBN13: $("#isbn13").val(),
-                            Price: $("#Price").val(),
-                            Cost: $("#Cost").val(),
-                            Quantity: $("#Quantity").val(),
-                            Description: $("#Description").val()
+                            saveBook(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, ''));
                         }
-                        //When done creating the book change to the page of the book
-                        $.ajax({
-                            type: "POST",
-                            url: "/Model/SaveBook",
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader("XSRF-TOKEN",
-                                    $('input:hidden[name="__RequestVerificationToken"]').val());
-                            },
-                            data: JSON.stringify(data),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (response) {
-                                location.href = '/Book?id=' + response;
-                            },
-                            failure: function (response) {
-                                location.href = "\Error";
-                            }
-                        });
+                        img.src = reader.result;
                     }
-                    img.src = reader.result;
+                    reader.readAsDataURL($("#customFile").get(0).files[0]);
+                } else {
+                    saveBook("");
                 }
-                reader.readAsDataURL($("#customFile").get(0).files[0]);
             }
         });
         //create author button click
@@ -417,6 +385,43 @@
         });
     });
 
+    function saveBook(Image) {
+        var data = {
+            BookID: $("#BookID").val(),
+            Image: Image,
+            Title: $("#Title").val(),
+            PublicationDate: $("#PublicationDate").val(),
+            CopyrightDate: $("#CopyrightDate").val(),
+            Authorlist: JSON.stringify($("#Authorlist").val()),
+            BookCat: JSON.stringify($("#BookCat").val()),
+            Publisher: $("#Publist").val(),
+            ISBN10: $("#isbn10").val(),
+            ISBN13: $("#isbn13").val(),
+            Price: $("#Price").val(),
+            Cost: $("#Cost").val(),
+            Quantity: $("#Quantity").val(),
+            Description: $("#Description").val()
+        }
+        //When done creating the book change to the page of the book
+        $.ajax({
+            type: "POST",
+            url: "/Model/SaveBook",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                location.href = '/Book?id=' + response;
+            },
+            failure: function (response) {
+                location.href = "\Error";
+            }
+        });
+    }
+
 
     //validation for adding category
     function validateCategory() {
@@ -452,7 +457,6 @@
         }
 
         return valid;
-
     }
 
     //validation for creating a book without custom categories or author
@@ -470,10 +474,6 @@
         $("#Price").removeAttr("style");
         $("#Description").removeAttr("style");
 
-        if ($("#customFile").get(0).files.length == 0) {
-            $("#customFile").css("border-color", "red");
-            valid = false;
-        }
         if ($("#Title").val() == "") {
             $("#Title").css("border-color", "red");
             valid = false;
