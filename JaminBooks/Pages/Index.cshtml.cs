@@ -18,7 +18,6 @@ namespace JaminBooks.Pages
     public class IndexModel : PageModel
     {
         public User CurrentUser;
-        public Book Reccomended;
         public List<Banner> Banners;
         public List<Book> MostPopular;
         public List<Book> BestSellers;
