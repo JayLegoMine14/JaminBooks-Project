@@ -1,4 +1,4 @@
-body {
+﻿body {
     padding-top: 95px;
     color: #020202;
     background-color: #f0e7d8;
@@ -24,7 +24,7 @@ body {
 
 #AdminSidebar .nav-link{
     color: white;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
     #AdminSidebar hr{
@@ -77,6 +77,11 @@ body {
     display: none !important;
 }
 
+.navbar-toggler {
+    border: none;
+    font-size: 29px;
+}
+
 .navbar-nav:not(.navbar-right) a {
     color: white !important;
     transition: .2s;
@@ -98,20 +103,8 @@ body {
         display: inline-block;
         height: 80%;
         vertical-align: middle;
-        margin-right: -4px;
+        margin: auto;
     }
-
-    .modal.lg {
-        margin-right: 4px;
-    }
-
-        .modal.lg .modal-content {
-            width: 800px;
-        }
-
-        .modal.lg .modal-dialog {
-            max-width: 100%;
-        }
 
 .modal-dialog {
     display: inline-block;
@@ -120,7 +113,8 @@ body {
 }
 
 .modal-content {
-    width:600px;
+    width: 200%;
+    transform: translateX(-25%);
 }
 
 .modal-header {
@@ -232,14 +226,20 @@ body {
 
 footer {
     background: #650d1b !important;
-    padding: 20px 0;
 }
+    footer > .row:last-of-type {
+        background: #420710 !important;
+    }
     footer a {
         color: white;
         text-decoration: none !important;
         background-color: transparent;
         -webkit-text-decoration-skip: objects;
     }
+
+        footer a:hover, footer a:link {
+            color: #999;
+        }
 
     footer ul.social li {
         padding: 10px 0;
@@ -282,10 +282,79 @@ footer {
             font-weight: 700;
         }
 
+input[type=checkbox].sleek-checkbox {
+    display: none !important;
+}
+
+    input[type=checkbox].sleek-checkbox + label {
+        height: 30px;
+    }
+
+        input[type=checkbox].sleek-checkbox + label:before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-bottom: -7px;
+            background-color: #F5F5F5;
+            box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+        }
+
+    input[type=checkbox].sleek-checkbox:checked + label:before {
+        content: "✓";
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+        font-size: 22px;
+        color: black;
+        text-align: center;
+    }
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */
     .carousel-caption {
         display: none;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    html {
+        font-size: .7rem;
+    }
+    .brand-name{
+        max-width: 300px;
+    }
+}
+
+@media screen and (max-width: 467px) {
+    .brand-name {
+        width: 200px;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .brand-name {
+        width: 150px;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 335px) {
+    .brand-name {
+        display:none;
+    }
+}
+
+@media screen and (max-width: 987px) {
+    .modal-content.do-not-scale {
+        width: auto;
+        transform: none;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    html {
+        font-size: .8rem;
     }
 }

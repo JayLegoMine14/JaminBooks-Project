@@ -1,7 +1,7 @@
 ﻿@Html.AntiForgeryToken()
 <div id="authenticationModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 600px;transform: translateX(0)">
             <div class="modal-body">
                 <div class="row" id="LoginDiv">
                     <div class="col-md-6">
@@ -17,7 +17,7 @@
                                 <span class="help-block"></span>
                             </div>
                             <div id="loginErrorMsg" class="text-danger" style="display:none">Incorrect username or password</div>
-              
+
                             <button id="Login" class="btn btn-secondary btn-block">Login</button>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                         </div>
                         <div class="row">
                             <div class=" col-12 text-center mb-2">
-                                By registering an account, you are consenting to this site's use of cookies.
+                                By registering an account, you are agreeing to this site's <a href="Terms">Terms of Service</a>, <a href="PrivacyPolicy">Privacy Policy</a>, and use of cookies.
                             </div>
                         </div>
                         <div class="row">
@@ -107,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-</div>
+                </div>
             </div>
         </div>
     </div>
@@ -140,14 +140,6 @@
             }
         });
 
-        $('#authenticationModal').on('hidden.bs.modal', function () {
-            $("#LoginRedirectLocation").remove();
-            $("#Email").removeAttr("style");
-            $("#Password").removeAttr("style");
-            $("#Email").val("");
-            $("#Password").val("");
-        })
-
         $("#RegisterView").click(function () {
             if (!$("#RegistrationDiv").is(":visible") || !$("#RegistrationDiv").height() > 0) {
                 $("#loginErrorMsg").hide();
@@ -166,6 +158,8 @@
                 $("#loginErrorMsg").hide();
                 $("#Email").removeAttr("style");
                 $("#Password").removeAttr("style");
+                $("#Email").val("");
+                $("#Password").val("");
                 showLogin();
         })
 
@@ -208,7 +202,7 @@
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
@@ -279,10 +273,8 @@
                                 dataType: "json",
                                 success: function (response) {
                                     var loggedin = JSON.parse(response);
-                                    if (loggedin == 1) {
+                                    if (loggedin > 0) {
                                         location.reload();
-                                    }else if (loggedin == 2) {
-                                        $("#RegEmail").css("border-color", "red");
                                     } else {
                                         $.alert({
                                             title: 'Error',
@@ -293,7 +285,7 @@
                                     }
                                 },
                                 failure: function (response) {
-                                    alert(response);
+                                    location.href = "\Error"
                                 }
                             });
                         } else {
@@ -316,7 +308,7 @@
                         }
                     },
                     failure: function (response) {
-                        alert(response);
+                        location.href = "\Error"
                     }
                 });
             }

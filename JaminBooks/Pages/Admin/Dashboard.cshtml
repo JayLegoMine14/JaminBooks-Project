@@ -30,7 +30,7 @@
                     <div class="card-body pb-0">
                         <h6 class="card-title mb-4">Gross Profit</h6>
                         <h3 class="card-text text-center">$@(((decimal)Model.Fields["GrossProfit"]).ToString("0.00"))</h3>
-                        <h5 class="card-text text-center">@(((((decimal)Model.Fields["GrossProfit"]) / ((decimal)Model.Fields["TotalSales"])) * 100m).ToString("0.00"))%</h5>
+                        <h5 class="card-text text-center">@( ((decimal)Model.Fields["TotalSales"]) != 0 ? ((((decimal)Model.Fields["GrossProfit"]) / ((decimal)Model.Fields["TotalSales"]) * 100m).ToString("0.00")) : "0")%</h5>
                     </div>
                 </div>
             </div>
@@ -109,19 +109,27 @@
                         </div>
                     </div>
                 </div>
+                <div class="card w-100">
+                    <div class="card-header">
+                        <h5 class="card-title">Sales By Category</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="SalesByCategory"></div>
+                        <div id="CategoryLoadIcon" class="row text-center mt-5 mb-5">
+                            <div class="col-12">
+                                <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-5">
                 <div class="card w-100">
                     <div class="card-body">
                         <p class="card-text row align-items-center">
-                            <span class="h3 col-2 pr-1">@Model.Fields["OutItems"]</span>
-                            <span class="col-7 pl-0">Books out of stock</span>
-                            <a href="Books?query=Quantity eq 0" class="btn btn-primary btn-sm">View</a>
-                        </p>
-                        <p class="card-text row align-items-center">
-                            <span class="h3 col-2 pr-1">@Model.Fields["UnfulfilledOrders"]</span>
-                            <span class="col-7 pl-0">Unfulfilled orders</span>
-                            <a href="Orders?query=IsFulfilled eq false" class="btn btn-primary btn-sm">View</a>
+                            <span class="h3 col-2 pr-1">@Model.ReshippedOrders</span>
+                            <span class="col-7 pl-0">Reshipped orders</span>
+                            <a href="Orders?query=IsReshipped eq true" class="btn btn-primary btn-sm">View</a>
                         </p>
                         <p class="card-text row align-items-center">
                             <span class="h3 col-2 pr-1">@Model.Fields["RefundedOrders"]</span>
@@ -129,19 +137,37 @@
                             <a href="Orders?query=RefundDate ge @Model.Start.ToString("yyyy-MM-dd") AND RefundDate le @Model.End.ToString("yyyy-MM-dd")" class="btn btn-primary btn-sm">View</a>
                         </p>
                         <hr />
-                        <div class="row">
-                            <div class="col-12">
-                                <h4 class="mb-4">Sales by Category</h4>
-                            </div>
-                            <div class="col-12">
-                                <div id="SalesByCategory"></div>
-                                <div id="CategoryLoadIcon" class="row text-center mt-5 mb-5">
-                                    <div class="col-12">
-                                        <i class="fas fa-circle-notch fa-spin fa-4x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-2 pr-1">@Model.Fields["OutItems"]</span>
+                            <span class="col-7 pl-0">Books out of stock <span class="badge badge-success ml-2">now</span></span>
+                            <a href="Books?query=Quantity eq 0 AND IsDeleted eq false" class="btn btn-primary btn-sm">View</a>
+                        </p>
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-2 pr-1">@Model.Fields["UnfulfilledOrders"]</span>
+                            <span class="col-7 pl-0">Unfulfilled orders <span class="badge badge-success ml-2">now</span></span>
+                            <a href="Orders?query=IsFulfilled eq false" class="btn btn-primary btn-sm">View</a>
+                        </p>
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-2 pr-1">@Model.FlaggedRatings</span>
+                            <span class="col-7 pl-0">Flagged book reviews <span class="badge badge-success ml-2">now</span></span>
+                            <a href="FlaggedRatings" class="btn btn-primary btn-sm">View</a>
+                        </p>
+                        <hr />
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-2 pr-1">@Model.Fields["TotalPromotions"]</span>
+                            <span class="col-7 pl-0">Order total promos <span class="badge badge-success ml-2">now</span></span>
+                            <a href="Promotions" class="btn btn-primary btn-sm">View</a>
+                        </p>
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-2 pr-1">@Model.Fields["CodePromotions"]</span>
+                            <span class="col-7 pl-0">Code promos <span class="badge badge-success ml-2">now</span></span>
+                            <a href="Promotions" class="btn btn-primary btn-sm">View</a>
+                        </p>
+                        <p class="card-text row align-items-center">
+                            <span class="h3 col-2 pr-1">@Model.Fields["BookPromotions"]</span>
+                            <span class="col-7 pl-0">Book promos <span class="badge badge-success ml-2">now</span></span>
+                            <a href="Books?query=IsOnSale eq true" class="btn btn-primary btn-sm">View</a>
+                        </p>
                         <hr />
                         <div class="row">
                             <div class="col-12">
@@ -159,19 +185,19 @@
                                     </div>
                                 </div>
                                 @foreach (Model.Book book in Model.BestSellers.Keys)
-            {
-                    <div class="row mb-1">
-                        <div class="col-2">
-                            <img height="50" style="width:auto" src="@book.LoadImage" />
-                        </div>
-                        <div class="col-4">
-                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
-                        </div>
-                        <div class="col-4">
-                            <h6>@Model.BestSellers[book]</h6>
-                        </div>
-                    </div>
-}
+                                {
+                                    <div class="row mb-1">
+                                        <div class="col-2">
+                                            <img height="50" style="width:auto" src="@book.LoadImage" />
+                                        </div>
+                                        <div class="col-4">
+                                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <h6>@Model.BestSellers[book]</h6>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                         <hr />
@@ -191,19 +217,19 @@
                                     </div>
                                 </div>
                                 @foreach (Model.Book book in Model.WorstSellers.Keys)
-            {
-                    <div class="row mb-1">
-                        <div class="col-2">
-                            <img height="50" style="width:auto" src="@book.LoadImage" />
-                        </div>
-                        <div class="col-4">
-                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
-                        </div>
-                        <div class="col-4">
-                            <h6>@Model.WorstSellers[book]</h6>
-                        </div>
-                    </div>
-}
+                                {
+                                    <div class="row mb-1">
+                                        <div class="col-2">
+                                            <img height="50" style="width:auto" src="@book.LoadImage" />
+                                        </div>
+                                        <div class="col-4">
+                                            <h6><a href="\Book?id=@book.BookID">@book.Title</a></h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <h6>@Model.WorstSellers[book]</h6>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -401,11 +427,11 @@
             $("#StartDate").removeAttr("style");
             $("#EndDate").removeAttr("style");
 
-            if (start == undefined || start == "") {
+            if (start == undefined || start == "" || Date.parse(start) < new Date(2018, 2, 1)) {
                 $("#StartDate").css("border-color", "red");
             } else if (end == undefined || end == "") {
                 $("#EndDate").css("border-color", "red");
-            } else if (start >= end) {
+            } else if (Date.parse(start) >= Date.parse(end)) {
                 $("#StartDate").css("border-color", "red");
                 $("#EndDate").css("border-color", "red");
             } else {

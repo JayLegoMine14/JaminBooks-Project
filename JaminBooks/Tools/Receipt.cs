@@ -9,8 +9,15 @@ using System.Threading.Tasks;
 
 namespace JaminBooks.Tools
 {
+    /// <summary>
+    /// Manages sending order and refund receipts
+    /// </summary>
     public class Receipt
     {
+        /// <summary>
+        /// Send a receipt for the given order.
+        /// </summary>
+        /// <param name="order">An order</param>
         public static void SendReceipt(Order order)
         {
             var fromAddress = new MailAddress(Authentication.Email, Authentication.Name);
@@ -57,7 +64,7 @@ namespace JaminBooks.Tools
 				                </div>
 				                <hr/>
 				                <div style=""margin: 20px 0px"">
-					                <span style=""font-size:30px;font-weight:bold;margin-right:20px"">Order Total:</span> <span style=""font-size:22px;color:#1d2227;font-weight:400;"">$" + order.Total.ToString("0.00") +@"</span>
+					                <span style=""font-size:30px;font-weight:bold;margin-right:20px"">Order Total:</span> <span style=""font-size:22px;color:#1d2227;font-weight:400;"">$" + order.Total.ToString("0.00") + @"</span>
 				                </div>
 				                <hr/>
 				                <div>
@@ -65,22 +72,23 @@ namespace JaminBooks.Tools
                                         <tr style=""color:#1d2227;font-weight:400;"">
 							                <th><div style=""margin-top:15px"">Title</div></th> <th>Quantity</th> <th>Price</th>
 						                </tr>";
-						                
-                                          foreach(KeyValuePair<Book, dynamic> book in order.Books){
-                                            body += @"
-                                            <tr style=""color:#1d2227;font-weight:400;"">
-							                    <td><div style=""margin-top:15px"">" + book.Key.Title +@"</div></td> <td>" + book.Value.Quantity +@"</td> <td>$" + book.Value.Price.ToString("0.00") + @"</td>
-						                    </tr>";
-                                          }
 
-                                          if(order.PercentDiscount > 0)
-                                          {
-                                            body += @"
+            foreach (KeyValuePair<Book, dynamic> book in order.Books)
+            {
+                body += @"
                                             <tr style=""color:#1d2227;font-weight:400;"">
-							                    <td colspan=2 style=""font-weight:bold""><div style=""margin-top:20px;"">Discount:</div></td> <td>" + order.PercentDiscount +@"%</td>
+							                    <td><div style=""margin-top:15px"">" + book.Key.Title + @"</div></td> <td>" + book.Value.Quantity + @"</td> <td>$" + book.Value.Price.ToString("0.00") + @"</td>
 						                    </tr>";
-                                          }
-                        body += @"</table>
+            }
+
+            if (order.PercentDiscount > 0)
+            {
+                body += @"
+                                            <tr style=""color:#1d2227;font-weight:400;"">
+							                    <td colspan=2 style=""font-weight:bold""><div style=""margin-top:20px;"">Discount:</div></td> <td>" + order.PercentDiscount + @"%</td>
+						                    </tr>";
+            }
+            body += @"</table>
 				                </div>
 			                  </div>
 			                </td>
@@ -113,6 +121,10 @@ namespace JaminBooks.Tools
             }
         }
 
+        /// <summary>
+        /// Send a refund receipt for the given order.
+        /// </summary>
+        /// <param name="order">An order</param>
         public static void SendRefundReceipt(Order order)
         {
             var fromAddress = new MailAddress(Authentication.Email, Authentication.Name);

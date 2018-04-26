@@ -1,9 +1,15 @@
-﻿<div class="modal fade lg" id="CardModal" data-id="-1" tabindex="-1" role="dialog">
+﻿<div class="modal fade" id="CardModal" data-id="-1" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content do-not-scale">
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="row mb-2 ml-2" style="font-size:2em;color:#aaa">
+                            <i class="fas fab fa-cc-visa mr-1"></i>
+                            <i class="fas fab fa-cc-mastercard mr-1"></i>
+                            <i class="fas fab fa-cc-discover mr-1"></i>
+                            <i class="fas fab fa-cc-diners-club mr-1"></i>
+                        </div>
                         <div class="row mb-2">
                             <div class="col-3">
                                 <input type="text" id="Number1" class="form-control" maxlength="4" placeholder="####">
@@ -36,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-lg-6 col-md-12 col-12">
                         <div class="row mb-2">
                             <div class="col-12">
                                 <input type="text" id="Line1" class="form-control" maxlength="100" placeholder="Line 1">
@@ -153,9 +159,9 @@
         $("#Name").val(card.data("name"));
         $("#Line1").val(card.data("line1"));
         $("#Line2").val(card.data("line2"));
-        $("#City").val(card.data("city")); 
+        $("#City").val(card.data("city"));
         $("#State").val(card.data("state"));
-        $("#Country").val(card.data("country")); 
+        $("#Country").val(card.data("country"));
         $("#ZIP").val(card.data("zip"));
         $("#CardModal").modal("show");
     }
@@ -186,7 +192,7 @@
                             });
                         },
                         failure: function (response) {
-                            alert(response);
+                            location.href = "\Error"
                         }
                     });
                 },
@@ -253,7 +259,11 @@
 
                         var card = "";
 
-                        card += '<div class="card dc-card d-inline-block" data-id="' + response[1] + '" style="width:300px" '
+                        if (@(ViewData["Title"].ToString() == "Checkout")) {
+                            card += '<div class="card dc-card d-inline-block w-100" data-id="' + response[1] + '" '
+                        } else {
+                            card += '<div class="card dc-card d-inline-block" data-id="' + response[1] + '" style="width:300px" '
+                        }
                         card += 'data-name="' + data.Name + '" ';
                         card += 'data-month="' + data.ExpMonth + '" ';
                         card += 'data-year="' + data.ExpYear + '" ';
@@ -283,7 +293,7 @@
                         initPopup();
                     },
                     failure: function (response) {
-                        alert(response);
+                        location.href = "\Error"
                     }
                 });
             }

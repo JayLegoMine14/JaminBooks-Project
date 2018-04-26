@@ -69,6 +69,10 @@
     body {
         padding-top: 0;
     }
+
+    .nav-link {
+        padding: 0.25rem 1rem;
+    }
 </style>
 
 <body>
@@ -84,22 +88,32 @@
                         <a class="nav-link home" href="/Admin/Dashboard">Dashboard <i class="fas fa-chart-pie float-right mt-1"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link home" href="/Books">Catalog <i class="fas fa-book float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Books">Book Catalog <i class="fas fa-th-list float-right mt-1"></i></a>
                     </li>
                     <hr />
                     <li class="nav-item">
                         <a class="nav-link home" href="/Admin/Books">Books <i class="fas fa-book float-right mt-1"></i></a>
                     </li>
+                    <hr />
                     <li class="nav-item">
-                        <a class="nav-link home" href="/Admin/BookCreate">New Book <i class="fas fa-plus float-right mt-1"></i></a>
+                        <a class="nav-link home" href="/Admin/Publishers">Publishers <i class="fas fa-paper-plane float-right mt-1"></i></a>
                     </li>
                     <hr />
                     <li class="nav-item">
                         <a class="nav-link home" href="/Admin/Accounts">Users <i class="fas fa-users float-right mt-1"></i></a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link home" href="/Admin/FlaggedRatings">Review Flags <i class="fas fa-flag float-right mt-1"></i></a>
+                    </li>
                     <hr />
                     <li class="nav-item">
                         <a class="nav-link home" href="/Admin/Orders">Orders <i class="fas fa-file-alt float-right mt-1"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link home" href="/Admin/Promotions">Promotions <i class="fas fa-dollar-sign float-right mt-1"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link home" href="/Admin/Banner">Banners <i class="fas fa-images float-right mt-1"></i></a>
                     </li>
                     <hr />
                     <li class="nav-item">
@@ -121,18 +135,8 @@
             <footer>
                 <div class="container">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
-                            <ul class="list-unstyled list-inline social text-center">
-                                <li class="list-inline-item"><a><i class="fab fa-facebook-square"></i></a></li>
-                                <li class="list-inline-item"><a><i class="fab fa-twitter-square"></i></a></li>
-                                <li class="list-inline-item"><a><i class="fas fa-envelope"></i></a></li>
-                            </ul>
-                        </div>
-                        <hr />
-                    </div>
-                    <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 text-center white-text">
-                            <p>&copy James And Michael</p>
+                            <p class="mt-2">&copy @(DateTime.Now.ToString("yyyy")) James And Michael</p>
                         </div>
                         <hr />
                     </div>

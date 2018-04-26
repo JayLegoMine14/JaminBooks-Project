@@ -1,0 +1,262 @@
+﻿@page
+@model JaminBooks.Pages.Admin.PublisherModel
+@{
+    ViewData["Title"] = "Publisher";
+    Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+}
+
+<span id="PublisherID" class="d-none">@(Model.Publisher != null ? Model.Publisher.PublisherID : -1)</span>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-12">
+            <h2 class="text-center col-12 mb-4 mt-2">Publisher Details</h2>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Publisher Name</label>
+                <div class="col-9">
+                    <input id="PublisherName" type="text" class="form-control" maxlength="100" placeholder="Publisher Name" value="@(Model.Publisher != null ? Model.Publisher.PublisherName : "")" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Contact First Name</label>
+                <div class="input-group col-9">
+                    <input type="text" id="Phone" class="form-control" placeholder="Phone Number" value="@(Model.Publisher != null ? Model.Publisher.Phone.Number : "")">
+                    <div class="input-group-append">
+                        <select id="PhoneCat" class="form-control">
+                            @foreach (string cat in Model.Categories.Values)
+                            {
+                                @Html.Raw("<option value='" + @cat + "'" + (Model.Publisher != null && Model.Publisher.Phone.Category == cat ? "selected='selected'" : "") + ">" + @cat + "</option>");
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Contact First Name</label>
+                <div class="col-9">
+                    <input id="FirstName" type="text" class="form-control" maxlength="50" placeholder="First Name" value="@(Model.Publisher != null ? Model.Publisher.ContactFirstName : "")" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Contact Last Name</label>
+                <div class="col-9">
+                    <input id="LastName" type="text" class="form-control" maxlength="50" placeholder="Last Name" value="@(Model.Publisher != null ? Model.Publisher.ContactLastName : "")" />
+                </div>
+            </div>
+
+            <h4>Address</h4>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <input type="text" id="Line1" class="form-control" maxlength="100" placeholder="Line 1" value="@(Model.Publisher != null ? Model.Publisher.Address.Line1 : "")">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <input type="text" id="Line2" class="form-control" maxlength="100" placeholder="Line 2 (optional)" value="@(Model.Publisher != null ? Model.Publisher.Address.Line2 : "")">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <input type="text" id="City" class="form-control" maxlength="100" placeholder="City" value="@(Model.Publisher != null ? Model.Publisher.Address.City : "")">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <select id="State" class="form-control">
+                                <option value="AL">Alabama</option>
+                                <option value="AK">Alaska</option>
+                                <option value="AZ">Arizona</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="CA">California</option>
+                                <option value="CO">Colorado</option>
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="DC">District Of Columbia</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="HI">Hawaii</option>
+                                <option value="ID">Idaho</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IN">Indiana</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NV">Nevada</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="NY">New York</option>
+                                <option value="NC">North Carolina</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="OH">Ohio</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="OR">Oregon</option>
+                                <option value="PA">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="TX">Texas</option>
+                                <option value="UT">Utah</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WA">Washington</option>
+                                <option value="WV">West Virginia</option>
+                                <option value="WI">Wisconsin</option>
+                                <option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <select id="Country" class="form-control">
+                                <option value="CA">Canada</option>
+                                <option value="DE">Germany</option>
+                                <option value="MX">Mexico</option>
+                                <option value="GB">United Kingdom</option>
+                                <option selected value="US">United States</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <input type="text" id="ZIP" class="form-control" maxlength="5" placeholder="ZIP" value="@(Model.Publisher != null ? Model.Publisher.Address.ZIP : "")">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mt-4 mb-4">
+                <div class="col-6 offset-3">
+                    <button id="SavePublisher" class="btn btn-block btn-dark-red text-white">Save Publisher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Publisher != null)
+{
+    <script>
+    $(function () {
+        $("#State option[value='@Model.Publisher.Address.State']").prop('selected', true);
+        $("#Country option[value='@Model.Publisher.Address.Country']").prop('selected', true);
+    });
+    </script>
+}
+
+<script>
+    $(function () {
+        $("#Phone").on('input', function () {
+            var regex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+            if ($("#Phone").val().match(regex)) {
+                $("#Phone").addClass("valid")
+                $("#Phone").css("border-color", "green");
+            } else {
+                $("#Phone").removeClass("valid")
+                $("#Phone").removeAttr("style");
+            }
+        });
+
+        $("#Phone").trigger('input');
+
+        $("#SavePublisher").click(function () {
+            if (validate()) {
+                var data = {
+                    ID: $("#PublisherID").text(),
+                    PublisherName: $("#PublisherName").val(),
+                    ContactFirstName: $("#FirstName").val(),
+                    ContactLastName: $("#LastName").val(),
+                    PhoneNumber: $("#Phone").val(),
+                    PhoneCategory: $("#PhoneCat").val(),
+                    Line1: $("#Line1").val(),
+                    Line2: $("#Line2").val(),
+                    City: $("#City").val(),
+                    State: $("#State").val(),
+                    Country: $("#Country").val(),
+                    ZIP: $("#ZIP").val()
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Model/SavePublisher",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        location.href = "Publishers";
+                    },
+                    failure: function (response) {
+                        location.href = "\Error"
+                    }
+                });
+            }
+        });
+    });
+
+    function validate() {
+        var valid = true;
+
+        $("#PublisherName").removeAttr("style");
+        $("#LastName").removeAttr("style");
+        $("#FirstName").removeAttr("style");
+        $("#ShipLine1").removeAttr("style");
+        $("#ShipLine1").removeAttr("style");
+        $("#ShipCity").removeAttr("style");
+        $("#ShipZIP").removeAttr("style");
+
+        if (!$("#Phone").hasClass("valid")) {
+            $("#Phone").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#PublisherName").val() == "") {
+            $("#PublisherName").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#FirstName").val() == "") {
+            $("#FirstName").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#LastName").val() == "") {
+            $("#LastName").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#Line1").val() == "") {
+            $("#Line1").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#City").val() == "") {
+            $("#City").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#ZIP").val() == "") {
+            $("#ZIP").css("border-color", "red");
+            valid = false;
+        }
+
+        return valid;
+    }
+</script>
+
+

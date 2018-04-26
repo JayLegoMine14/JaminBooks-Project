@@ -32,11 +32,34 @@
         top: -50px;
         left: -50px;
     }
+
+    .oldprice {
+        text-decoration: line-through;
+        font-size: .8em;
+        margin-top: 0;
+    }
+
     #AdminOptions {
         position: absolute;
         top: 20px;
         right: 30px;
         width: 500px;
+    }
+
+    @@media screen and (max-width: 990px) {
+        #BookImage {
+            left: -95px;
+        }
+    }
+
+    @@media screen and (max-width: 766px) {
+        #BookImage {
+            left: 80px;
+        }
+
+        #BookViewBody {
+            width: 100%
+        }
     }
 </style>
 
@@ -45,12 +68,12 @@
 
 @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
 {
-    <div id="AdminOptions" class="float-right">
+    <div id="AdminOptions" class="float-right" style="width:60%">
         <div class="row">
-            <div class="col-6">
+            <div class="col-4">
                 <a href="\Admin\BookCreate?id=@Model.Book.BookID" class="btn btn-success btn-block">Edit <i class="fas fa-edit ml-2"></i></a>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 @if (Model.Book.IsDeleted)
                 {
                     <button class="btn btn-warning btn-block" onclick="undeleteBook(event, this)">Undelete <i class="fas fa-sign-in-alt ml-2"></i></button>
@@ -60,10 +83,149 @@
                     <button class="btn btn-danger btn-block" onclick="deleteBook(event, this)">Delete <i class="fas fa-trash ml-2"></i></button>
                 }
             </div>
+            <div class="col-4">
+                @if (Model.Book.PercentDiscount > 0)
+                {
+                    <button class="btn btn-danger btn-block" onclick="removeDiscount(event, this)">Remove Discount <i class="fas fa-times ml-2"></i></button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-block" onclick="addDiscount()">Add Discount<i class="fas fa-plus ml-2"></i></button>
+                }
+            </div>
         </div>
     </div>
 
     <script>
+            function addDiscount() {
+                $.confirm({
+                    title: 'Add Discount',
+                    type: 'blue',
+                    content: '' +
+                        '<form action="" class="formName">' +
+                        '<div class="form-group">' +
+                        '<div class="input-group pl-0 col-6 mb-2">' +
+                        '<input type="number" step="1" min="0" max="100" class="form-control percent" placeholder="Dicount">' +
+                        '<div class="input-group-append">' +
+                        '<div class="input-group-text">%</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<input type="date" class="form-control start-date col-12 mb-2" placeholder="Start Date">' +
+                        '<input type="date" class="form-control end-date col-12" placeholder="End Date">' +
+                        '</div>' +
+                        '</form>',
+                    buttons: {
+                        add: {
+                            text: 'Add Discount',
+                            btnClass: 'btn-info',
+                            action: function () {
+                                var percent = this.$content.find('.percent').val();
+                                var startdate = this.$content.find('.start-date').val();
+                                var enddate = this.$content.find('.end-date').val();
+
+                                this.$content.find('.percent').removeAttr("style");
+                                this.$content.find('.start-date').removeAttr("style");
+                                this.$content.find('.end-date').removeAttr("style");
+
+                                var valid = true;
+                                if (percent == "") {
+                                    this.$content.find('.percent').css("border-color", "red");
+                                    valid = false;
+                                }
+
+                                if (startdate == "") {
+                                    this.$content.find('.start-date').css("border-color", "red");
+                                    valid = false;
+                                }
+
+                                if (enddate == "") {
+                                    this.$content.find('.end-date').css("border-color", "red");
+                                    valid = false;
+                                }
+
+                                if (Date.parse(startdate) >= Date.parse(enddate)) {
+                                    this.$content.find('.start-date').css("border-color", "red");
+                                    this.$content.find('.end-date').css("border-color", "red");
+                                    valid = false;
+                                }
+
+                                if (!valid) return false;
+
+                                $.ajax({
+                                        type: "POST",
+                                        url: "/Model/AddDiscount",
+                                        beforeSend: function (xhr) {
+                                            xhr.setRequestHeader("XSRF-TOKEN",
+                                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                                        },
+                                        data: JSON.stringify({
+                                            ID: @Model.Book.BookID,
+                                            Percent: percent,
+                                            Startdate: startdate,
+                                            Enddate: enddate
+                                        }),
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "json",
+                                        success: function () {
+                                            location.reload();
+                                        },
+                                        failure: function (response) {
+                                            location.href = "\Error"
+                                        }
+                                    });
+                            }
+                        },
+                        cancel: function () {
+                        },
+                    },
+                    onContentReady: function () {
+                        var jc = this;
+                        this.$content.find('form').on('submit', function (e) {
+                            e.preventDefault();
+                            jc.$$formSubmit.trigger('click');
+                        });
+                    }
+                });
+                return false;
+            }
+
+            function removeDiscount() {
+                $.confirm({
+                    title: 'Remove Discount',
+                    content: 'Are you sure you want to remove this book\'s discount?',
+                    type: 'red',
+                    buttons: {
+                        delete: {
+                            text: 'Remove',
+                            btnClass: 'btn-red',
+                            action: function () {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Model/RemoveDiscount",
+                                    beforeSend: function (xhr) {
+                                        xhr.setRequestHeader("XSRF-TOKEN",
+                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                    },
+                                    data: JSON.stringify({
+                                        ID: @Model.Book.BookID
+                                    }),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (logout) {
+                                        location.reload();
+                                    },
+                                    failure: function (response) {
+                                        location.href = "\Error"
+                                    }
+                                });
+                            }
+                        },
+                        Cancel: function () { }
+                    }
+                });
+                return false;
+            }
+
             function undeleteBook(event, button) {
                 $.confirm({
                     title: 'Undelete Book',
@@ -90,7 +252,7 @@
                                         location.reload();
                                     },
                                     failure: function (response) {
-                                        alert(response);
+                                        location.href = "\Error"
                                     }
                                 });
                             }
@@ -129,7 +291,7 @@
                                         location.reload();
                                     },
                                     failure: function (response) {
-                                        alert(response);
+                                        location.href = "\Error"
                                     }
                                 });
                             }
@@ -149,23 +311,33 @@
             <img id="BookImage" src="@Model.Book.LoadImage" />
             <div class="container" style="overflow:auto;">
                 <div class="row mt-3">
-                    <div class="col-3">
+                    <div class="col-lg-3 col-md-3 col-12">
                         <div style="margin-top: 320px">
                             @{ var count = Model.Book.Quantity; }
                             <h5 class="w-75 ml-4 text-center"><span id="BookQuantity" class="@(count <= 5 ? "text-danger" : "")">@(@Model.Book.IsDeleted ? "Removed From Stock" : count == 0 ? "Out Of Stock" : (count <= 5 ? "Only " : "") + count + " In Stock")</span></h5>
-                            <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mt-2 w-75" @(count == 0 ? "disabled" : "")>Add to Cart</button>
+                            <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mb-2 mt-2 w-75" @(count == 0 ? "disabled" : "")>Add to Cart</button>
                         </div>
                     </div>
-                    <div class="col-8">
+                    <div class="col-lg-8 col-md-8 col-12">
                         <span id="BookID" class="d-none">@Model.Book.BookID</span>
-                        <h2 id="BookTitle">@Model.Book.Title</h2>
+                        <div class="float-right">
+                            @if (Model.CurrentUser != null && Model.CurrentUser.GetBookShelf().All(b => b.BookID != Model.Book.BookID))
+                            {
+                                <button id="AddToBookshelf" class="btn btn-warning"><i class="fas fa-star"></i></button>
+                            }
+                        </div>
+                        <h2 id="BookTitle" style="margin-right:80px">@Model.Book.Title</h2>
                         <h4 id="BookAuthor">@(string.Join(",", Model.Book.Authors.Select(a => string.Format("{0} {1}", a.FirstName, a.LastName))))</h4>
-                        <h3>$<span id="BookPrice">@Model.Book.Price.ToString("0.00")</span></h3>
+                        <h3 class="@(Model.Book.PercentDiscount > 0 ? "text-success" : "")">
+                            $<span id="BookPrice">@Model.Book.Price.ToString("0.00")</span>
+                            @if (Model.Book.PercentDiscount > 0)
+                            {
+                                <span class="ml-3 oldprice text-muted">$<span id="BookOldPrice">@Model.Book._Price.ToString("0.00")</span></span>
+                                <span class="ml-3 text-dark" style="font-size:.6em">(@Model.Book.PercentDiscount% Off until @Model.Promo.EndDate.ToString("M/d/yyyy"))</span>
+                            }
+                        </h3>
                         <div id="Rating">
                             <span>
-                                @{
-                                    var rating = Model.Book.Rating;
-                                }
                                 @for (int i = 0; i < Model.Book.Rating; i++)
                                 {
                                     <i class="fas fa-star"></i>
@@ -220,18 +392,18 @@
                                             <h6>@Model.Book.Publisher.Address.Line1</h6>
 
                                             @if (Model.Book.Publisher.Address.Line2 != null)
-    {
-                                        <h6>@Model.Book.Publisher.Address.Line2</h6>
-}
+                                            {
+                                                <h6>@Model.Book.Publisher.Address.Line2</h6>
+                                            }
 
                                             @if (Model.Book.Publisher.Address.State != null)
-    {
-                                        <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.State @Model.Book.Publisher.Address.ZIP</h6>
-}
-else
-{
-                                        <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.Country @Model.Book.Publisher.Address.ZIP</h6>
-}
+                                            {
+                                                <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.State @Model.Book.Publisher.Address.ZIP</h6>
+                                            }
+                                            else
+                                            {
+                                                <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.Country @Model.Book.Publisher.Address.ZIP</h6>
+                                            }
                                         </div>
                                     }
                                 </div>
@@ -249,45 +421,49 @@ else
                                         </div>
                                     </div>
                                     @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
-    {
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label font-weight-bold">Publisher Contact:</label>
-                                    <div class="col-8">
-                                        <input id="PublisherContact" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.FullName">
-                                    </div>
-                                </div>
+                                    {
+                                        <div class="form-group row">
+                                            <label class="col-4 col-form-label font-weight-bold">Publisher Contact:</label>
+                                            <div class="col-8">
+                                                <input id="PublisherContact" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.FullName">
+                                            </div>
+                                        </div>
 
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label font-weight-bold">Publisher Number:</label>
-                                    <div class="col-8">
-                                        <input id="PublisherNumber" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.Phone.Number">
-                                    </div>
-                                </div>
-}
+                                        <div class="form-group row">
+                                            <label class="col-4 col-form-label font-weight-bold">Publisher Number:</label>
+                                            <div class="col-8">
+                                                <input id="PublisherNumber" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.Phone.Number">
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
                         <hr />
                         <div id="Ratings" class="mt-3">
                             <h3>Reviews</h3>
-                            @if(Model.CurrentUser != null)
+                            @if (Model.CurrentUser != null && Model.CurrentUser.IsConfirmed)
                             {
-                            <div class="col-12">
-                                <span id="RatingStars">
-                                    <span class="star-overlay"></span>
-                                    <i class="fas fa-star"></i>
-                                    <span class="star-overlay"></span>
-                                    <i class="far fa-star"></i>
-                                    <span class="star-overlay"></span>
-                                    <i class="far fa-star"></i>
-                                    <span class="star-overlay"></span>
-                                    <i class="far fa-star"></i>
-                                    <span class="star-overlay"></span>
-                                    <i class="far fa-star"></i>
-                                </span>
-                                <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
-                                <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
-                            </div>
+                                <div class="col-12">
+                                    <span id="RatingStars">
+                                        <span class="star-overlay"></span>
+                                        <i class="fas fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                        <span class="star-overlay"></span>
+                                        <i class="far fa-star"></i>
+                                    </span>
+                                    <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                                    <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
+                                </div>
+                            }
+                            else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
+                            {
+                                <h5 class="text-danger font-weight-bold">Verify email address to write reviews.</h5>
                             }
                             <div id="RatingMessages" class="mt-3"></div>
                             <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
@@ -402,10 +578,48 @@ else
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
+
+        $("#AddToBookshelf").click(function () {
+            $.confirm({
+                title: 'Place on Bookshelf',
+                icon: 'fas fa-star',
+                content: 'Would you like to place this book on your bookshelf?',
+                type: 'orange',
+                buttons: {
+                    yes: {
+                        action: function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "/Model/AddBookToBookShelf",
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("XSRF-TOKEN",
+                                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                                },
+                                data: JSON.stringify({
+                                    ID: $("#BookID").text()
+                                }),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function () {
+                                    $("#AddToBookshelf").fadeOut();
+                                },
+                                failure: function (response) {
+                                    location.href = "\Error"
+                                }
+                            });
+                        }
+                    },
+                    no: function () { }
+                }
+            });
+            event.stopPropagation();
+            return false;
+        });
+
     });
 </script>
 @await Html.PartialAsync("_Authentication")

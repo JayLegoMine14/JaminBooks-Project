@@ -17,7 +17,8 @@ namespace JaminBooks.Pages
         public void OnGet(int? id)
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
-            if (CurrentUser == null) {
+            if (CurrentUser == null)
+            {
                 Response.Redirect("Index");
             }
             else

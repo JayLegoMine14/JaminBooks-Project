@@ -67,7 +67,7 @@
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
@@ -104,7 +104,7 @@
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
@@ -137,7 +137,7 @@
                 })
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }
@@ -179,7 +179,47 @@
                             });
                         },
                         failure: function (response) {
-                            alert(response);
+                            location.href = "\Error"
+                        }
+                    });
+                },
+                no: function () { }
+            }
+        });
+    }
+
+    function flagRating(button) {
+        var rating = $(button).parents(".rating");
+        $.confirm({
+            title: 'Flag Review',
+            content: 'Are you sure you want to flag this review as inappropriate?',
+            type: 'orange',
+            buttons: {
+                yes: function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "Model/FlagRating",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify({
+                            ID: rating.data("id")
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function () {
+                            $(button).fadeOut(function () {
+                                $(button).remove();
+                                $.alert({
+                                    title: 'Review Flagged',
+                                    content: 'The review has been flagged and will be reviewed by a moderator.',
+                                    type: 'orange'
+                                });
+                            });
+                        },
+                        failure: function (response) {
+                            location.href = "\Error"
                         }
                     });
                 },
@@ -210,12 +250,16 @@
         ratingmessage += '</div>'
         ratingmessage += '<h5 class="userName">' + rating.NameAndImage[0] + '</h5>'
 
+        ratingmessage += '<div class="float-right mt-1">'
         if ($("#UserID").text() == rating.UserID || $("#UserIsAdmin").text() == "True") {
-            ratingmessage += '<div class="float-right mt-1">'
             ratingmessage += '<button class="btn btn-danger btn-sm mr-2" onclick="deleteRating(this)"><i class="fas fa-trash"></i></button>'
-            ratingmessage += '<button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>'
-            ratingmessage += '</div>'
+            if (!rating.Hidden)
+                ratingmessage += '<button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>'
         }
+        if ($("#UserID").text() != "-1" && $("#UserIsAdmin").text() == "False" && rating.Comment != "" && rating.FlagUsers.indexOf(parseInt($("#UserID").text())) == -1) {
+            ratingmessage += '<button class="btn btn-warning btn-sm" onclick="flagRating(this)"><i class="fas fa-flag"></i></button>'
+        }
+        ratingmessage += '</div>'
 
         ratingmessage += '<div class="float-right mt-1">'
         ratingmessage += '<h6 class="mr-3 mt-1">' + rating.FormatedDate + '</h6>'

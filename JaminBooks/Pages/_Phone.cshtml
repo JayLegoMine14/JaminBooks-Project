@@ -60,7 +60,7 @@
                             });
                         },
                         failure: function (response) {
-                            alert(response);
+                            location.href = "\Error"
                         }
                     });
                 },
@@ -149,7 +149,7 @@
                         $("#PhoneModal").modal("hide");
                     },
                     failure: function (response) {
-                        alert(response);
+                        location.href = "\Error"
                     }
                 });
             }

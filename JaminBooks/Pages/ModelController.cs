@@ -11,7 +11,8 @@ using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static JaminBooks.Model.SQL;
+using static JaminBooks.Tools.SQL;
+using JaminBooks.Tools;
 
 namespace JaminBooks.Pages
 {
@@ -58,9 +59,45 @@ namespace JaminBooks.Pages
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
             if (currentUser.IsAdmin)
             {
-                book.IsDeleted = false;
-                book.Quantity = 0;
-                book.Save();
+                if (!book.Publisher.IsDeleted)
+                {
+                    book.IsDeleted = false;
+                    book.Quantity = 0;
+                    book.Save();
+                }
+                else
+                {
+                    return new JsonResult(0);
+                }
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/DeletePublisher")]
+        public IActionResult DeletePublisher()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Publisher pub = new Publisher(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                pub.Delete();
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/UndeletePublisher")]
+        public IActionResult UndeletePublisher()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Publisher pub = new Publisher(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                pub.IsDeleted = false;
+                pub.Save();
             }
             return new JsonResult("");
         }
@@ -234,7 +271,7 @@ namespace JaminBooks.Pages
 
                 foreach (JArray book in books.Children<JArray>())
                 {
-                    int BookID = (int) book[0];
+                    int BookID = (int)book[0];
                     int? Quantity = (int?)book[1];
                     if (!Quantity.HasValue) Quantity = 0;
 
@@ -242,12 +279,24 @@ namespace JaminBooks.Pages
                     BookTotal += new Book(BookID).Price * Quantity.Value;
                 }
 
-                if (BookTotal > 75.00m) Discount = 10;
+                var codeWorks = false;
+                string code = fields["Code"];
+                if (!String.IsNullOrEmpty(code))
+                {
+                    Discount = Promotions.GetDiscount(code);
+                    if (Discount > 0) codeWorks = true;
+                }
+
+                var totalDiscount = Promotions.GetDiscount(BookTotal);
+                if (totalDiscount > Discount) Discount = totalDiscount;
+
                 OrderTotal = BookTotal - (BookTotal * (Discount / 100m));
 
-                return new JsonResult(new object[] { BookTotal.ToString("0.00"),
+                return new JsonResult(new object[] { fields["CallID"],
+                                                     codeWorks,
+                                                     BookTotal.ToString("0.00"),
                                                      Discount == 0 ? "0" : Discount + "%",
-                                                    OrderTotal.ToString("0.00") });
+                                                     OrderTotal.ToString("0.00") });
             }
             return new JsonResult("");
         }
@@ -262,6 +311,58 @@ namespace JaminBooks.Pages
             if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
             {
                 user.RemoveBookFromCart(Convert.ToInt32(fields["BookID"]));
+            }
+
+            return new JsonResult("");
+        }
+
+        [Route("Model/AddBanner")]
+        public IActionResult SaveBanner()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                byte[] blob = Convert.FromBase64String(fields["Image"]);
+                string URL = fields["URL"].ToString();
+                Banner b = new Banner();
+                b.Image = blob;
+                b.URL = URL == "" ? null : URL;
+                b.Order = Convert.ToInt32(fields["Order"]);
+                b.Save();
+                return new JsonResult(b.BannerID);
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/OrderBanners")]
+        public IActionResult OrderBanners()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                int[] banners = JsonConvert.DeserializeObject<int[]>(fields["Order"]);
+
+                int order = 0;
+                foreach (int id in banners)
+                {
+                    Banner.SetOrder(id, order++);
+                }
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/RemoveBanner")]
+        public IActionResult RemoveBanner()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                Banner.Delete(Convert.ToInt32(fields["ID"]));
             }
 
             return new JsonResult("");
@@ -355,6 +456,52 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/FlagRating")]
+        public IActionResult FlagRating()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Rating r = new Rating(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser != null && !currentUser.IsAdmin && r.Comment != "" && !r.hasFlagged(currentUser.UserID))
+            {
+                r.AddFlag(currentUser.UserID);
+            }
+
+            return new JsonResult("");
+        }
+
+        [Route("Model/HideRating")]
+        public IActionResult HideRating()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Rating r = new Rating(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                r.Hidden = true;
+                r.DeleteFlags();
+                r.Save();
+            }
+
+            return new JsonResult("");
+        }
+
+        [Route("Model/ClearFlags")]
+        public IActionResult ClearFlags()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Rating r = new Rating(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                r.DeleteFlags();
+            }
+            return new JsonResult("");
+        }
+
         [Route("Model/SaveRating")]
         public IActionResult SaveRating()
         {
@@ -367,14 +514,16 @@ namespace JaminBooks.Pages
 
                 Rating r = id != -1 ? new Rating(id) : new Rating();
 
-                if(id == -1)
+                if (id == -1)
                 {
                     r.UserID = user.UserID;
                     r.BookID = Convert.ToInt32(fields["BookID"]);
                 }
-
-                r.RatingValue = Convert.ToInt32(fields["Rating"]);
-                r.Comment = fields["Comment"];
+                if (!r.Hidden)
+                {
+                    r.RatingValue = Convert.ToInt32(fields["Rating"]);
+                    r.Comment = ProfanityFilter.Filter(fields["Comment"]);
+                }
                 r.Save();
 
                 return new JsonResult(JsonConvert.SerializeObject(r));
@@ -395,6 +544,44 @@ namespace JaminBooks.Pages
                 o.Save();
             }
 
+            return new JsonResult("");
+        }
+
+        [Route("Model/ReshipOrder")]
+        public IActionResult ReshipOrder()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Order o = new Order(Convert.ToInt32(fields["ID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                List<string> titles = new List<string>();
+                foreach (KeyValuePair<Book, dynamic> book in o.Books)
+                {
+                    if (book.Key.Quantity < book.Value.Quantity)
+                        titles.Add(book.Key.Title);
+                }
+
+                if (o.Children.Count == 2)
+                {
+                    return new JsonResult(new object[] { 0 });
+                }
+                else if (titles.Count > 0)
+                {
+                    return new JsonResult(new object[] { 1, titles });
+                }
+                else
+                {
+                    int oldID = o.OrderID;
+                    o.ClearID();
+                    o.FulfilledDate = DateTime.Now;
+                    o.ParentOrderID = oldID;
+                    o.PercentDiscount = 100;
+                    o.Save();
+                    return new JsonResult(new object[] { 2, o.OrderID });
+                }
+            }
             return new JsonResult("");
         }
 
@@ -458,6 +645,109 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
+        [Route("Model/AddDiscount")]
+        public IActionResult AddDiscount()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                Promotion p = new Promotion();
+                p.BookID = Convert.ToInt32(fields["ID"]);
+                p.PercentDiscount = Convert.ToInt32(fields["Percent"]);
+                p.StartDate = DateTime.Parse(fields["Startdate"]);
+                p.EndDate = DateTime.Parse(fields["Enddate"]);
+                p.Save();
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/RemoveDiscount")]
+        public IActionResult RemoveDiscount()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                Promotion.DeletePromotions(Convert.ToInt32(fields["ID"]));
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/SavePromotion")]
+        public IActionResult SavePromotion()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                int id = Convert.ToInt32(fields["ID"]);
+                Promotion p = id != -1 ? new Promotion(id) : new Promotion();
+
+                p.Total = fields["Total"] == null ? null : (decimal?)Convert.ToDecimal(fields["Total"]);
+                p.Code = fields["Code"] == null ? null : fields["Code"];
+                p.PercentDiscount = Convert.ToInt32(fields["Percent"]);
+                p.StartDate = DateTime.Parse(fields["Startdate"]);
+                p.EndDate = DateTime.Parse(fields["Enddate"]);
+                p.Save();
+
+                return new JsonResult(new object[] { p.PromotionID });
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/SavePublisher")]
+        public ActionResult SavePublisher()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                int id = Convert.ToInt32(fields["ID"]);
+                Publisher p = id != -1 ? new Publisher(id) : new Publisher();
+
+                p.PublisherName = fields["PublisherName"].ToString();
+                p.ContactFirstName = fields["ContactFirstName"].ToString();
+                p.ContactLastName = fields["ContactLastName"].ToString();
+
+                Phone ph = p.PublisherID == -1 ? new Phone() : new Phone(p.Phone.PhoneID);
+                ph.Number = fields["PhoneNumber"].ToString();
+                ph.Category = fields["PhoneCategory"].ToString();
+                ph.Save();
+
+                p.Phone = ph;
+
+                Address a = p.PublisherID == -1 ? new Address() : new Address(p.Address.AddressID);
+                a.Line1 = fields["Line1"].ToString();
+                a.Line2 = fields["Line2"].ToString();
+                a.City = fields["City"].ToString();
+                a.State = fields["State"].ToString();
+                a.Country = fields["Country"].ToString();
+                a.ZIP = fields["ZIP"].ToString();
+                a.Save();
+
+                p.Address = a;
+                p.Save();
+            }
+            return new JsonResult("");
+        }
+
+        [Route("Model/DeletePromotion")]
+        public IActionResult DeletePromotion()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+                Promotion p = new Promotion(Convert.ToInt32(fields["ID"]));
+                p.Delete();
+            }
+            return new JsonResult("");
+        }
+
         [Route("Model/ChangePassword")]
         public IActionResult ChangePassword()
         {
@@ -500,6 +790,10 @@ namespace JaminBooks.Pages
                         user.ConfirmationCode = Authentication.GenerateConfirmationCode();
                     }
 
+                    if (currentUser.IsAdmin)
+                        if (fields.ContainsKey("IsAdmin"))
+                            user.IsAdmin = (fields["IsAdmin"] == "on");
+
                     user.Save();
                 }
             }
@@ -516,7 +810,7 @@ namespace JaminBooks.Pages
             if (currentUser.UserID == user.UserID || currentUser.IsAdmin)
             {
                 byte[] blob = Convert.FromBase64String(fields["Icon"]);
-                    
+
                 user.Icon = blob;
                 user.Save();
             }
@@ -528,7 +822,7 @@ namespace JaminBooks.Pages
         {
             User u = Authentication.GetCurrentUser(HttpContext);
 
-            if(u == null)
+            if (u == null)
             {
                 return new JsonResult(JsonConvert.SerializeObject(0));
             }
@@ -548,12 +842,31 @@ namespace JaminBooks.Pages
             }
         }
 
+        [Route("Model/AddBookToBookShelf")]
+        public IActionResult AddBookToBookShelf()
+        {
+            User u = Authentication.GetCurrentUser(HttpContext);
+            Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
+            u.AddBookToBookShelf(Convert.ToInt32(fields["ID"]));
+            return new JsonResult("");
+        }
+
+        [Route("Model/RemoveBookFromBookShelf")]
+        public IActionResult RemoveBookFromBookShelf()
+        {
+            User u = Authentication.GetCurrentUser(HttpContext);
+            Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
+            u.RemoveBookFromBookShelf(Convert.ToInt32(fields["ID"]));
+            return new JsonResult("");
+        }
+
         [Route("Model/GetRatings")]
         public IActionResult GetRatings()
         {
             Dictionary<string, object> fields = AJAX.GetObjectFields(Request);
             int BookID = Convert.ToInt32(fields["BookID"]);
-            return new JsonResult(JsonConvert.SerializeObject(Rating.GetRatings(BookID)));
+            List<Rating> ratings = Rating.GetRatings(BookID);
+            return new JsonResult(JsonConvert.SerializeObject(ratings.Where(r => !r.Hidden).ToList()));
         }
 
         [Route("Model/LoadBooks")]
@@ -570,7 +883,8 @@ namespace JaminBooks.Pages
             int[] categories = ((JArray)fields["Cats"]).Select(j => (int)j).ToArray();
 
             String searchProcedure = "uspSearchBookByAll";
-            switch (searchtype) {
+            switch (searchtype)
+            {
                 case 1:
                     searchProcedure = "uspSearchBookByAll";
                     break;
@@ -593,11 +907,14 @@ namespace JaminBooks.Pages
             else
                 search = "%" + search.Trim().Replace(" ", "%") + "%";
 
+            List<String> autofills = SQL.Execute("uspGetAutofill", new Param("@Search", search))
+                .Select().Select(row => row["Match"].ToString()).ToList();
+
             DataTable bookresults = SQL.Execute(searchProcedure, new Param("@Search", search));
             List<Book> books = Book.GetBooks(bookresults);
 
             //This needs to get all books that have at least one cat in the cat list
-            if(categories.Count() > 0)
+            if (categories.Count() > 0)
                 books = books.Where(b => b.Categories.Any(c => categories.Contains(c.CategoryID))).ToList();
 
             switch (sorttype)
@@ -621,6 +938,9 @@ namespace JaminBooks.Pages
                 case 6:
                     books.Sort((b1, b2) => b1.PublicationDate.CompareTo(b2.PublicationDate));
                     break;
+                case 7:
+                    books.Sort((b1, b2) => b2.PercentDiscount.CompareTo(b1.PercentDiscount));
+                    break;
             }
 
             count = books.Count - index < count ? books.Count - index : count;
@@ -632,7 +952,10 @@ namespace JaminBooks.Pages
                 book.Cost = 0;
             }
 
-            return new JsonResult(JsonConvert.SerializeObject(new object[] { fields["CallID"], count, books }));
+            User u = Authentication.GetCurrentUser(HttpContext);
+            List<int> bookshelf = u == null ? new List<int>() : u.GetBookShelf().Select(b => b.BookID).ToList();
+
+            return new JsonResult(JsonConvert.SerializeObject(new object[] { fields["CallID"], count, books, bookshelf, autofills }));
         }
 
         //create a new book

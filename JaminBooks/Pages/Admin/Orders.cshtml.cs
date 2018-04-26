@@ -7,7 +7,8 @@ using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using static JaminBooks.Model.SQL;
+using static JaminBooks.Tools.SQL;
+using JaminBooks.Tools;
 
 namespace JaminBooks.Pages.Admin
 {
@@ -38,7 +39,9 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("Items", "Item Count");
             SearchColumns.Add("Item", "Item ISBN");
             SearchColumns.Add("Total", "Total");
-            SearchColumns.Add("PercentDiscount", "Dicount");
+            SearchColumns.Add("PercentDiscount", "Discount");
+            SearchColumns.Add("IsReshipped", "Reshipped");
+            SearchColumns.Add("IsReshipping", "Is Reship Order");
             SearchColumns.Add("IsFulfilled", "Is Fulfilled");
             SearchColumns.Add("FulfilledDate", "Date Fulfilled");
             SearchColumns.Add("RefundDate", "Date Refunded");

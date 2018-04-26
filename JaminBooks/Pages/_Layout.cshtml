@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="refresh" content="1200"/>
+    <meta http-equiv="refresh" content="1200" />
     <title>@ViewData["Title"] - Jamin' Books</title>
 
     <environment include="Development">
@@ -70,70 +70,86 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="Navbar">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav mr-auto pr-3">
                     <li class="nav-item ml-2"><a class="nav-link home" asp-page="/Index">Home</a></li>
                     <li class="nav-item ml-2"><a class="nav-link books" asp-page="/Books">Books</a></li>
+                    @if (Convert.ToBoolean(ViewData["IsLoggedIn"]))
+                    {
+                        <li class="nav-item ml-2"><a class="nav-link bookshelf" asp-page="/Bookshelf">Bookshelf</a></li>
+                    }
                 </ul>
 
                 <ul class="navbar-nav navbar-right">
                     @if (Convert.ToBoolean(ViewData["IsLoggedIn"]))
-            {
-                <li class="nav-item">
-                    <div class="dropdown">
-                        <button class="btn btn-dark-red mt-2 dropdown-toggle btn-lg white-text" type="button" id="UserDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            @ViewData["Name"] <i class="fa fa-chevron-down"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="UserDropDown">
-                            <li><a class="dropdown-item" href="/Account">My Account</a></li>
-                            <li><a class="dropdown-item" href="/Orders">My Orders</a></li>
-                            <li><a class="dropdown-item" href="/Ratings">My Reviews</a></li>
-                            <li><a href="/Security/Logout" class="dropdown-item">Logout</a></li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item mt-2 ml-4">
-                    <a href="\Cart" class="cart-icon">
-                        <span class="fa-layers fa-fw">
-                            <i class="fas fa-shopping-cart line-height-0"></i>
-                            @if (Convert.ToInt32(ViewData["CartCount"]) > 0) {
-                                <span class="fa-layers-counter text-white">@ViewData["CartCount"]</span>
-                            }
-                        </span>
-                    </a>
-                </li>
-    }
-    else
-    {
-        <li class="nav-item">
-            <button type="button" id="ShowLogin" class="btn btn-primary mt-2 btn-lg btn-dark-red" data-toggle="modal" data-target="#authenticationModal">
-                Login
-            </button>
-        </li>
-}
+                    {
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <button class="btn btn-dark-red mt-2 dropdown-toggle btn-lg white-text" type="button" id="UserDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    @ViewData["Name"] <i class="fa fa-chevron-down"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="UserDropDown">
+                                    <li><a class="dropdown-item" href="/Account">My Account</a></li>
+                                    <li><a class="dropdown-item" href="/Orders">My Orders</a></li>
+                                    <li><a class="dropdown-item" href="/Ratings">My Reviews</a></li>
+                                    <li><a href="/Security/Logout" class="dropdown-item">Logout</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item mt-2 ml-4">
+                            <a href="\Cart" class="cart-icon">
+                                <span class="fa-layers fa-fw">
+                                    <i class="fas fa-shopping-cart line-height-0"></i>
+                                    @if (Convert.ToInt32(ViewData["CartCount"]) > 0)
+                                    {
+                                        <span class="fa-layers-counter text-white">@ViewData["CartCount"]</span>
+                                    }
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <button type="button" id="ShowLogin" class="btn btn-primary mt-2 btn-lg btn-dark-red" data-toggle="modal" data-target="#authenticationModal">
+                                Login
+                            </button>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
-</nav>
+    </nav>
 
-        @RenderBody()
+    @RenderBody()
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
-                    <ul class="list-unstyled list-inline social text-center">
-                        <li class="list-inline-item"><a><i class="fab fa-facebook-square"></i></a></li>
-                        <li class="list-inline-item"><a><i class="fab fa-twitter-square"></i></a></li>
-                        <li class="list-inline-item"><a><i class="fas fa-envelope"></i></a></li>
-                    </ul>
-                </div>
+        <div class="row">
+            <div class="col-2 offset-3 p-3">
+                <h5 class="text-white">Website Info</h5>
                 <hr />
+                <p><a href="About">About Us</a></p>
+                <p><a href="Terms">Terms of Service</a></p>
+                <p><a href="PrivacyPolicy">Privacy Policy</a></p>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 text-center white-text">
-                    <p>&copy James And Michael</p>
-                </div>
+            <div class="col-2 p-3">
+                <h5 class="text-white">Links</h5>
                 <hr />
+                <p><a href="Index">Home</a></p>
+                <p><a href="Books">Books</a></p>
             </div>
+            <div class="col-2 p-3">
+                <ul class="list-unstyled list-inline social text-center">
+                    <li class="list-inline-item"><a><i class="fab fa-facebook-square"></i></a></li>
+                    <li class="list-inline-item"><a><i class="fab fa-twitter-square"></i></a></li>
+                    <li class="list-inline-item"><a href="mailto:jaminbooksnoreply@gmail.com"<i class="fas fa-envelope"></i></a></li>
+                </ul>
+            </div>
+            <hr />
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 text-center white-text">
+                <p class="mt-2">&copy @(DateTime.Now.ToString("yyyy")) James And Michael</p>
+            </div>
+            <hr />
         </div>
     </footer>
 </body>

@@ -14,6 +14,12 @@ namespace JaminBooks.Tools
         private const int Keysize = 128;
         private const int DerivationIterations = 1000;
 
+        /// <summary>
+        /// Encrypt the given phrase using the given password in AES128
+        /// </summary>
+        /// <param name="plainText">The text to encrypt</param>
+        /// <param name="passPhrase">The password</param>
+        /// <returns>The encrypted text</returns>
         public static string Encrypt(string plainText, string passPhrase)
         {
             var saltStringBytes = Generate128BitsOfRandomEntropy();
@@ -48,6 +54,12 @@ namespace JaminBooks.Tools
             }
         }
 
+        /// <summary>
+        /// Decrypt the given phrase using the given password in AES128
+        /// </summary>
+        /// <param name="cipherText">The text to Decrypt</param>
+        /// <param name="passPhrase">The password</param>
+        /// <returns>The Decrypted text</returns>
         public static string Decrypt(string cipherText, string passPhrase)
         {
             var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);

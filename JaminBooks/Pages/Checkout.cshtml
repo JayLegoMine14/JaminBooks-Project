@@ -80,7 +80,7 @@
                                 <div id="Cards" class="col-12 mb-4 owl-carousel owl-theme">
                                     @foreach (Model.Card card in Model.CurrentUser.Cards)
                                     {
-                                        <div class="card dc-card d-inline-block item" data-id="@card.CardID" style="width:300px"
+                                        <div class="card dc-card d-inline-block item w-100" data-id="@card.CardID"
                                              data-name="@card.Name"
                                              data-last-four="@card.LastFourDigits" data-month="@card.ExpMonth"
                                              data-year="@card.ExpYear" data-line1="@card.Address.Line1"
@@ -97,7 +97,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <div class="card d-inline-block create item" style="width:300px">
+                                    <div class="card d-inline-block create item w-100">
                                         <div id="CardCreate" class="card-body create-card" style="line-height: 125px">
                                             <i class="fas fa-plus"></i>
                                         </div>
@@ -120,7 +120,7 @@
                                 <div id="Addresses" class="col-12 mb-4 owl-carousel owl-theme">
                                     @foreach (Model.Address add in Model.CurrentUser.AllAddresses)
                                     {
-                                        <div class="card address d-inline-block item" data-id="@add.AddressID" style="width:300px"
+                                        <div class="card address d-inline-block item w-100" data-id="@add.AddressID"
                                              data-line1="@add.Line1" data-line2="@add.Line2"
                                              data-city="@add.City" data-state="@add.State"
                                              data-country="@add.Country" data-zip="@add.ZIP">
@@ -143,7 +143,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <div class="card d-inline-block create item" style="width:300px">
+                                    <div class="card d-inline-block create item w-100">
                                         <div id="AddressCreate" class="card-body create-card" style="line-height: 70px">
                                             <i class="fas fa-plus"></i>
                                         </div>
@@ -156,7 +156,7 @@
                     @await Html.PartialAsync("_CheckoutAddress")
 
                 </div>
-                <div class="col-4 mt-5">
+                <div class=" col-lg-4 offset-lg-0 col-md-4 offset-md-0 offset-1 col-10 mt-5">
                     <div class="card w-100 p-2">
                         <h3>Summary</h3>
                         <hr />
@@ -168,7 +168,7 @@
                         </div>
                         @if (Model.PercentDiscount != "")
                         {
-                            <div class="row p-2" id="Discount" style="display:none">
+                            <div class="row p-2" id="Discount">
                                 <h5 class="col-6">Discount</h5>
                                 <div class="col-6 text-right">
                                     <span>@Model.PercentDiscount</span>
@@ -230,14 +230,14 @@
                                 </div>
                             </div>
                             @if (Model.PercentDiscount != "")
-            {
-                <div class="row p-2" id="Discount" style="display:none">
-                    <h5 class="col-6">Discount</h5>
-                    <div class="col-6 text-right">
-                        <span>@Model.PercentDiscount</span>
-                    </div>
-                </div>
-}
+                            {
+                                <div class="row p-2" id="Discount">
+                                    <h5 class="col-6">Discount</h5>
+                                    <div class="col-6 text-right">
+                                        <span>@Model.PercentDiscount</span>
+                                    </div>
+                                </div>
+                            }
                             <div class="row p-2">
                                 <h5 class="col-6">Shipping</h5>
                                 <div class="col-6 text-right">
@@ -288,6 +288,14 @@
                     $("#AddressCreate").click(function () {
                         $("#AddressModal").modal("show");
                     });
+                },
+                responsive : {
+                    0 : {
+                        margin: 10
+                    },
+                    480 : {
+                        margin: 20
+                    }
                 }
             });
             $('#Cards, #Addresses').prepend('<div class="fade-in"></div><div class="fade-out" ></div>')
@@ -371,7 +379,7 @@
                             }
                         },
                         failure: function (response) {
-                            alert(response);
+                            location.href = "\Error"
                         }
                     });
                 }

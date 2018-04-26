@@ -35,11 +35,17 @@ namespace JaminBooks.Pages
             return new JsonResult(Authentication.CreateUser(Request));
         }
 
+        [Route("Security/AdminCreate")]
+        public IActionResult AdminCreate()
+        {
+            return new JsonResult(Authentication.CreateUser(Request, true, false, false));
+        }
+
         [Route("Security/Logout")]
         public void Logout()
         {
             var checkingOut = HttpContext.Session.GetString("CheckingOut");
-            if(checkingOut != null && Convert.ToBoolean(checkingOut))
+            if (checkingOut != null && Convert.ToBoolean(checkingOut))
             {
                 Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
                 foreach (KeyValuePair<Book, int> item in currentUser.GetCart().AsEnumerable())
@@ -60,14 +66,15 @@ namespace JaminBooks.Pages
             try
             {
                 User u = new User(id);
-                if(u.ConfirmationCode == code)
+                if (u.ConfirmationCode == code)
                 {
                     u.IsConfirmed = true;
                     u.Save();
                     Response.Redirect("/Confirmed");
                 }
                 else Response.Redirect("/Error");
-            }catch
+            }
+            catch
             {
                 Response.Redirect("/Error");
             }

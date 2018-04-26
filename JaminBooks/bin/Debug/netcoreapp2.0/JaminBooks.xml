@@ -1,0 +1,1663 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JaminBooks</name>
+    </assembly>
+    <members>
+        <member name="T:JaminBooks.Model.Address">
+            <summary>
+            Models an address, shipping or billing
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Address.AddressID">
+            <summary>
+            A unique number representing this address. -1 represents an uncreated address.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Address.Line1">
+            <summary>
+            The first line of the street address.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Address.Line2">
+            <summary>
+            The second line of the street address.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Address.City">
+            <summary>
+            The city of the address.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Address.State">
+            <summary>
+            The state of the address. This will be a two letter code.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Address.Country">
+            <summary>
+            The country of the address. This will be a two letter code.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Address.ZIP">
+            <summary>
+            The ZIP code of the address.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Address.#ctor">
+            <summary>
+            Instantiates an empty address with all the default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Address.#ctor(System.Int32)">
+            <summary>
+            Instantiates an address and fills the fields with the address in the database with the given id number.
+            </summary>
+            <param name="AddressID">The addresses id number</param>
+        </member>
+        <member name="M:JaminBooks.Model.Address.#ctor(System.Int32,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Instantiates an address with the given its fields set to the given parameters.
+            </summary>
+            <param name="AddressID">The address's id</param>
+            <param name="Line1">Street address line 1</param>
+            <param name="Line2">Street address line 2</param>
+            <param name="City">City</param>
+            <param name="State">State</param>
+            <param name="Country">Country</param>
+            <param name="ZIP">ZIP</param>
+        </member>
+        <member name="M:JaminBooks.Model.Address.Delete">
+            <summary>
+            Set the address isdeleted true in the database and set its id to -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Address.AddUser(System.Int32)">
+            <summary>
+            Adds this address to the given user.
+            </summary>
+            <param name="UserID"></param>
+        </member>
+        <member name="M:JaminBooks.Model.Address.GetUserID">
+            <summary>
+            Gets the id number of the user who owns this address.
+            </summary>
+            <returns>The is number of the user who owns this address.</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Address.GetAddresses(System.Int32)">
+            <summary>
+            Gets a list of address that belong to the given user.
+            </summary>
+            <param name="UserID">A user's id number.</param>
+            <returns>A list of addresses.</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Address.GetAddressesIncludingCards(System.Int32)">
+            <summary>
+            Gets a list of address that belong to the given user or one of the user's credit cards.
+            </summary>
+            <param name="UserID">A user's id number.</param>
+            <returns>A list of addresses.</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Address.GetAddresses(System.Int32,System.String)">
+            <summary>
+            Gets a list of address that belong to the given user using the specified stored procedure.
+            </summary>
+            <param name="UserID">A user's id number.</param>
+            <param name="proc">The stored procedure to use to get the desired addresses.</param>
+            <returns>A list of addresses.</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Author">
+            <summary>
+            Models the author of a book
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Author.AuthorID">
+            <summary>
+            The unique id number that identifies this author. -1 represents an uncreated author.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Author.FirstName">
+            <summary>
+            The authors first name.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Author.LastName">
+            <summary>
+            The authors last name.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Author.IsDeleted">
+            <summary>
+            Whether or not the author has been deleted.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Author.FullName">
+            <summary>
+            The first and last name of the author joined with a space
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Author.#ctor">
+            <summary>
+            Instantiates a empty author with all of the default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Author.#ctor(System.Int32)">
+            <summary>
+            Instantiates an author and fills the fields with the author in the database with the given id number.
+            </summary>
+            <param name="AuthorID"></param>
+        </member>
+        <member name="M:JaminBooks.Model.Author.#ctor(System.Int32,System.String,System.String,System.Boolean)">
+            <summary>
+            Instantiates and author and sets the fields to the given parameters.
+            </summary>
+            <param name="AuthorID">The author's id</param>
+            <param name="FirstName">The author's first name</param>
+            <param name="LastName">The author's last name</param>
+            <param name="IsDeleted">Whether or not the author is deleted</param>
+        </member>
+        <member name="M:JaminBooks.Model.Author.Save">
+            <summary>
+            Save the author to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Author.Delete">
+            <summary>
+            Delete the author from the database and set the author's id to -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Author.AddAuthor(System.Int32)">
+            <summary>
+            Add this author to a book.
+            </summary>
+            <param name="BookID"></param>
+        </member>
+        <member name="M:JaminBooks.Model.Author.GetAuthors(System.Int32)">
+            <summary>
+            Get a list of authors from a given book.
+            </summary>
+            <param name="BookID">The book's id number</param>
+            <returns>A list of authors.</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Author.GetAuthors">
+            <summary>
+            Get a list of all authors.
+            </summary>
+            <returns>A list of all authors</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Banner">
+            <summary>
+            Models a home page banner
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Banner.BannerID">
+            <summary>
+            The unique number that identifies this banner.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Banner.URL">
+            <summary>
+            The url to which this banner's button links.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Banner.Order">
+            <summary>
+            An integer reflecting the position of this banner.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Banner.Image">
+            <summary>
+            A byte representation of this banner's image.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Banner.LoadImage">
+            <summary>
+            Cache this banner's image if the image has not yet been cached. If the image has been cached, return the path to the image. 
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Banner.#ctor">
+            <summary>
+            Instantiates an empty Banner with all of the default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Banner.#ctor(System.Int32,System.String,System.Byte[],System.Int32)">
+            <summary>
+            Instantiate a banner with the fields set to the give parameters.
+            </summary>
+            <param name="BannerID">The banner's id number</param>
+            <param name="URL">The banner's link</param>
+            <param name="Image">The banner's image</param>
+            <param name="Order">The banner's position</param>
+        </member>
+        <member name="M:JaminBooks.Model.Banner.Save">
+            <summary>
+            Save the banner to the database and update its id
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Banner.Delete(System.Int32)">
+            <summary>
+            Delete the given banner from the database.
+            </summary>
+            <param name="BannerID">The banner's id number</param>
+        </member>
+        <member name="M:JaminBooks.Model.Banner.SetOrder(System.Int32,System.Int32)">
+            <summary>
+            Set the position of the given banner.
+            </summary>
+            <param name="BannerID">The banner's id number</param>
+            <param name="Order">The new position of the banner.</param>
+        </member>
+        <member name="M:JaminBooks.Model.Banner.GetBanners">
+            <summary>
+            Get a list of all banners.
+            </summary>
+            <returns>A list of all banners.</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Book">
+            <summary>
+            Models a book
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.BookID">
+            <summary>
+            The unique id number that identifies this book. -1 represents an uncreated book.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.Title">
+            <summary>
+            The title of the book.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.PublisherID">
+            <summary>
+            The id number of this book's publisher.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.PublicationDate">
+            <summary>
+            The date of publication.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.ISBN10">
+            <summary>
+            This book's ISBN 10 number.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.ISBN13">
+            <summary>
+            This book's ISBN 13 number.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.Description">
+            <summary>
+            This book's description.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.CopyrightDate">
+            <summary>
+            The copyright date.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book._Price">
+            <summary>
+            This book's original price.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.Cost">
+            <summary>
+            The cost of this book.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.Quantity">
+            <summary>
+            The number of units of this book in stock.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.IsDeleted">
+            <summary>
+            Whether or not this book has been deleted.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.BookImage">
+            <summary>
+            A byte representation of this book's image.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.Rating">
+            <summary>
+            This books star rating as an integer. Should be between 0 and 5.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.PercentDiscount">
+            <summary>
+            The best discount currently on this book.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Book.LoadPublisher">
+            <summary>
+            Whether or not to load the full publisher of this book or just the name of the publisher.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.Price">
+            <summary>
+            The discounted price of this book.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.HasIcon">
+            <summary>
+            Whether or not this book has an image.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.LoadImage">
+            <summary>
+            Cache this book's image if the image has not yet been cached. If the image has been cached, return the path to the image. 
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.Categories">
+            <summary>
+            A list of all the categories this book is under.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.Authors">
+            <summary>
+            A list of all this books authors.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.Sales">
+            <summary>
+            An integer representing the total number of sales of this book.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Book.Publisher">
+            <summary>
+            The publisher of this book.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Book.#ctor">
+            <summary>
+            Instantiates an empty book with all of the default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Book.#ctor(System.Int32)">
+            <summary>
+            Instantiates a book and fills the fields with the book in the database with the given id number.
+            </summary>
+            <param name="BookID">The books id number</param>
+        </member>
+        <member name="M:JaminBooks.Model.Book.#ctor(System.Int32,System.String,System.DateTime,System.Int32,System.String,System.String,System.String,System.DateTime,System.Decimal,System.Decimal,System.Int32,System.Boolean,System.Byte[])">
+            <summary>
+            Instantiates a book with all of the fields set to the value of the given parameters
+            </summary>
+            <param name="BookID">The book's id</param>
+            <param name="Title">The book's title</param>
+            <param name="PublicationDate">The book's publication date</param>
+            <param name="PublisherID">The id of the book's publisher</param>
+            <param name="ISBN10">The ISBN 10 of this book</param>
+            <param name="ISBN13">The ISBN 13 of the book</param>
+            <param name="Description">The book's description</param>
+            <param name="CopyrightDate">the book's copyright date</param>
+            <param name="_Price">The book's non-discounted price</param>
+            <param name="Cost">The book's cost</param>
+            <param name="Quantity">The book's quantity in stock</param>
+            <param name="IsDeleted">Whether or not the book is deleted</param>
+            <param name="BookImage">The books image</param>
+        </member>
+        <member name="M:JaminBooks.Model.Book.Save">
+            <summary>
+            Save the book to the database
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Book.Delete">
+            <summary>
+            Delete the book in the database and set its id to -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Book.AddPublisher(JaminBooks.Model.Publisher)">
+            <summary>
+            Add a publisher to this book
+            </summary>
+            <param name="p">The publisher</param>
+        </member>
+        <member name="M:JaminBooks.Model.Book.AddAuthor(JaminBooks.Model.Author)">
+            <summary>
+            Add an author to this book.
+            </summary>
+            <param name="a">The author</param>
+        </member>
+        <member name="M:JaminBooks.Model.Book.AddCategory(JaminBooks.Model.Category)">
+            <summary>
+            Add a category to this book.
+            </summary>
+            <param name="c">The category</param>
+        </member>
+        <member name="M:JaminBooks.Model.Book.GetBookShelf(JaminBooks.Model.User)">
+            <summary>
+            Get a list of books on a user's bookshelf.
+            </summary>
+            <param name="user">The user</param>
+            <returns>A list of books on the bookshelf.</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Book.GetBooks">
+            <summary>
+            Get all books
+            </summary>
+            <returns>A list of all books</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Book.GetBooks(System.Data.DataTable)">
+            <summary>
+            Get a list of books from the given DataTable.
+            </summary>
+            <param name="dt">A DataTable containing books</param>
+            <returns>A list of books.</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Card">
+            <summary>
+            Models a debit or credit card
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Card.CardID">
+            <summary>
+            The unique id number that identifies this card. -1 represents a uncreated card.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card.ExpMonth">
+            <summary>
+            The expiration month as a two digits.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card.ExpYear">
+            <summary>
+            The expiration year as two digits.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card.Name">
+            <summary>
+            The full name on the card.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card.Address">
+            <summary>
+            The address associated with this card.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Card.LastFourDigits">
+            <summary>
+            The last four digits of the card number.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card.IsEncrypted">
+            <summary>
+            Whether or not the card number is currently encrypted.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card.IsHashed">
+            <summary>
+            Whether or not the CVC is hashed.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Card.CVC">
+            <summary>
+            The CVC number of the card.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Card.Number">
+            <summary>
+            The card number.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card._CVC">
+            <summary>
+            A private copy of the CVC
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card._Number">
+            <summary>
+            A private copy of the CVC
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Card.User">
+            <summary>
+            The user who owns the card
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Card.UserID">
+            <summary>
+            Private id number of the user
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Card.#ctor">
+            <summary>
+            Instantiate an empty card with all of the default values
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Card.#ctor(System.Int32)">
+            <summary>
+            Instantiate a card and set the fields equal to the card in the database with the given id number
+            </summary>
+            <param name="CardID">The card's id number</param>
+        </member>
+        <member name="M:JaminBooks.Model.Card.#ctor(System.Int32,System.Int32,System.String,System.String,System.String,System.String,System.String,System.Int32,System.String)">
+            <summary>
+            Instantiate a card and set the fields equal to the given parameters
+            </summary>
+            <param name="CardID">The card's id</param>
+            <param name="UserID">The card's user's id</param>
+            <param name="Number">The card number</param>
+            <param name="CVC">The card's CVC</param>
+            <param name="ExpMonth">The card's expiration month</param>
+            <param name="ExpYear">The card's expiration year</param>
+            <param name="Name">The name on the card</param>
+            <param name="AddressID">The id of the card's address</param>
+            <param name="LastFourDigits">The last four digits of the card's number</param>
+        </member>
+        <member name="M:JaminBooks.Model.Card.Save">
+            <summary>
+            Save the card to teh database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Card.Delete">
+            <summary>
+            Delete the card from the database, delete its address, and set its id to -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Card.DecryptNumber(System.String)">
+            <summary>
+            Decrypt the card number using the CVC as the password.
+            </summary>
+            <param name="CVC">The card's unhashed CVC</param>
+            <returns></returns>
+        </member>
+        <member name="M:JaminBooks.Model.Card.GetCards(System.Int32)">
+            <summary>
+            Get a list of all cards owned by a specific user.
+            </summary>
+            <param name="UserID">The user's id</param>
+            <returns>A list of cards.</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Category">
+            <summary>
+            Models a book category
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Category.CategoryID">
+            <summary>
+            a unique id number identifying this category. -1 represents an uncreated category.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Category.CategoryName">
+            <summary>
+            The name of the category.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Category.IsDeleted">
+            <summary>
+            Whether or not the category has been deleted.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Category.#ctor">
+            <summary>
+            Instantiate an empty category with default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Category.#ctor(System.Int32)">
+            <summary>
+            Instantiate a category and set its fields equal to the category in the database with the given id.
+            </summary>
+            <param name="CategoryID"></param>
+        </member>
+        <member name="M:JaminBooks.Model.Category.#ctor(System.Int32,System.String,System.Boolean)">
+            <summary>
+            Instantiate a category and set the fields equal to given parameters.
+            </summary>
+            <param name="CategoryID">The category's id</param>
+            <param name="CategoryName">The name of the category</param>
+            <param name="IsDeleted">Whether or not the category is deleted</param>
+        </member>
+        <member name="M:JaminBooks.Model.Category.Save">
+            <summary>
+            Save the category to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Category.Delete">
+            <summary>
+            Delete the category from the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Category.AddCategory(System.Int32)">
+            <summary>
+            Add the category to the given book.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.Category.GetCategories(System.Int32)">
+            <summary>
+            Get a list of categories associated with a given book.
+            </summary>
+            <param name="BookID">The id of the book</param>
+            <returns>A list of categories</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Category.GetCategories">
+            <summary>
+            Get all categories
+            </summary>
+            <returns>A list of all categories</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Order">
+            <summary>
+            Models an order
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Order.OrderID">
+            <summary>
+            the unique id number that identifies this order. -1 represents an unsaved Order.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Order.OrderDate">
+            <summary>
+            The date on which the order was made.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Order.RefundDate">
+            <summary>
+            The date on which the order was refunded.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Order.FulfilledDate">
+            <summary>
+            The date on which the order was fulfilled.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Order.PercentDiscount">
+            <summary>
+            The percent discount on the order.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Order.Card">
+            <summary>
+            The card used to pay for the order.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Order.Address">
+            <summary>
+            The shipping address of the order.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Order.ParentOrderID">
+            <summary>
+            The parent id of a reshipped order.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Order.Books">
+            <summary>
+            A list of books on the order.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Order.IsRefunded">
+            <summary>
+            Whether or not the order has been refunded
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Order.IsFulfilled">
+            <summary>
+            Whether or not the order has been refunded.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Order.Total">
+            <summary>
+            The total price of the order including the price of all books on the order and the discount on the order.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Order.Children">
+            <summary>
+            A list of the id numbers of the orders which were reshipments of this order.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Order.#ctor">
+            <summary>
+            Instantiate an empty order with default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Order.#ctor(System.Int32)">
+            <summary>
+            Instantiates an order and sets the fields equal to the order in the database with the given id number.
+            </summary>
+            <param name="OrderID">The order's id number</param>
+        </member>
+        <member name="M:JaminBooks.Model.Order.#ctor(System.Int32,System.DateTime,System.Int32,System.Int32,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32})">
+            <summary>
+            Instantiate an order and set the fields equal to the given parameters.
+            </summary>
+            <param name="OrderID">The id number of the order</param>
+            <param name="OrderDate">The date the order was made</param>
+            <param name="CardID">The card used to pay for the user</param>
+            <param name="AddressID">The id number of the shipping address</param>
+            <param name="PercentDiscount">The percent discount on the order</param>
+            <param name="RefundDate">The date the order was refunded</param>
+            <param name="FulfilledDate">The date the order was fulfilled</param>
+            <param name="ParentOrderID">The id of the parent of this order</param>
+        </member>
+        <member name="M:JaminBooks.Model.Order.ClearID">
+            <summary>
+            Clear the id of this order to allow for recreation.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Order.Save">
+            <summary>
+            Save this order to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Order.GetAll">
+            <summary>
+            Get all orders.
+            </summary>
+            <returns>A list of all orders</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Order.GetAllByUser(System.Int32)">
+            <summary>
+            Get all orders made by the give user
+            </summary>
+            <param name="UserID">The user's id</param>
+            <returns>A list of orders</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Order.GetOrders(System.Data.DataTable)">
+            <summary>
+            Get a list of order from the given DataTable.
+            </summary>
+            <param name="dt">A DataTable containing orders</param>
+            <returns>A list of orders</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Phone">
+            <summary>
+            Models a phone
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Phone.PhoneID">
+            <summary>
+            The unique id number identifying this phone. -1 represents an uncreated phone.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Phone.Number">
+            <summary>
+            The number of this phone.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Phone.Category">
+            <summary>
+            The category of phone.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.#ctor">
+            <summary>
+            Instantiate an empty phone with default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.#ctor(System.Int32)">
+            <summary>
+            Instantiate a phone and set its fields equal to the phone in the database with the given id.
+            </summary>
+            <param name="PhoneID">The phone's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.#ctor(System.Int32,System.String,System.String)">
+            <summary>
+            Initialize a phone and set the fields equal to the given parameters.
+            </summary>
+            <param name="PhoneID">The phone's id</param>
+            <param name="Number">The phone's number</param>
+            <param name="Category">The phone's category</param>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.Save">
+            <summary>
+            Save the phone to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.Delete">
+            <summary>
+            Delete the phone from the database and set its id to -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.AddUser(System.Int32)">
+            <summary>
+            Add the phone to the given user.
+            </summary>
+            <param name="UserID">The user's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.GetUserID">
+            <summary>
+            Get the user who owns the phone
+            </summary>
+            <returns>The user's id</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.GetPhones(System.Int32)">
+            <summary>
+            Gets a list of phones owned by the given user.
+            </summary>
+            <param name="UserID">The user's id</param>
+            <returns>A list of phones.</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Phone.GetPhoneCategories">
+            <summary>
+            Get a list of all phone categories.
+            </summary>
+            <returns>A dictionary that represents all phone categories.</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Promotion">
+            <summary>
+            Models a book, discount code, or order total promotion
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Promotion.PromotionID">
+            <summary>
+            The unique id number that identifies the promotion. -1 represent an uncreated promotion.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Promotion.StartDate">
+            <summary>
+            The start date of the promotion.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Promotion.EndDate">
+            <summary>
+            The end date of the promotion.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Promotion.PercentDiscount">
+            <summary>
+            The percent discount of the promotion.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Promotion.Total">
+            <summary>
+            The total order value needed to earn the promotion. (Optional)
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Promotion.Code">
+            <summary>
+            The coupon code that acquires the promotion (Optional)
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Promotion.BookID">
+            <summary>
+            The id of the book with the promotion (Optional)
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Promotion.Book">
+            <summary>
+            Get the book with the promotion. returns null if the promotion is not a book promotion.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.#ctor">
+            <summary>
+            Initialize an empty promotion with default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.#ctor(System.Int32)">
+            <summary>
+            Initialize a promotion and set the equal to the promotion in the database with the given id.
+            </summary>
+            <param name="PromotionID">The promotion's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.#ctor(System.Int32,System.DateTime,System.DateTime,System.Int32,System.Nullable{System.Decimal},System.String,System.Nullable{System.Int32})">
+            <summary>
+            Initialize a promotion and set its fields equal to the given parameters.
+            </summary>
+            <param name="PromotionID">The promotion's id</param>
+            <param name="StartDate">The promotion's start date</param>
+            <param name="EndDate">The promotion's end date</param>
+            <param name="PercentDiscount">The promotion's discount</param>
+            <param name="Total">The necessary total</param>
+            <param name="Code">The coupon code</param>
+            <param name="BookID">The id of the book with the promotion</param>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.Save">
+            <summary>
+            Save the promotion to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.Delete">
+            <summary>
+            Delete the promotion from the database and set its id to -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.DeletePromotions(System.Int32)">
+            <summary>
+            Delete any promotions on the given book.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.DeleteExpiredPromotions(System.Int32)">
+            <summary>
+            Delete an promotions past their end date from the given book.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.GetPromotions">
+            <summary>
+            Get a list of all promotions
+            </summary>
+            <returns>A list of all promotions</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Promotion.GetPromotions(System.Data.DataTable)">
+            <summary>
+            Get a list of all promotions from the given DataTable.
+            </summary>
+            <param name="dt">A DataTable containing promotions</param>
+            <returns>A list of promotions</returns>
+        </member>
+        <member name="T:JaminBooks.Model.Publisher">
+            <summary>
+            Models a book publisher
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Publisher.PublisherID">
+            <summary>
+            The unique id number that identifies the publisher. -1 represents an uncreated publisher.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Publisher.PublisherName">
+            <summary>
+            The name of the publisher.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Publisher.Address">
+            <summary>
+            The address of the publisher.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Publisher.Phone">
+            <summary>
+            The phone of the publisher's contact.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Publisher.ContactFirstName">
+            <summary>
+            The first name of the publisher's contact.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Publisher.ContactLastName">
+            <summary>
+            The last name of the publisher's contact.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Publisher.IsDeleted">
+            <summary>
+            Whether or not the publisher is deleted.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Publisher.FullName">
+            <summary>
+            The first name and last name of the publisher's contact joined with a space.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.#ctor">
+            <summary>
+            Initialize an empty publisher with default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.#ctor(System.Int32)">
+            <summary>
+            Initialize a publisher and set its fields equal to the publisher in the database with the given id.
+            </summary>
+            <param name="PublisherID">The publisher's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.#ctor(System.Int32,System.String,System.Int32,System.Int32,System.String,System.String,System.Boolean)">
+            <summary>
+            Initialize a publisher and set the fields equal to the given parameters
+            </summary>
+            <param name="PublisherID">The id of the publisher</param>
+            <param name="PublisherName">The name of the publisher</param>
+            <param name="AddressID">The id of the publisher's address</param>
+            <param name="PhoneID">The id of the publisher's phone</param>
+            <param name="ContactFirstName">The first name of the publisher's contact</param>
+            <param name="ContactLastName">The last name of the publisher's contact</param>
+            <param name="IsDeleted">Whether or not the publisher has been deleted</param>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.Save">
+            <summary>
+            Save the publisher to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.Delete">
+            <summary>
+            Delete the publisher from the database and set its id as -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.GetBooks">
+            <summary>
+            Get the number of books published by this publisher.
+            </summary>
+            <returns>the number of books</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.GetSales">
+            <summary>
+            Get the number of sales made by this publisher.
+            </summary>
+            <returns>The number of sales</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.GetPublishers(System.Data.DataTable)">
+            <summary>
+            Get a list of publishers from the given DataTable.
+            </summary>
+            <param name="dt">A DataTable containing publishers</param>
+            <returns>A list of publishers.</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.GetPublishers">
+            <summary>
+            Get all publishers.
+            </summary>
+            <returns>A list of all publishers</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Publisher.AddPublisher(System.Int32)">
+            <summary>
+            Add the publisher to given book.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="T:JaminBooks.Model.Rating">
+            <summary>
+            Models a book rating
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Rating.RatingID">
+            <summary>
+            The unique id number that identifies the rating. -1 represents an uncreated rating.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Rating.RatingValue">
+            <summary>
+            The value of the rating. Between 0-5.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Rating.Comment">
+            <summary>
+            The comment on the rating.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Rating.BookID">
+            <summary>
+            The id of the book on which the rating was left.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Rating.UserID">
+            <summary>
+            The id of the user who left the rating.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Rating.Hidden">
+            <summary>
+            Whether or not the rating should be visible.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Rating.CreationDate">
+            <summary>
+            The date on which the rating was created.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.Rating.Flags">
+            <summary>
+            A list of the id number of users who have flagged this rating.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Rating.FlagUsers">
+            <summary>
+            Get a list of the id number of the users who have flagged this rating.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Rating.FormatedDate">
+            <summary>
+            Get the creation date of this rating formatted as "M/d/yy htt"
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.Rating.NameAndImage">
+            <summary>
+            Get the name and image of the user who left this rating.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.#ctor">
+            <summary>
+            Initialize an empty rating with default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.#ctor(System.Int32)">
+            <summary>
+            Initialize a rating and set its fields equal to the rating in the database.
+            </summary>
+            <param name="RatingID"></param>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.#ctor(System.Int32,System.Int32,System.String,System.Int32,System.Int32,System.DateTime,System.Boolean)">
+            <summary>
+            Initialize a rating and set its fields equal to the value of the given parameters.
+            </summary>
+            <param name="RatingID">the rating's id</param>
+            <param name="bRating">The rating's star rating</param>
+            <param name="Comment">The rating's comment</param>
+            <param name="BookID">The id of the rating's book</param>
+            <param name="UserID">The id of the rating's creator</param>
+            <param name="CreationDate">The date on which the rating was created</param>
+            <param name="Hidden">Whether or not the rating should be hidden</param>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.Save">
+            <summary>
+            Save the rating to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.Delete">
+            <summary>
+            Delete the rating from the database, clear its flags, and set its id to -1.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.AddFlag(System.Int32)">
+            <summary>
+            Add a flag to the rating.
+            </summary>
+            <param name="userID">The user who flagged the rating</param>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.DeleteFlags">
+            <summary>
+            Delete the flags on this rating.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.hasFlagged(System.Int32)">
+            <summary>
+            Check whether the given user has already flagged the rating.
+            </summary>
+            <param name="userID">The id of the user who flagged this rating</param>
+            <returns>Whether or not the user has flagged the rating </returns>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.GetRatings(System.Int32)">
+            <summary>
+            Get a list of ratings on the given book.
+            </summary>
+            <param name="BookID">The book's id</param>
+            <returns>A list of ratings</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.GetFlagged">
+            <summary>
+            Get a list of flagged ratings.
+            </summary>
+            <returns>A list of ratings</returns>
+        </member>
+        <member name="M:JaminBooks.Model.Rating.GetRatingsByUser(JaminBooks.Model.User)">
+            <summary>
+            Get all ratings made by the given user.
+            </summary>
+            <param name="user">The user</param>
+            <returns>A list of ratings</returns>
+        </member>
+        <member name="T:JaminBooks.Model.User">
+            <summary>
+            Models a user
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.UserID">
+            <summary>
+            The unique id number that identifies the user. -1 represents an uncreated user.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.CreationDate">
+            <summary>
+            The creation date of the user.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.FirstName">
+            <summary>
+            The first name of the user.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.LastName">
+            <summary>
+            The last name of the user.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.Email">
+            <summary>
+            The email address of the user.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.IsDeleted">
+            <summary>
+            Whether or not the user is deleted.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.IsAdmin">
+            <summary>
+            Whether or not the user is an administrator.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.IsConfirmed">
+            <summary>
+            Whether or not the user's email is confirmed.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.ConfirmationCode">
+            <summary>
+            The confirmation code of the given user.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Model.User.Password">
+            <summary>
+            The password of the user.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.Icon">
+            <summary>
+            The icon of the user.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.HasIcon">
+            <summary>
+            Whether or not the user has an icon
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.LastFirstName">
+            <summary>
+            The first and last name of the user joined by a comma, last name first.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.FullName">
+            <summary>
+            The first and last name of the user joined by a space.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.LoadImage">
+            <summary>
+            Cache this user's image if the image has not yet been cached. If the image has been cached, return the path to the image. 
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.Orders">
+            <summary>
+            A list of the orders made by the user.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.Addresses">
+            <summary>
+            A list of the user's shipping addresses.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.AllAddresses">
+            <summary>
+            A list of the user's sipping and billing addresses.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.Cards">
+            <summary>
+            A list of the user's cards.
+            </summary>
+        </member>
+        <member name="P:JaminBooks.Model.User.Phones">
+            <summary>
+            A list of the user's phones.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.User.#ctor">
+            <summary>
+            Initialize an empty user with default values.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.User.#ctor(System.Int32)">
+            <summary>
+            Initialize a user and set the fields equal to the user in the database with the given id.
+            </summary>
+            <param name="UserID"></param>
+        </member>
+        <member name="M:JaminBooks.Model.User.#ctor(System.Int32,System.String,System.String,System.DateTime,System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.String,System.Byte[])">
+            <summary>
+            Initialize a user and set its fields equal to the given parameters.
+            </summary>
+            <param name="UserID">The user's id</param>
+            <param name="FirstName">The user's first name</param>
+            <param name="LastName">The user's last name</param>
+            <param name="CreationDate">The date the user was created</param>
+            <param name="Password">The user's password</param>
+            <param name="Email">The user's email address</param>
+            <param name="IsDeleted">Whether or not the user is deleted</param>
+            <param name="IsAdmin">Whether or not the user is an administrator</param>
+            <param name="IsConfirmed">Whether or not the user's email is confirmed</param>
+            <param name="ConfirmationCode">The user's email confirmation code</param>
+            <param name="Icon">The user's icon</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.Save">
+            <summary>
+            Save the user to the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.User.Delete">
+            <summary>
+            Delete the user from the database.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.User.AddAddress(JaminBooks.Model.Address)">
+            <summary>
+            Add the given address to the user.
+            </summary>
+            <param name="a">The address to add</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.AddCard(JaminBooks.Model.Card)">
+            <summary>
+            Add the given card to the user.
+            </summary>
+            <param name="c">The card to add</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.AddPhone(JaminBooks.Model.Phone)">
+            <summary>
+            Add the given phone to the user.
+            </summary>
+            <param name="p">The phone to add</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.CartContains(System.Int32)">
+            <summary>
+            Check whether or not the users cart contains the given book.
+            </summary>
+            <param name="BookID">The book's id</param>
+            <returns>whether or not the users cart contains the given book</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.GetCart">
+            <summary>
+            Get a user's cart.
+            </summary>
+            <returns>A dictionary containing books and their quantity</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.GetBookShelf">
+            <summary>
+            Get a list of books in the user's bookshelf.
+            </summary>
+            <returns>A list of books</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.hasBought(System.Int32)">
+            <summary>
+            Check whether or not the user has bought the given book.
+            </summary>
+            <param name="BookID">the book's id</param>
+            <returns>Whether or not the user has bought the given book</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.AddBookToBookShelf(System.Int32)">
+            <summary>
+            Add the given book to the user's bookshelf.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.RemoveBookFromBookShelf(System.Int32)">
+            <summary>
+            Remove the given book from the user's bookshelf.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.AddBookToCart(System.Int32)">
+            <summary>
+            Add the given book to the user's cart.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.RemoveBookFromCart(System.Int32)">
+            <summary>
+            Remove the given book from the user's cart.
+            </summary>
+            <param name="BookID">The book's id</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.EmptyCart">
+            <summary>
+            Remove all books from the user's cart.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Model.User.UpdateQuantityInCart(System.Int32,System.Int32)">
+            <summary>
+            Change the quantity of the given book in the user's cart.
+            </summary>
+            <param name="BookID">The book's id</param>
+            <param name="Quantity">The new quantity</param>
+        </member>
+        <member name="M:JaminBooks.Model.User.GetUsers">
+            <summary>
+            Get a list of all users.
+            </summary>
+            <returns>A list of all users</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.getUsers(System.Data.DataTable)">
+            <summary>
+            Get a list of all users from the given DataTable.
+            </summary>
+            <param name="dt">A DataTable containing users</param>
+            <returns>A list of all users</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.Exists(System.String,System.String,System.Nullable{System.Int32}@)">
+            <summary>
+            Check whether a user with the given email and password exists.
+            </summary>
+            <param name="Email">The user's email</param>
+            <param name="Password">The user's password</param>
+            <param name="id">The user's id to output if the user exists</param>
+            <returns>Whether a user with the given email and password exists</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.Exists(System.String,System.String)">
+            <summary>
+            Check whether a user with the given email and password exists.
+            </summary>
+            <param name="Email">The user's email</param>
+            <param name="Password">The user's password</param>
+            <returns>Whether a user with the given email and password exists</returns>
+        </member>
+        <member name="M:JaminBooks.Model.User.Exists(System.String)">
+            <summary>
+            Check whether a user with the given email exists.
+            </summary>
+            <param name="Email">The user's email</param>
+            <returns>Whether a user with the given email exists</returns>
+        </member>
+        <member name="T:JaminBooks.Model.NamespaceDoc">
+            <summary>
+            Models
+            </summary>
+        </member>
+        <member name="T:JaminBooks.NamespaceDoc">
+            <summary>
+            Jamin' Books e-commerce bookstore project
+            </summary>
+        </member>
+        <member name="T:JaminBooks.Pages.NamespaceDoc">
+            <summary>
+            Pages available to users and administrators
+            </summary>
+        </member>
+        <member name="T:JaminBooks.Pages.Admin.NamespaceDoc">
+            <summary>
+            Pages available to administrators only
+            </summary>
+        </member>
+        <member name="T:JaminBooks.Tools.NamespaceDoc">
+            <summary>
+            Static classes with methods for preforming various functions
+            </summary>
+        </member>
+        <member name="T:JaminBooks.Tools.AJAX">
+            <summary>
+            Provides methods for parsing JSON objects in HTML requests.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Tools.AJAX.GetFields(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Converts a HTML request made by AJAX into a dictionary. All values will be strings.
+            </summary>
+            <param name="request">An HTML request made by AJAX</param>
+            <returns>A dictionary of the fields from the data in the AJAX request. All values will be strings.</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.AJAX.GetObjectFields(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Converts a HTML request made by AJAX into a dictionary. Values will be objects.
+            </summary>
+            <param name="request">An HTML request made by AJAX</param>
+            <returns>A dictionary of the fields from the data in the AJAX request. Values will be objects.</returns>
+        </member>
+        <member name="T:JaminBooks.Tools.Authentication">
+            <summary>
+            Manages all user and server authentication.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Tools.Authentication.Email">
+            <summary>
+            The email address of the web server.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Tools.Authentication.Password">
+            <summary>
+            The password to the web servers email account.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Tools.Authentication.Name">
+            <summary>
+            The name of the web server.
+            </summary>
+        </member>
+        <member name="F:JaminBooks.Tools.Authentication.RANDOM">
+            <summary>
+            A new random generator for creating confirmation codes.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.GetCurrentUser(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Get the user currently logged in.
+            </summary>
+            <param name="context">The current context</param>
+            <returns>The user currently logged in</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.LogoutCurrentUser(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Logout the user from the current context.
+            </summary>
+            <param name="context">The current context</param>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.UserExists(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Determine if the given user exists.
+            </summary>
+            <param name="request">An HTML request containing the user data</param>
+            <returns>Whether or not the user exists</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.EmailExists(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Determine if the given email already exists.
+            </summary>
+            <param name="request">An HTML request containing the email</param>
+            <returns>Whether of not the given email already exists</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.EmailExistsWithException(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Determine if the email already exists unless equal to the user's current email.
+            </summary>
+            <param name="request">An HTML request containing the email</param>
+            <returns>Whether or not the given email exists</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.SetCurrentUser(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Login the given user
+            </summary>
+            <param name="request">An HTML request containing the user data</param>
+            <returns>And array of boolean values. The first value represents whether or not the login was successful, and the
+            second whether or not the user was an admin</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.CreateUser(Microsoft.AspNetCore.Http.HttpRequest,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Create a new user.
+            </summary>
+            <param name="request">An HTML request containing the user data</param>
+            <param name="requireAdmin">Whether or not only an administrator can complete this action</param>
+            <param name="login">Whether or not to login the user after creation</param>
+            <param name="confirm">Whether or not to confirm the user's email address</param>
+            <returns>The new user's id. 0 represents a failed creation attempt.</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.SendConfirmationEmail(Microsoft.AspNetCore.Http.HttpRequest,JaminBooks.Model.User)">
+            <summary>
+            Send a confirmation email to the given user.
+            </summary>
+            <param name="request">A request from the host to which the email should link</param>
+            <param name="u">The user to receive the email</param>
+            <returns>Whether or not the email sent successfully</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.GenerateConfirmationCode">
+            <summary>
+            Generate a new 64 character confirmation code.
+            </summary>
+            <returns>A new 64 character confirmation code</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Authentication.Hash(System.String)">
+            <summary>
+            Hash the given data using SHA256
+            </summary>
+            <param name="data">The data to hash</param>
+            <returns>The hashed data</returns>
+        </member>
+        <member name="T:JaminBooks.Tools.BookPreviews">
+            <summary>
+            Manages list of books that meet certain criteria
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Tools.BookPreviews.GetBestSellers">
+            <summary>
+            Get a list of books that have sold the best over the history of the store.
+            </summary>
+            <returns>A list of books</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.BookPreviews.GetMostPopular">
+            <summary>
+            Get a list of the most popular books based on comments and ratings.
+            </summary>
+            <returns>A list of books</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.BookPreviews.GetSales">
+            <summary>
+            Get a list of books that are on sales.
+            </summary>
+            <returns>A list of books</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.BookPreviews.GetReccomended(JaminBooks.Model.User)">
+            <summary>
+            Get a list of books that are recommended for the current user based on past purchases
+            </summary>
+            <param name="u">The user</param>
+            <returns>A list of books</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Encryption.Encrypt(System.String,System.String)">
+            <summary>
+            Encrypt the given phrase using the given password in AES128
+            </summary>
+            <param name="plainText">The text to encrypt</param>
+            <param name="passPhrase">The password</param>
+            <returns>The encrypted text</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.Encryption.Decrypt(System.String,System.String)">
+            <summary>
+            Decrypt the given phrase using the given password in AES128
+            </summary>
+            <param name="cipherText">The text to Decrypt</param>
+            <param name="passPhrase">The password</param>
+            <returns>The Decrypted text</returns>
+        </member>
+        <member name="T:JaminBooks.Tools.ProfanityFilter">
+            <summary>
+            Manages filtration of rating comments from profanity.
+            </summary>
+        </member>
+        <member name="M:JaminBooks.Tools.ProfanityFilter.Filter(System.String)">
+            <summary>
+            Replace profane words with asterisks.
+            </summary>
+            <param name="s">The string to filter</param>
+            <returns>The filtered string</returns>
+        </member>
+        <member name="M:JaminBooks.Tools.ProfanityFilter.IsProfane(System.String)">
+            <summary>
+            Determine whether the given word is profane
+            </summary>
+            <param name="s">The word to check</param>
+            <returns>Whether the given word is profane</returns>
+        </member>
+        <member name="T:JaminBooks.Program">
+            <summary>
+            Starts the web server
+            </summary>
+        </member>
+        <member name="T:JaminBooks.Startup">
+            <summary>
+            Initializes the web server
+            </summary>
+        </member>
+    </members>
+</doc>

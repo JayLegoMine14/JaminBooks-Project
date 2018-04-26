@@ -29,13 +29,54 @@
         padding: 20px;
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: center;
         flex-wrap: wrap;
     }
 
     .book {
         margin: 25px;
     }
+
+    .overlay-oldprice {
+        text-decoration: line-through;
+        position: absolute;
+        bottom: -20px;
+        left: 65px;
+        color: #ccc;
+        font-size: smaller;
+    }
+
+    .oldprice {
+        text-decoration: line-through;
+        font-size: .8em;
+        margin-top: 0;
+    }
+
+    .auto-complete {
+        position: absolute;
+        margin-top: 38px;
+        width: 83%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        z-index: 1000;
+        padding: 10px;
+        background-color: white;
+    }
+
+        .auto-complete .item .value {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            border-radius: 2px;
+        }
+
+        .auto-complete .item {
+            transition: .2s;
+        }
+
+            .auto-complete .item.active .value,
+            .auto-complete .item:hover .value {
+                background-color: #ddd;
+            }
 
     #BookView {
         position: fixed;
@@ -73,10 +114,11 @@
 <span class="d-none" id="UserID">@(Model.CurrentUser == null ? -1 : Model.CurrentUser.UserID)</span>
 <span class="d-none" id="UserIsAdmin">@(Model.CurrentUser == null ? false : Model.CurrentUser.IsAdmin)</span>
 <div id="SearchBar" class="row">
-    <div class="col-6 offset-4">
+    <div class="col-lg-6 offset-lg-4 col-md-6 offset-md-4 col-10 offset-1">
         <div class="form-group">
             <div class="input-group mt-3">
                 <input type="text" id="Search" class="form-control" placeholder="Search...">
+                <div id="AutoComplete" class="auto-complete" style="display:none"></div>
                 <div class="input-group-append">
                     <select id="SearchType" class="form-control">
                         <option value="1">General</option>
@@ -91,7 +133,7 @@
     </div>
 </div>
 <div class="row">
-    <div id="Sidebar" class="col-2">
+    <div id="Sidebar" class="col-lg-2 col-md-2 col-xs-12">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -118,7 +160,8 @@
                             <div class="col-12">
                                 <select id="SortType" class="form-control">
                                     <option value="1">Popularity</option>
-                                    <option value="2">Relavence</option>
+                                    <option value="2">Relevance</option>
+                                    <option value="7">Sales and Deals</option>
                                     <option value="3">Price: Low to High</option>
                                     <option value="4">Price: High to Low</option>
                                     <option value="5">New to Old</option>
@@ -131,7 +174,7 @@
             </div>
         </div>
     </div>
-    <div class="col-10">
+    <div class="col-lg-10 col-md-10 col-12">
         <div class="row">
             <div id="Books" class="col-12">
 
@@ -152,17 +195,20 @@
         <img id="BookImage" src="" />
         <div class="container" style="overflow:auto;">
             <div class="row mt-3">
-                <div class="col-3">
+                <div class="col-lg-3 col-md-3 col-12">
                     <div style="margin-top: 320px">
                         <h5 class="w-75 ml-4 text-center"><span id="BookQuantity">0</span></h5>
-                        <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mt-2 w-75">Add to Cart</button>
+                        <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mt-2 mb-2 w-75">Add to Cart</button>
                     </div>
                 </div>
-                <div class="col-8">
+                <div class="col-lg-8 col-md-8 col-12">
                     <span id="BookID" class="d-none">-1</span>
-                    <h2 id="BookTitle">Title</h2>
+                    <div class="float-right">
+                        <button id="AddToBookshelf" class="btn btn-warning"><i class="fas fa-star"></i></button>
+                    </div>
+                    <h2 id="BookTitle" style="margin-right:80px">Title</h2>
                     <h4 id="BookAuthor">Author</h4>
-                    <h3>$<span id="BookPrice">0.00</span></h3>
+                    <h3>$<span id="BookPrice">0.00</span> <span class="ml-3 oldprice text-muted">$<span id="BookOldPrice">0.00</span></span></h3>
                     <div id="Rating">
                         <span>
                             <i class="far fa-star"></i>
@@ -216,25 +262,29 @@
                     <hr />
                     <div id="Ratings" class="mt-3">
                         <h3>Reviews</h3>
-                         @if(Model.CurrentUser != null)
-                         {
-                        <div class="col-12">
-                            <span id="RatingStars">
-                                <span class="star-overlay"></span>
-                                <i class="fas fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                                <span class="star-overlay"></span>
-                                <i class="far fa-star"></i>
-                            </span>
-                            <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
-                            <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
-                        </div>
-                         }
+                        @if (Model.CurrentUser != null && Model.CurrentUser.IsConfirmed)
+                        {
+                            <div class="col-12">
+                                <span id="RatingStars">
+                                    <span class="star-overlay"></span>
+                                    <i class="fas fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                    <span class="star-overlay"></span>
+                                    <i class="far fa-star"></i>
+                                </span>
+                                <textarea id="Comment" class="w-100 mt-2 mb-2 form-control" placeholder="What did you think?..."></textarea>
+                                <button id="SubmitRating" class="btn btn-dark-red text-white">Submit Review</button>
+                            </div>
+                        }
+                        else if (Model.CurrentUser != null && !Model.CurrentUser.IsConfirmed)
+                        {
+                            <h5 class="text-danger font-weight-bold">Verify email address to write reviews.</h5>
+                        }
                         <div id="RatingMessages" class="mt-3"></div>
                         <div id="RatingLoadIcon" class="row text-center mt-1 mb-1">
                             <div class="col-12">
@@ -326,6 +376,43 @@
             $("#BookCat").val(-1);
         });
 
+        $("#AddToBookshelf").click(function () {
+            $.confirm({
+                title: 'Place on Bookshelf',
+                icon: 'fas fa-star',
+                content: 'Would you like to place this book on your bookshelf?',
+                type: 'orange',
+                buttons: {
+                    yes: {
+                        action: function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "/Model/AddBookToBookShelf",
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("XSRF-TOKEN",
+                                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                                },
+                                data: JSON.stringify({
+                                    ID: $("#BookID").text()
+                                }),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function () {
+                                    $("#AddToBookshelf").fadeOut();
+                                },
+                                failure: function (response) {
+                                    location.href = "\Error"
+                                }
+                            });
+                        }
+                    },
+                    no: function () { }
+                }
+            });
+            event.stopPropagation();
+            return false;
+        });
+
         $("#AddToCart").click(function () {
             $.ajax({
                 type: "POST",
@@ -381,7 +468,7 @@
                     }
                 },
                 failure: function (response) {
-                    alert(response);
+                    location.href = "\Error"
                 }
             });
         });
@@ -392,6 +479,40 @@
 
         $("#Search").on('input', function () {
             loadBooks(true);
+        });
+
+        $("#Search").focusout(function () {
+            if ($(e.target).hasClass("item")) return;
+            $("#AutoComplete").hide();
+        });
+
+        $("#Search").focusin(function () {
+            if ($(".auto-complete .item").length > 0)
+                $("#AutoComplete").show();
+        });
+
+        $("#Search").keyup(function (event) {
+            if (event.which == 40) {
+                var next = $(".auto-complete .item.active");
+                next.removeClass("active");
+                if (next.length > 0) {
+                    next.next(".item").addClass("active");
+                } else {
+                    $(".auto-complete .item").first().addClass("active");
+                }
+            } else if (event.which == 38) {
+                var next = $(".auto-complete .item.active");
+                next.removeClass("active");
+                if (next.length > 0) {
+                    next.prev(".item").addClass("active");
+                }
+            } else if (event.which == 13) {
+                var next = $(".auto-complete .item.active");
+                if (next.length > 0) {
+                    $("#Search").val(next.text());
+                    loadBooks(true);
+                }
+            }
         });
 
         $(window).scroll(function () {
@@ -431,8 +552,10 @@
         }
 
         if (loading || loaded) return;
-        loading = true;
-        if(!reset) $("#LoadIcon").show();
+        if (!reset) {
+            loading = true;
+            $("#LoadIcon").show();
+        }
         var count = 10;
 
         var cats = [];
@@ -451,6 +574,7 @@
         $.ajax({
             type: "POST",
             url: "Model/LoadBooks",
+            async: true,
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -463,6 +587,24 @@
                 if (response[0] < callID) return;
 
                 if (reset) $("#Books").empty();
+                if (data.Search != "" && response[4].length > 0) {
+                    $("#AutoComplete").show();
+                    $("#AutoComplete").empty();
+                    var regex = new RegExp(data.Search, "gi");
+                    response[4].forEach(function (match) {
+                        if ($("#Search").val() == match) return;
+                        $("#AutoComplete").append("<div class='row item'><div class='col-12'><div class='value'>"
+                            + match.replace(regex, "<b>$&</b>") + "</div></div></div>");
+                    });
+                    $("#AutoComplete .item").click(function (event) {
+                        $("#Search").val($(this).text());
+                        loadBooks(true);
+                    });
+                    if ($("#AutoComplete .item").length == 0)
+                        $("#AutoComplete").hide();
+                } else {
+                    $("#AutoComplete").hide();
+                }
 
                 response[2].forEach(function (book) {
 
@@ -479,7 +621,7 @@
                     bookcard += 'data-id="' + book.BookID + '"'
                     bookcard += 'data-title="' + book.Title + '"'
                     bookcard += 'data-quantity="' + book.Quantity + '"'
-                    bookcard += 'data-price="' + book.Price + '"'
+                    bookcard += 'data-price="' + book.Price.toFixed(2) + '"'
                     bookcard += 'data-description="' + book.Description + '"'
                     bookcard += 'data-authors=\'' + JSON.stringify(book.Authors) + '\''
                     bookcard += 'data-categories=\'' + JSON.stringify(book.Categories) + '\''
@@ -489,13 +631,25 @@
                     bookcard += 'data-copyright="' + book.CopyrightDate + '"'
                     bookcard += 'data-publication="' + book.PublicationDate + '"'
                     bookcard += 'data-publisher="' + book.Publisher.PublisherName + '"'
-                    bookcard += '> '
+                    bookcard += 'data-discount="' + book.PercentDiscount + '"'
+                    bookcard += 'data-oldprice="' + book._Price.toFixed(2) + '"'
+                    bookcard += 'data-on-bookshelf="' + (response[3].indexOf(book.BookID) > -1) + '"'
+                    bookcard += '>'
                     bookcard += '<img class="card-img" src="' + book.LoadImage + '">'
                     bookcard += '<div class="card-img-overlay book-overlay" style="display:none">'
                     if (book.Quantity == 0) bookcard += '<h5 class="card-title"><span class="badge badge-danger">Out Of Stock</span></h5>'
+                    if (book.PercentDiscount > 0) bookcard += '<h5 class="card-title"><span class="badge badge-success">On Sale</span></h5>'
                     bookcard += '<h5 class="card-title">' + book.Title + '</h5>'
-                    bookcard += '<h5 class="card-text mt-4">$' + book.Price + '</h5>'
-                    bookcard += '<h5 class="card-text mt-4">' + bookrating + '</h5>'
+
+                    if (book.PercentDiscount == 0) {
+                        bookcard += '<h5 class="card-text mt-4">$' + book.Price.toFixed(2);  + '</h5>'
+                    } else {
+                        bookcard += '<h5 class="card-text mt-4 position-relative">$' + book.Price.toFixed(2);
+                        bookcard += '<span class="overlay-oldprice">$' + book._Price.toFixed(2);  + '</span>';
+                        bookcard += '</h5>'
+                    }
+
+                    bookcard += '<h5 class="card-text mt-5">' + bookrating + '</h5>'
                     bookcard += '</div>'
                     bookcard += '</div>'
 
@@ -521,7 +675,7 @@
                 }
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }
@@ -531,7 +685,25 @@
         $("#BookImage").attr("src", book.find("img").attr("src"))
         $("#BookID").text(book.data("id"));
         $("#BookTitle").text(book.data("title"));
+
+        if ($("#UserID").text() == "-1" || book.data("on-bookshelf"))
+            $("#AddToBookshelf").hide();
+        else $("#AddToBookshelf").show();
+
+        if (book.data("discount") > 0) {
+            $("#BookPrice").text(book.data("price"));
+            $("#BookPrice").parent().addClass("text-success");
+            $("#BookOldPrice").parent().show();
+            $("#BookOldPrice").text(book.data("oldprice"));
+        } else {
+            $("#BookPrice").text(book.data("price"));
+            $("#BookPrice").parent().removeClass("text-success");
+            $("#BookOldPrice").parent().hide();
+        }
+
         $("#BookPrice").text(book.data("price"));
+
+
         $("#Description").text(book.data("description"));
 
         $("#ISBN10").val(book.data("isbn10"));
@@ -613,5 +785,6 @@
 
 </script>
 
+@await Html.PartialAsync("_BackToTop")
 @await Html.PartialAsync("_Ratings")
 @await Html.PartialAsync("_Authentication")

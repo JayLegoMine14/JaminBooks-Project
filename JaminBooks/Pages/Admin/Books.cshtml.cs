@@ -37,7 +37,7 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("Title", "Title");
             SearchColumns.Add("ISBN13", "ISBN 13");
             SearchColumns.Add("ISBN10", "ISBN 10");
-            SearchColumns.Add("Description", "Desciption");
+            SearchColumns.Add("Description", "Description");
             SearchColumns.Add("Price", "Price");
             SearchColumns.Add("Cost", "Cost");
             SearchColumns.Add("Quantity", "Quantity");
@@ -50,6 +50,8 @@ namespace JaminBooks.Pages.Admin
             SearchColumns.Add("PublisherName", "Publisher");
             SearchColumns.Add("PublicationDate", "PublicationDate");
             SearchColumns.Add("PublisherContact", "Publisher Contact");
+            SearchColumns.Add("PercentDiscount", "Percent Discount");
+            SearchColumns.Add("IsOnSale", "On Sale");
             SearchColumns.Add("IsDeleted", "Is Deleted");
         }
     }

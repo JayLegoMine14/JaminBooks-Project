@@ -13,10 +13,13 @@ namespace JaminBooks.Pages
     {
         public Book Book;
         public User CurrentUser;
+        public Promotion Promo;
 
         public void OnGet(int id)
         {
+            Promotion.DeleteExpiredPromotions(id);
             Book = new Book(id);
+            Promo = Promotions.GetPromotion(Book);
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
         }
     }

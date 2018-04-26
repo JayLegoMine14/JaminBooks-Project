@@ -4,20 +4,15 @@
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
-</p>
+<div class="container text-center" style="margin-top: 5vh">
+    <img height="300" src="~/images/codermonkey.png">
+    <h2>Oops, Sorry. Something's gone wrong.</h2>
+    <h4>Our coder monkeys are furiously smashing their keyboards to fix it.</h4>
+    <div class="row mb-5 mt-5">
+        <div class="col-4 offset-4">
+            <a href="\Books" class="btn btn-dark-red text-white btn-lg btn-block">Continue Shopping</a>
+        </div>
+    </div>
+</div>

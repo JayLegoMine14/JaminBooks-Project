@@ -103,6 +103,9 @@
     <div id="SearchBox" class="col-6 offset-1">
         <div class="form-group">
             <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                    <a class="btn btn-primary" href="\Amdin\BookCreate">New Book<i class="fas fa-plus ml-2"></i></a>
+                </div>
                 <input type="text" id="Search" class="form-control" placeholder="Search...">
                 <div class="input-group-append">
                     <button class="btn btn-info" onclick="return showFilters(event);"><i class="fas fa-filter"></i></button>
@@ -153,7 +156,7 @@
     </div>
 
 </div>
-<div class="row">
+<div class="row" style="min-height:85vh">
     <div class="col-12">
         <div class="row">
             <div class="col-12 text-center mt-3">
@@ -232,7 +235,7 @@
                 }
             }
             addHRListeners();
-            showFilters();
+            showASButtons();
         }
 
         loadItems();
@@ -254,6 +257,7 @@
 
         if (loading || loaded) return;
         $("#LoadIcon").show();
+        $("#ResultCount").text("-");
         if (!reset) {
             loading = true;
         }
@@ -350,7 +354,7 @@
                 $("#LoadIcon").hide();
             },
             failure: function (response) {
-                alert(response);
+                location.href = "\Error"
             }
         });
     }
@@ -377,11 +381,19 @@
                             }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
-                            success: function (logout) {
-                                $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-danger delete-btn" onclick="deleteBook(event, this)"><i class="fas fa-trash"></i></button>');
+                            success: function (code) {
+                                if (code == 0) {
+                                    $.alert({
+                                        title: 'Publisher Deleted',
+                                        content: 'The books publisher has been deleted. Change or undelete the publisher to undelete this book.',
+                                        type: 'red'
+                                    });
+                                } else {
+                                    $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-danger delete-btn" onclick="deleteBook(event, this)"><i class="fas fa-trash"></i></button>');
+                                }
                             },
                             failure: function (response) {
-                                alert(response);
+                                location.href = "\Error"
                             }
                         });
                     }
@@ -420,7 +432,7 @@
                                 $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-warning undelete-btn" onclick="undeleteBook(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
                             },
                             failure: function (response) {
-                                alert(response);
+                                location.href = "\Error"
                             }
                         });
                     }
@@ -430,6 +442,11 @@
         });
         event.stopPropagation();
         return false;
+    }
+
+    function showASButtons() {
+        $("#SearchBox").hide();
+        $("#AS").fadeIn();
     }
 
     //Show the advanced search options
@@ -571,7 +588,7 @@
         where += '<input id="CheckBox_' + IDCounter + '" type="checkbox" class="form-control sleek-checkbox"/>'
         where += '<label for="CheckBox_' + IDCounter + '"></label>'
         where += '</div>'
-        where += '<select id="Column_' + IDCounter + '" class="form-control col-3 column" onchange="$(this).siblings(\'.value\').val(\'\'); updateValueBox(this); search();">'
+        where += '<select id="Column_' + IDCounter + '" class="form-control col-3 column" onchange="$(this).siblings(\'.value\').val(\'\'); loadItems(true)">'
                 @foreach(KeyValuePair<string, string> Column in Model.SearchColumns.AsEnumerable())
                 {
                     @Html.Raw("where += '<option value=\"" + @Column.Key + "\">" + @Column.Value + "</option>';");
@@ -645,3 +662,5 @@
         return elementBottom > viewportTop && elementTop < viewportBottom;
     };
 </script>
+
+@await Html.PartialAsync("_BackToTop")

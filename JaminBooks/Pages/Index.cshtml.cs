@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using static JaminBooks.Model.SQL;
+using static JaminBooks.Tools.SQL;
+using JaminBooks.Tools;
 
 namespace JaminBooks.Pages
 {
@@ -18,15 +19,19 @@ namespace JaminBooks.Pages
     {
         public User CurrentUser;
         public Book Reccomended;
-        public Book MostPopular;
-        public Book BestSeller;
+        public List<Banner> Banners;
+        public List<Book> MostPopular;
+        public List<Book> BestSellers;
+        public List<Book> OnSale;
 
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
             Reccomended = BookPreviews.GetReccomended(CurrentUser);
             MostPopular = BookPreviews.GetMostPopular();
-            BestSeller = BookPreviews.GetBestSeller();
+            BestSellers = BookPreviews.GetBestSellers();
+            OnSale = BookPreviews.GetSales();
+            Banners = Banner.GetBanners();
         }
     }
 }
