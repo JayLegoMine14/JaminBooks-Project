@@ -2,7 +2,6 @@
 @model JaminBooks.Pages.Admin.BookCreateModel
 @{
     ViewData["Title"] = "Create Book";
-    DateTime date1 = new DateTime(2000, 1, 1);
     var BookImage = "";
 
 
@@ -18,7 +17,10 @@
     }
 </style>
 
-<input type="hidden" name="BookID" value="@(Model.Book == null ? -1 : Model.Book.BookID)" />
+
+<!--The book page layout-->
+<!--Hide the book id but still keep it available-->
+<input id="BookID" type="hidden" name="BookID" value="@(Model.Book == null ? -1 : Model.Book.BookID)" />
 <div class="container body-content">
     <div class="row">
         <div class="col-10 offset-1">
@@ -28,25 +30,26 @@
                 </div>
             </div>
 
-
+           
+            <!--general book information entry-->
             <div class="row">
                 <div class="col-12">
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Title</label>
                         <div class="col-9">
-                            <input type="text" class="form-control" placeholder="Title" required maxlength="100" name="Title" value="@(Model.Book == null ? "" : Model.Book.Title )" />
+                            <input id="Title" type="text" maxlength=100 class="form-control" placeholder="Title" required maxlength="100" name="Title" value="@(Model.Book == null ? "" : Model.Book.Title )" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Publication Date</label>
                         <div class="col-9">
-                            <input type="date" class="form-control" required name="PublicationDate" value="@(Model.Book == null ? date1.ToString("yyyy-MM-dd") : Model.Book.PublicationDate.ToString("yyyy-MM-dd") )" />
+                            <input id="PublicationDate" type="date" class="form-control" required name="PublicationDate" value="@(Model.Book == null ? "" : Model.Book.PublicationDate.ToString("yyyy-MM-dd") )" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Copyright Date</label>
                         <div class="col-9">
-                            <input type="date" class="form-control" required name="CopyrightDate" value="@(Model.Book == null ? date1.ToString("yyyy-MM-dd") : Model.Book.CopyrightDate.ToString("yyyy-MM-dd") )" />
+                            <input id="CopyrightDate" type="date" class="form-control" required name="CopyrightDate" value="@(Model.Book == null ? "" : Model.Book.CopyrightDate.ToString("yyyy-MM-dd") )" />
                         </div>
                     </div>
 
@@ -54,35 +57,34 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Author</label>
                         <div class="col-5">
-                            <select id="AuthorList" class="form-control" multiple>
-                                @foreach (Model.Author a in Model.Book.Authors)
-                                {
-                                    @Html.Raw("<option " + (Model.Book.Authors.Any(a2 => a2.AuthorID == a.AuthorID) ? "selected='selected'" : "") + " value='" + a.AuthorID + "'>" + a.FullName + "</option>");
-                                }
+                            <select id="Authorlist" class="form-control" multiple>
+                                @foreach (Model.Author a in Model.Authors)
+                {
+                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Authors.Any(a2 => a2.AuthorID == a.AuthorID) ? "selected='selected'" : "") + " value='" + a.AuthorID + "'>" + a.FullName + "</option>");
+}
                             </select>
                         </div>
                         <div class="col-4">
-                            <input type="button" onclick="unhide(this, 'author'); " value="Add New" class="btn btn-block btn-dark">
+                            <input id="SaveAuthor" type="button" onclick="unhide(this, 'author'); " value="Add New" class="btn btn-block btn-dark">
                         </div>
                     </div>
-
                     <div id="author" class="hidden">
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">First Name</label>
                             <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Author First Name" required name="FName" />
+                                <input id="AFirstName" maxlength=50 type="text" class="form-control" placeholder="Author First Name" required name="FName" />
                             </div>
                         </div>
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">Last Name</label>
                             <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Author Last Name" required name="LName" />
+                                <input id="ALastName" maxlength=50 type="text" class="form-control" placeholder="Author Last Name" required name="LName" />
                             </div>
                         </div>
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label"></label>
                             <div class="col-9">
-                                <button id="SaveAuthor" onclick="SaveAuthor()" class="btn btn-block btn-red">Save New Author</button>
+                                <button id="CreateAuthor" class="btn btn-block btn-red">Save New Author</button>
                             </div>
                         </div>
                     </div>
@@ -95,14 +97,14 @@
                         <label class="col-3 col-form-label">Category</label>
                         <div class="col-5">
                             <select id="BookCat" class="form-control" multiple>
-                                @foreach (Model.Category c in Model.Book.Categories)
-                                {
-                                    @Html.Raw("<option " + (Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
-                                }
+                                @foreach (Model.Category c in Model.Categories)
+                {
+                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
+}
                             </select>
                         </div>
                         <div class="col-4">
-                            <input type="button" onclick="unhide(this, 'category'); unEdit(this, 'CatList') " value="Add New" class="btn btn-block btn-dark">
+                            <input id="SaveCategory" type="button" onclick="unhide(this, 'category'); " value="Add New" class="btn btn-block btn-dark">
                         </div>
                     </div>
 
@@ -110,14 +112,14 @@
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label">Category Name</label>
                             <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Category" required name="category" />
+                                <input id="CategoryName" maxlength=50 type="text" class="form-control" placeholder="Category" required name="category" />
                             </div>
                         </div>
 
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label"></label>
                             <div class="col-9">
-                                <button id="SaveCategory" onclick="SaveCategory()" class="btn btn-block btn-red">Save New Category</button>
+                                <button id="CreateCategory" class="btn btn-block btn-red">Save New Category</button>
                             </div>
                         </div>
                     </div>
@@ -127,111 +129,30 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Publisher</label>
                         <div class="col-5">
-                            <select id="PubList" class="form-control">
-                                @foreach (Model.Publisher p in Model.Book.Publishers)
-                                {
-                                    @Html.Raw("<option value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
-                                }
-
+                            <select id="Publist" class="form-control">
+                                <option>Select Publisher...</option>
+                                @foreach (Model.Publisher p in Model.Publishers)
+                {
+                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Publishers.Any(p2 => p2.PublisherID == p.PublisherID) ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
+}
 
                             </select>
                         </div>
-
-                        <div class="col-4">
-                            <input type="button" onclick="unhide(this, 'publisher'); " value="Add New" class="btn btn-block btn-dark">
-                        </div>
-                    </div>
-
-                    <div id="publisher" class="hidden">
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Publisher Name</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Publisher Name" required name="PubName" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Phone</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Phone Number" required name="Phone" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Contact First Name</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="First Name" required name="ContactFirst" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label">Contact Last Name</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="Last Name" required name="ContactLast" />
-                            </div>
                         </div>
 
 
-                        <!-- address fields -->
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Publisher Address</label>
-                        </div>
 
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Line 1</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control" placeholder="Line 1" required name="AddressLine1" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Line 2</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control" placeholder="Line 2" name="AddressLine2" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">City</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control" placeholder="City" required name="city" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">State</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control" placeholder="State" required name="state" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">Country</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control" placeholder="Country" required name="Country" />
-                            </div>
-                        </div>
-                        <div class="form-group row offset-2">
-                            <label class="col-3 col-form-label">ZIP</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control" placeholder="ZIP" required name="zip" />
-                            </div>
-                        </div>
-
-                        <div class="form-group row offset-1">
-                            <label class="col-3 col-form-label"></label>
-                            <div class="col-9">
-                                <button id="SaveAuthor" onlick="SavePublisher()" class="btn btn-block btn-red">Save New Publisher</button>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!--End Publisher sub Entry-->
-
+                    <!--final general entries-->
                     <div class="form-group row">
                         <label class="col-3 col-form-label">ISBN10</label>
                         <div class="col-9">
-                            <input type="text" class="form-control" placeholder="ISBN10" required name="ISBN10" value="@(Model.Book == null ? "" : Model.Book.ISBN10)" />
+                            <input id="isbn10" type="text" class="form-control" maxlength=10 placeholder="ISBN10" required name="ISBN10" value="@(Model.Book == null ? "" : Model.Book.ISBN10)" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">ISBN13</label>
                         <div class="col-9">
-                            <input type="text" class="form-control" placeholder="ISBN13" required name="ISBN13" value="@(Model.Book == null ? "" : Model.Book.ISBN13 )" />
+                            <input id="isbn13" type="text" class="form-control" maxlength=13 placeholder="ISBN13" required name="ISBN13" value="@(Model.Book == null ? "" : Model.Book.ISBN13 )" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -240,7 +161,7 @@
                             <div class="input-group-prepend">
                                 <div class="input-group-text">$</div>
                             </div>
-                            <input type="number" class="form-control" step="0.1" required name="Price" value="@(Model.Book == null ? "0.00" : Model.Book.Price.ToString("0.00"))" />
+                            <input id="Price" type="number" class="form-control" step="0.1" required name="Price" value="@(Model.Book == null ? "0.00" : Model.Book.Price.ToString("0.00"))" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -249,19 +170,19 @@
                             <div class="input-group-prepend">
                                 <div class="input-group-text">$</div>
                             </div>
-                            <input type="number" class="form-control" step="0.1" required name="Cost" value="@(Model.Book == null ? "0.00" : Model.Book.Cost.ToString("0.00"))" />
+                            <input id="Cost" type="number" class="form-control" step="0.1" required name="Cost" value="@(Model.Book == null ? "0.00" : Model.Book.Cost.ToString("0.00"))" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Quantity</label>
                         <div class="col-9">
-                            <input type="number" class="form-control" required name="Quantity" value="@(Model.Book == null ? 0 : Model.Book.Quantity)" />
+                            <input id="Quantity" type="number" class="form-control" required name="Quantity" value="@(Model.Book == null ? 0 : Model.Book.Quantity)" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Description</label>
                         <div class="col-9">
-                            <textarea class="form-control" placeholder="Enter the Description" required name="Description" value="@(Model.Book == null ? "" : Model.Book.Description)"> </textarea>
+                            <textarea id="Description" class="form-control" placeholder="Enter the Description" required name="Description">@(Model.Book == null ? "" : Model.Book.Description)</textarea>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -275,19 +196,68 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="ConfirmNoQuantity" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label>Confirm</label>
+            </div>
+            <div class="modal-body">
+                <label>Are you sure you want to create a Book with 0 Quantity?</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="Cancel0Q" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a id="Confirm0Q" class="btn btn-danger btn-ok">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ConfirmNoDescription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label>Confirm</label>
+            </div>
+            <div class="modal-body">
+                <label>Are you sure you want to create a Book with no Description?</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="CancelNoD" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a id="ConfirmNoD" class="btn btn-danger btn-ok">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Script for the buttons-->
 <script>
+
     $(document).ready(function () {
+    //save the book
         $("#SaveBook").click(function () {
             if (validate()) {
 
                 var data = {
                     BookID: $("#BookID").val(),
-                    UserID: $("#UserID").val()
+                    Title: $("#Title").val(),
+                    PublicationDate: $("#PublicationDate").val(),
+                    CopyrightDate: $("#CopyrightDate").val(),
+                    Authorlist: JSON.stringify($("#Authorlist").val()),
+                    BookCat: JSON.stringify($("#BookCat").val()),
+                    Publisher: $("#Publist").val(),
+                    ISBN10: $("#isbn10").val(),
+                    ISBN13: $("#isbn13").val(),
+                    Price: $("#Price").val(),
+                    Cost: $("#Cost").val(),
+                    Quantity: $("#Quantity").val(),
+                    Description: $("#Description").val()
                 }
-
+                //When done creating the book change to the page of the book
                 $.ajax({
                     type: "POST",
-                    url: "Model/SaveBook",
+                    url: "/Model/SaveBook",
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("XSRF-TOKEN",
                             $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -296,7 +266,67 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
+                        location.href ='/Book?id=' + response;
+                    },
+                    failure: function (response) {
+                        location.href = "\Error";
+                    }
+                });
+            }
+        });
+        //create author button click
+        $("#CreateAuthor").click(function () {
+            if (validateAuthor()) {
 
+                var data = {
+                    AFirstName: $("#AFirstName").val(),
+                    ALastName: $("#ALastName").val()                
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Model/CreateAuthor/",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        unhide(SaveAuthor, 'author');
+                        $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#Authorlist");
+   
+                    },
+                    failure: function (response) {
+                        location.href = "\Error";
+                    }
+                });
+            }
+        });
+
+        $("#CreateCategory").click(function () {
+            if (validateCategory()) {
+
+                var data = {
+
+                    CategoryName: $("#CategoryName").val()
+
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Model/CreateCategory/",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        unhide(SaveCategory, 'category');
+                        $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#BookCat");
                     },
                     failure: function (response) {
                         location.href = "\Error";
@@ -306,8 +336,103 @@
         });
     });
 
+
+    //validation for adding category
+    function validateCategory() {
+        var valid = true;
+        $("#CategoryName").removeAttr("style");
+
+        if ($("#CategoryName").val() == "") {
+            $("#CategoryName").css("border-color", "red");
+            valid = false;
+        }
+        if (["#CatgoryName"].indexOf(BookCat) >= 0) {
+            valid = false;
+        }
+        return valid;
+
+    }
+
+    //validation for adding Author
+    function validateAuthor() {
+        var valid = true;
+        $("#AFirstName").removeAttr("style");
+        $("#ALastName").removeAttr("style");
+
+
+
+        if ($("#AFirstName").val() == "") {
+            $("#AFirstName").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#ALastName").val() == "") {
+            $("#ALastName").css("border-color", "red");
+            valid = false;
+        }
+
+        return valid;
+
+    }
+
+    //validation for creating a book without custom categories or author
     function validate() {
-        return true;
+            var valid = true;
+            $("#Title").removeAttr("style");
+            $("#PublicationDate").removeAttr("style");
+            $("#CopyrightDate").removeAttr("style");
+            $("#Authorlist").removeAttr("style");
+            $("#BookCat").removeAttr("style");
+            $("#Publist").removeAttr("style");
+            $("#isbn10").removeAttr("style");
+            $("#isbn13").removeAttr("style");
+            $("#Cost").removeAttr("style");
+            $("#Price").removeAttr("style");
+            $("#Description").removeAttr("style");
+
+
+            if ($("#Title").val() == "") {
+                $("#Title").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#PublicationDate").val() == "") {
+                $("#PublicationDate").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#CopyrightDate").val() == "") {
+                $("#CopyrightDate").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Authorlist").val() == null) {
+                $("#Authorlist").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#BookCat").val() == null) {
+                $("#BookCat").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Publist").val() == "Select Publisher...") {
+                $("#Publist").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#isbn10").val() == "") {
+                $("#isbn10").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#isbn13").val() == "") {
+                $("#isbn13").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Price").val() == "0.00") {
+                $("#Price").css("border-color", "red");
+                valid = false;
+                }
+            if ($("#Cost").val() == "0.00") {
+                $("#Cost").css("border-color", "red");
+                valid = false;
+                }
+            }
+
+            return valid;
 
     }
 </script>
@@ -326,6 +451,8 @@
         }
     }
 
+
+    
 
 
 </script>

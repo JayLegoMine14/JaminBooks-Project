@@ -94,6 +94,26 @@ namespace JaminBooks.Model
                 new Param("LastName", LastName),
                 new Param("IsDeleted", IsDeleted)
                 );
+
+            if (dt.Rows.Count > 0)
+                AuthorID = (int)dt.Rows[0]["AuthorID"];
+        }
+
+        //delete an author relationship from a book
+        public void DeleteAuthorFromBook(int BookID)
+        {
+            DataTable dt = SQL.Execute("uspDeleteAuthorFromBook",
+                new Param("BookID", BookID),
+                new Param("AuthorID", AuthorID)
+                );
+        }
+
+        /// <summary>
+        /// Delete all authors not related to a book
+        /// </summary>
+        public void DumpAuthors()
+        {
+            DataTable dt = SQL.Execute("uspDeleteEmptyAuthors");
         }
 
         /// <summary>

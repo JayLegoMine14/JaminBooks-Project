@@ -14,9 +14,11 @@ namespace JaminBooks.Pages.Admin
         public Book Book;
         public Author Author;
         public Publisher Publisher;
-        public List<Publisher> PubList;
-        public List<Author> Authors;
-        public List<Category> Categories;
+        public List<Publisher> Publishers = Publisher.GetPublishers();
+        public List<Author> Authors = Author.GetAuthors();
+        public List<Category> Categories = Category.GetCategories();
+        public Dictionary<int, string> PhoneCategories = Phone.GetPhoneCategories();
+
 
         public DateTime date1 = new DateTime(2000, 1, 1);
 
@@ -40,7 +42,7 @@ namespace JaminBooks.Pages.Admin
             decimal price = Convert.ToDecimal(Request.Form["Price"]);
             decimal cost = Convert.ToDecimal(Request.Form["Cost"]);
             int quantity = Convert.ToInt32(Request.Form["Quantity"]);
-
+            
 
             Book b = new Book(id);
             b.Title = title;

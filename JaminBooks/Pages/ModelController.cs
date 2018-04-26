@@ -957,5 +957,153 @@ namespace JaminBooks.Pages
 
             return new JsonResult(JsonConvert.SerializeObject(new object[] { fields["CallID"], count, books, bookshelf, autofills }));
         }
+
+        //create a new book
+        [Route("Model/SaveBook")]
+        public IActionResult SaveBook()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+           Model.Book book = new Book();
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+
+                int id = Convert.ToInt32(fields["BookID"]);
+
+                Book b = id != -1 ? new Book(id) : new Book();
+                Author auth = new Author();
+                Category cat = new Category();
+
+
+
+                b.Title = fields["Title"];
+                b.PublicationDate = Convert.ToDateTime(fields["PublicationDate"]);
+                b.CopyrightDate = Convert.ToDateTime(fields["CopyrightDate"]);
+                
+                b.PublisherID = Convert.ToInt32(fields["Publisher"]);
+                b.ISBN10 = fields["ISBN10"];
+                b.ISBN13 = fields["ISBN13"];
+                b.Price = Convert.ToDecimal(fields["Price"]);
+                b.Cost = Convert.ToDecimal(fields["Cost"]);
+                b.Quantity = Convert.ToInt32(fields["Quantity"]);
+                b.Description = fields["Description"];
+
+                b.Save();
+
+
+                foreach (Author a in b.Authors) a.DeleteAuthorFromBook(id);
+                foreach (Category c in b.Categories) c.DeleteCategoryFromBook(id);
+
+                int[] categories = JsonConvert.DeserializeObject<int[]>(fields["BookCat"]);
+                foreach (int c in categories)
+                    b.AddCategory(new Category(c));
+
+                int[] authors = JsonConvert.DeserializeObject<int[]>(fields["Authorlist"]);
+                foreach (int a in authors)
+                    b.AddAuthor(new Author(a));
+
+                //to ensure the cleanliness of the table, all unattended Authors and categories will be removed from the premises
+                auth.DumpAuthors();
+                cat.DumpCategories();
+
+
+                return new JsonResult(b.BookID);
+            }
+            return new JsonResult("");
+        }
+
+        //create new author
+        [Route("Model/CreateAuthor")]
+        public IActionResult CreateAuthor()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Author author = new Author();
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+
+
+                Author a = new Author();
+
+                a.FirstName = fields["AFirstName"];
+                a.LastName = fields["ALastName"];
+
+                a.Save();
+
+                return new JsonResult(new object[] { a.AuthorID, a.FullName});
+            }
+            return new JsonResult("");
+        }
+
+        //create category
+        [Route("Model/CreateCategory")]
+        public IActionResult CreateCategory()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Category category = new Category();
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+
+                Category c = new Category();
+
+                c.CategoryName = fields["CategoryName"];
+                c.IsDeleted = false;
+
+                c.Save();
+
+                return new JsonResult(new object[] { c.CategoryID, c.CategoryName });
+            }
+            return new JsonResult("");
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        [Route("Model/CreatePublisher")]
+        public IActionResult CreatePublisher()
+        {
+            Dictionary<string, string> fields = AJAX.GetFields(Request);
+            Model.Publisher publisher = Convert.ToInt32(fields["PublisherID"]) == -1 ? new Publisher() : new Publisher(Convert.ToInt32(fields["PublisherID"]));
+            Model.Phone phone = Convert.ToInt32(fields["PhoneID"]) == -1 ? new Phone() : new Phone(Convert.ToInt32(fields["PhoneID"]));
+            Model.Address address = Convert.ToInt32(fields["AddressID"]) == -1 ? new Address() : new Address(Convert.ToInt32(fields["AddressID"]));
+
+            Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
+            if (currentUser.IsAdmin)
+            {
+
+                int id = Convert.ToInt32(fields["PublisherID"]);
+
+                Publisher p = id != -1 ? new Publisher(id) : new Publisher();
+                Phone ph = id != -1 ? new Phone(id) : new Phone();
+                Address ad = id != -1 ? new Address(id) : new Address();
+
+                p.PublisherName = fields["PublisherName"];
+                p.ContactFirstName = fields["FirstName"];
+                p.ContactLastName = fields["LastName"];
+                
+                ph.Save();
+                ad.Save();
+
+                p.Save();
+
+
+
+            }
+
+                return new JsonResult(publisher.PublisherID);
+            }
+          
+        }
     }
-}

@@ -75,8 +75,27 @@ namespace JaminBooks.Model
                 new Param("CategoryName", CategoryName),
                 new Param("IsDeleted", IsDeleted)
                 );
+
+            if (dt.Rows.Count > 0)
+                CategoryID = (int)dt.Rows[0]["CategoryID"];
         }
 
+        public void DeleteCategoryFromBook(int BookID)
+        {
+            DataTable dt = SQL.Execute("uspDeleteCategoryFromBook",
+                new Param("BookID", BookID),
+                new Param("CategoryID", CategoryID)
+                );
+        }
+
+
+        /// <summary>
+        /// Delete the categories not linked to a book from the database.
+        /// </summary>
+        public void DumpCategories()
+        {
+            DataTable dt = SQL.Execute("uspDeleteEmptyAuthors");
+        }
 
         /// <summary>
         /// Delete the category from the database.
