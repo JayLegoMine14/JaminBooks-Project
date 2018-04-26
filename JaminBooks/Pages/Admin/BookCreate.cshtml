@@ -4,6 +4,10 @@
     ViewData["Title"] = "Create Book";
     var BookImage = "";
 
+    @if (Model.Book != null)
+    {
+        BookImage = Model.Book.LoadImage;
+    }
 
 }
 
@@ -29,8 +33,23 @@
                     <h2 class="text-center">Create a Book</h2>
                 </div>
             </div>
-
-           
+            <div class="row mb-3 mt-3">
+                <div class="col-3">
+                    <div class="icon-div">
+                        <img id="Image" height="100" width="71" src="@(Model.Book != null ? BookImage : "/images/missing.png")" />
+                    </div>
+                </div>
+                <div class="col-9 pt-3">
+                    <div class="custom-file">
+                        <div class="input-group mb-3">
+                            <input type="file" class="custom-file-input" id="customFile">
+                            <label class="custom-file-label" for="customFile">
+                                Choose file...
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!--general book information entry-->
             <div class="row">
                 <div class="col-12">
@@ -59,9 +78,9 @@
                         <div class="col-5">
                             <select id="Authorlist" class="form-control" multiple>
                                 @foreach (Model.Author a in Model.Authors)
-                {
-                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Authors.Any(a2 => a2.AuthorID == a.AuthorID) ? "selected='selected'" : "") + " value='" + a.AuthorID + "'>" + a.FullName + "</option>");
-}
+                                {
+                                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Authors.Any(a2 => a2.AuthorID == a.AuthorID) ? "selected='selected'" : "") + " value='" + a.AuthorID + "'>" + a.FullName + "</option>");
+                                }
                             </select>
                         </div>
                         <div class="col-4">
@@ -98,9 +117,9 @@
                         <div class="col-5">
                             <select id="BookCat" class="form-control" multiple>
                                 @foreach (Model.Category c in Model.Categories)
-                {
-                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
-}
+                                {
+                                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
+                                }
                             </select>
                         </div>
                         <div class="col-4">
@@ -132,13 +151,13 @@
                             <select id="Publist" class="form-control">
                                 <option>Select Publisher...</option>
                                 @foreach (Model.Publisher p in Model.Publishers)
-                {
-                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Publishers.Any(p2 => p2.PublisherID == p.PublisherID) ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
-}
+                                {
+                                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Publishers.Any(p2 => p2.PublisherID == p.PublisherID) ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
+                                }
 
                             </select>
                         </div>
-                        </div>
+                    </div>
 
 
 
@@ -235,43 +254,90 @@
 <script>
 
     $(document).ready(function () {
-    //save the book
+
+        $("#isbn10, #isbn13, #Quantity").bind("input keyup paste", function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        $("#Price, #Cost").bind("input keyup paste", function () {
+            this.value = this.value.replace(/[^0-9,.]/g, '');
+        });
+
+        $('#customFile').change(function () {
+            var filename = $(this).val().split('\\').pop();
+            $(".custom-file-label").html(filename);
+        });
+
+        $("#customFile").change(function () {
+            var canvas = document.createElement("canvas");
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var img = new Image();
+                img.onload = function () {
+                    canvas.width = 251;
+                    canvas.height = 400;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    $("#Image").get(0).src = canvas.toDataURL('image/png');
+                }
+                img.src = reader.result;
+            }
+            reader.readAsDataURL($("#customFile").get(0).files[0]);
+        });
+
+        //save the book
         $("#SaveBook").click(function () {
             if (validate()) {
 
-                var data = {
-                    BookID: $("#BookID").val(),
-                    Title: $("#Title").val(),
-                    PublicationDate: $("#PublicationDate").val(),
-                    CopyrightDate: $("#CopyrightDate").val(),
-                    Authorlist: JSON.stringify($("#Authorlist").val()),
-                    BookCat: JSON.stringify($("#BookCat").val()),
-                    Publisher: $("#Publist").val(),
-                    ISBN10: $("#isbn10").val(),
-                    ISBN13: $("#isbn13").val(),
-                    Price: $("#Price").val(),
-                    Cost: $("#Cost").val(),
-                    Quantity: $("#Quantity").val(),
-                    Description: $("#Description").val()
-                }
-                //When done creating the book change to the page of the book
-                $.ajax({
-                    type: "POST",
-                    url: "/Model/SaveBook",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        location.href ='/Book?id=' + response;
-                    },
-                    failure: function (response) {
-                        location.href = "\Error";
+                var canvas = document.createElement("canvas");
+
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var img = new Image();
+                    img.onload = function () {
+                        canvas.width = 251;
+                        canvas.height = 400;
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        var data = {
+                            BookID: $("#BookID").val(),
+                            Image: canvas.toDataURL('image/png').replace(/^data:image\/(png|jpeg);base64,/, ''),
+                            Title: $("#Title").val(),
+                            PublicationDate: $("#PublicationDate").val(),
+                            CopyrightDate: $("#CopyrightDate").val(),
+                            Authorlist: JSON.stringify($("#Authorlist").val()),
+                            BookCat: JSON.stringify($("#BookCat").val()),
+                            Publisher: $("#Publist").val(),
+                            ISBN10: $("#isbn10").val(),
+                            ISBN13: $("#isbn13").val(),
+                            Price: $("#Price").val(),
+                            Cost: $("#Cost").val(),
+                            Quantity: $("#Quantity").val(),
+                            Description: $("#Description").val()
+                        }
+                        //When done creating the book change to the page of the book
+                        $.ajax({
+                            type: "POST",
+                            url: "/Model/SaveBook",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+                                location.href = '/Book?id=' + response;
+                            },
+                            failure: function (response) {
+                                location.href = "\Error";
+                            }
+                        });
                     }
-                });
+                    img.src = reader.result;
+                }
+                reader.readAsDataURL($("#customFile").get(0).files[0]);
             }
         });
         //create author button click
@@ -280,28 +346,37 @@
 
                 var data = {
                     AFirstName: $("#AFirstName").val(),
-                    ALastName: $("#ALastName").val()                
+                    ALastName: $("#ALastName").val()
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "/Model/CreateAuthor/",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        unhide(SaveAuthor, 'author');
-                        $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#Authorlist");
-   
-                    },
-                    failure: function (response) {
-                        location.href = "\Error";
-                    }
-                });
+                var option = $("option:contains('" + $("#AFirstName").val() + " " + $("#ALastName").val() + "')");
+                if (option.length > 0) {
+                    option.attr("selected", "selected");
+                    unhide(SaveAuthor, 'author');
+                    $("#AFirstName").val("");
+                    $("#ALastName").val("");
+                } else {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Model/CreateAuthor/",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            unhide(SaveAuthor, 'author');
+                            $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#Authorlist");
+                            $("#AFirstName").val("");
+                            $("#ALastName").val("");
+                        },
+                        failure: function (response) {
+                            location.href = "\Error";
+                        }
+                    });
+                }
             }
         });
 
@@ -309,29 +384,35 @@
             if (validateCategory()) {
 
                 var data = {
-
                     CategoryName: $("#CategoryName").val()
-
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "/Model/CreateCategory/",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        unhide(SaveCategory, 'category');
-                        $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#BookCat");
-                    },
-                    failure: function (response) {
-                        location.href = "\Error";
-                    }
-                });
+                var option = $("option:contains('" + $("#CategoryName").val() + "')");
+                if (option.length > 0) {
+                    option.attr("selected", "selected");
+                    unhide(SaveCategory, 'category');
+                    $("#CategoryName").val("");
+                } else {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Model/CreateCategory/",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            unhide(SaveCategory, 'category');
+                            $("<option selected='selected' value='" + response[0] + "'>" + response[1] + "</option>").appendTo("#BookCat");
+                            $("#CategoryName").val("");
+                        },
+                        failure: function (response) {
+                            location.href = "\Error";
+                        }
+                    });
+                }
             }
         });
     });
@@ -376,64 +457,64 @@
 
     //validation for creating a book without custom categories or author
     function validate() {
-            var valid = true;
-            $("#Title").removeAttr("style");
-            $("#PublicationDate").removeAttr("style");
-            $("#CopyrightDate").removeAttr("style");
-            $("#Authorlist").removeAttr("style");
-            $("#BookCat").removeAttr("style");
-            $("#Publist").removeAttr("style");
-            $("#isbn10").removeAttr("style");
-            $("#isbn13").removeAttr("style");
-            $("#Cost").removeAttr("style");
-            $("#Price").removeAttr("style");
-            $("#Description").removeAttr("style");
+        var valid = true;
+        $("#Title").removeAttr("style");
+        $("#PublicationDate").removeAttr("style");
+        $("#CopyrightDate").removeAttr("style");
+        $("#Authorlist").removeAttr("style");
+        $("#BookCat").removeAttr("style");
+        $("#Publist").removeAttr("style");
+        $("#isbn10").removeAttr("style");
+        $("#isbn13").removeAttr("style");
+        $("#Cost").removeAttr("style");
+        $("#Price").removeAttr("style");
+        $("#Description").removeAttr("style");
 
-
-            if ($("#Title").val() == "") {
-                $("#Title").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#PublicationDate").val() == "") {
-                $("#PublicationDate").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#CopyrightDate").val() == "") {
-                $("#CopyrightDate").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#Authorlist").val() == null) {
-                $("#Authorlist").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#BookCat").val() == null) {
-                $("#BookCat").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#Publist").val() == "Select Publisher...") {
-                $("#Publist").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#isbn10").val() == "") {
-                $("#isbn10").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#isbn13").val() == "") {
-                $("#isbn13").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#Price").val() == "0.00") {
-                $("#Price").css("border-color", "red");
-                valid = false;
-                }
-            if ($("#Cost").val() == "0.00") {
-                $("#Cost").css("border-color", "red");
-                valid = false;
-                }
-            }
-
-            return valid;
-
+        if ($("#customFile").get(0).files.length == 0) {
+            $("#customFile").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#Title").val() == "") {
+            $("#Title").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#PublicationDate").val() == "") {
+            $("#PublicationDate").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#CopyrightDate").val() == "") {
+            $("#CopyrightDate").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#Authorlist").val() == null) {
+            $("#Authorlist").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#BookCat").val() == null) {
+            $("#BookCat").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#Publist").val() == "Select Publisher...") {
+            $("#Publist").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#isbn10").val() == "") {
+            $("#isbn10").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#isbn13").val() == "") {
+            $("#isbn13").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#Price").val() == "0.00") {
+            $("#Price").css("border-color", "red");
+            valid = false;
+        }
+        if ($("#Cost").val() == "0.00") {
+            $("#Cost").css("border-color", "red");
+            valid = false;
+        }
+        return valid;
     }
 </script>
 
@@ -452,7 +533,7 @@
     }
 
 
-    
+
 
 
 </script>
