@@ -327,7 +327,6 @@ namespace JaminBooks.Model
                 book.Publisher.ContactFirstName = "";
                 book.Publisher.ContactLastName = "";
                 book.Publisher.Phone = null;
-                book.Cost = 0;
                 cartItems.Add(book, Convert.ToInt32(bookresults.Rows[i++]["QuantityInCart"]));
             }
 

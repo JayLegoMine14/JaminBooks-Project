@@ -319,6 +319,7 @@
                     $("#ReviewCard").html($("#Cards .center .dc-card").clone())
                     $("#ReviewAddress").html($("#Addresses .center .address").clone())
                     $("#ReviewModal").modal("show");
+                    initPopup();
                 }
             });
 
@@ -385,6 +386,7 @@
                 }
             })
 
+
             $(window).unload(function () {
                 $.ajax({
                     type: "POST",
@@ -399,6 +401,30 @@
                 });
             });
         });
+
+        function initPopup() {
+            $('.popup').tooltipster({
+                contentCloning: true,
+                contentAsHTML: true,
+                theme: 'tooltipster-light',
+                functionBefore: function (instance, helper) {
+                    var data = "";
+
+                    var card = $(helper.origin).parents(".dc-card");
+                    data += '<div>'
+                    data += '<h6 class="card-title">' + card.data("line1") + '</h6>'
+                    if (card.data("line2") != "")
+                        data += '<h6 class="card-title text-muted">' + card.data("line2") + '</h6>'
+                    data += '<h6 class="card-title text-muted">' + card.data("city") + ', ' +
+                        (card.data("country") != "US" ? card.data("country") : card.data("state"))
+                        + ' ' + card.data("zip") + '</h6>'
+                    data += '</div>'
+
+                    instance.content(data);
+                }
+            });
+
+        }
     </script>
 }
 

@@ -1,9 +1,15 @@
-﻿<div class="modal fade lg" id="CardModal" data-id="-1" tabindex="-1" role="dialog">
+﻿<div class="modal fade" id="CardModal" data-id="-1" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content do-not-scale">
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="row mb-2 ml-2" style="font-size:2em;color:#aaa">
+                            <i class="fas fab fa-cc-visa mr-1"></i>
+                            <i class="fas fab fa-cc-mastercard mr-1"></i>
+                            <i class="fas fab fa-cc-discover mr-1"></i>
+                            <i class="fas fab fa-cc-diners-club mr-1"></i>
+                        </div>
                         <div class="row mb-2">
                             <div class="col-3">
                                 <input type="text" id="Number1" class="form-control" maxlength="4" placeholder="####">
@@ -36,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-lg-6 col-md-12 col-12">
                         <div class="row mb-2">
                             <div class="col-12">
                                 <input type="text" id="Line1" class="form-control" maxlength="100" placeholder="Line 1">
@@ -202,7 +208,7 @@
 
                         var card = "";
 
-                        card += '<div class="card dc-card d-inline-block item" data-id="' + response[1] + '" style="width:300px" '
+                        card += '<div class="card dc-card d-inline-block item w-100" data-id="' + response[1] + '" '
                         card += 'data-name="' + data.Name + '" ';
                         card += 'data-month="' + data.ExpMonth + '" ';
                         card += 'data-year="' + data.ExpYear + '" ';
@@ -229,6 +235,27 @@
                         $("#CardModal").modal("hide");
                         initPopup();
                         $('#Cards').trigger('to.owl.carousel', -1);
+
+                        var card = "";
+
+                        card += '<div class="card address d-inline-block item w-100" data-id="' + response[2] + '" '
+                        card += 'data-line1="' + data.Line1 + '" ';
+                        card += 'data-line2="' + data.Line2 + '" ';
+                        card += 'data-state="' + data.State + '" ';
+                        card += 'data-city="' + data.City + '" ';
+                        card += 'data-country="' + data.Country + '" ';
+                        card += 'data-zip="' + data.ZIP + '" ';
+                        card += '>'
+                        card += '<div class="card-body">'
+                        card += '<h6 class="card-title">' + data.Line1 + '</h6>'
+                        if (data.Line2 != "")
+                            card += '<h6 class="card-title text-muted">' + data.Line2 + '</h6>'
+                        card += '<h6 class="card-title text-muted">' + data.City + ', ' + (data.Country != "US" ? data.Country : data.State) + ' ' + data.ZIP + '</h6>'
+                        card += '</div>'
+                        card += '</div>'
+
+                        $('#Addresses').trigger('add.owl.carousel', card)
+                        $('#Addresses').trigger('to.owl.carousel', -1);
                     },
                     failure: function (response) {
                         location.href = "\Error"

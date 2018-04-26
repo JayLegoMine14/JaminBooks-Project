@@ -259,11 +259,7 @@
 
                         var card = "";
 
-                        if ("@(ViewData["Title"].ToString() == "Checkout")" == "True") {
-                            card += '<div class="card dc-card d-inline-block w-100" data-id="' + response[1] + '" '
-                        } else {
-                            card += '<div class="card dc-card d-inline-block" data-id="' + response[1] + '" style="width:300px" '
-                        }
+                        card += '<div class="card dc-card d-inline-block" data-id="' + response[1] + '" style="width:300px" ';
                         card += 'data-name="' + data.Name + '" ';
                         card += 'data-month="' + data.ExpMonth + '" ';
                         card += 'data-year="' + data.ExpYear + '" ';

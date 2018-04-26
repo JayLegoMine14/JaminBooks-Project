@@ -396,7 +396,7 @@ namespace JaminBooks.Pages
                 c.ExpYear = fields["ExpYear"];
                 c.User = user;
                 c.Save();
-                return new JsonResult(new object[] { id, c.CardID });
+                return new JsonResult(new object[] { id, c.CardID, c.Address.AddressID });
             }
             return new JsonResult("");
         }
