@@ -652,8 +652,9 @@ namespace JaminBooks.Pages
                 Author auth = new Author();
                 Category cat = new Category();
 
+                byte[] blob = Convert.FromBase64String(fields["Image"]);
 
-
+                b.BookImage = blob;
                 b.Title = fields["Title"];
                 b.PublicationDate = Convert.ToDateTime(fields["PublicationDate"]);
                 b.CopyrightDate = Convert.ToDateTime(fields["CopyrightDate"]);
