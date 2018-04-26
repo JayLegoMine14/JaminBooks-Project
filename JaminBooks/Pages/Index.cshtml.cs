@@ -27,7 +27,6 @@ namespace JaminBooks.Pages
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
-            Reccomended = BookPreviews.GetReccomended(CurrentUser);
             MostPopular = BookPreviews.GetMostPopular();
             BestSellers = BookPreviews.GetBestSellers();
             OnSale = BookPreviews.GetSales();

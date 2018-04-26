@@ -152,7 +152,7 @@
                                 <option>Select Publisher...</option>
                                 @foreach (Model.Publisher p in Model.Publishers)
                                 {
-                                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Publishers.Any(p2 => p2.PublisherID == p.PublisherID) ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
+                                    @Html.Raw("<option " + (Model.Book != null && Model.Book.Publisher.PublisherID == p.PublisherID ? "selected='selected'" : "") + " value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
                                 }
 
                             </select>
