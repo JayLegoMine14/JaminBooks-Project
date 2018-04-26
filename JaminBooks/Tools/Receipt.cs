@@ -9,8 +9,15 @@ using System.Threading.Tasks;
 
 namespace JaminBooks.Tools
 {
+    /// <summary>
+    /// Manages sending order and refund receipts
+    /// </summary>
     public class Receipt
     {
+        /// <summary>
+        /// Send a receipt for the given order.
+        /// </summary>
+        /// <param name="order">An order</param>
         public static void SendReceipt(Order order)
         {
             var fromAddress = new MailAddress(Authentication.Email, Authentication.Name);
@@ -114,6 +121,10 @@ namespace JaminBooks.Tools
             }
         }
 
+        /// <summary>
+        /// Send a refund receipt for the given order.
+        /// </summary>
+        /// <param name="order">An order</param>
         public static void SendRefundReceipt(Order order)
         {
             var fromAddress = new MailAddress(Authentication.Email, Authentication.Name);

@@ -56,9 +56,9 @@
                         <div class="col-5">
                             <select id="AuthorList" class="form-control" multiple>
                                 @foreach (Model.Author a in Model.Book.Authors)
-    {
-                            @Html.Raw("<option " + (Model.Book.Authors.Any(a2 => a2.AuthorID == a.AuthorID) ? "selected='selected'" : "") + " value='" + a.AuthorID + "'>" + a.FullName + "</option>");
-}
+                                {
+                                    @Html.Raw("<option " + (Model.Book.Authors.Any(a2 => a2.AuthorID == a.AuthorID) ? "selected='selected'" : "") + " value='" + a.AuthorID + "'>" + a.FullName + "</option>");
+                                }
                             </select>
                         </div>
                         <div class="col-4">
@@ -96,9 +96,9 @@
                         <div class="col-5">
                             <select id="BookCat" class="form-control" multiple>
                                 @foreach (Model.Category c in Model.Book.Categories)
-    {
-                            @Html.Raw("<option " + (Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
-}
+                                {
+                                    @Html.Raw("<option " + (Model.Book.Categories.Any(c2 => c2.CategoryID == c.CategoryID) ? "selected='selected'" : "") + " value='" + c.CategoryID + "'>" + c.CategoryName + "</option>");
+                                }
                             </select>
                         </div>
                         <div class="col-4">
@@ -130,9 +130,9 @@
                             <select id="PubList" class="form-control">
                                 @foreach (Model.Publisher p in Model.Book.Publishers)
                                 {
-                                @Html.Raw("<option value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
+                                    @Html.Raw("<option value='" + p.PublisherID + "'>" + p.PublisherName + "</option>");
                                 }
-        
+
 
                             </select>
                         </div>
@@ -241,8 +241,8 @@
                                 <div class="input-group-text">$</div>
                             </div>
                             <input type="number" class="form-control" step="0.1" required name="Price" value="@(Model.Book == null ? "0.00" : Model.Book.Price.ToString("0.00"))" />
-                            </div>
                         </div>
+                    </div>
                     <div class="form-group row">
                         <label class="col-3 col-form-label">Cost</label>
                         <div class="input-group col-9">

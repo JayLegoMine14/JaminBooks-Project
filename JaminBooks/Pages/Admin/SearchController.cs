@@ -8,7 +8,8 @@ using JaminBooks.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static JaminBooks.Model.SQL;
+using static JaminBooks.Tools.SQL;
+using JaminBooks.Tools;
 
 namespace JaminBooks.Pages.Admin
 {

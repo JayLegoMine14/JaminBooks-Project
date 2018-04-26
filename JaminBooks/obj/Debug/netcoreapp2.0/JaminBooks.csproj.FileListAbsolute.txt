@@ -9,3 +9,4 @@ C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.
 C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.AssemblyInfo.cs
 C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.dll
 C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\obj\Debug\netcoreapp2.0\JaminBooks.pdb
+C:\Users\James Allison\source\repos\JaminBooks\JaminBooks\bin\Debug\netcoreapp2.0\JaminBooks.xml

@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using static JaminBooks.Model.SQL;
+using static JaminBooks.Tools.SQL;
+using JaminBooks.Tools;
 
 namespace JaminBooks.Pages
 {

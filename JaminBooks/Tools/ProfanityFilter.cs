@@ -5,12 +5,21 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static JaminBooks.Model.SQL;
+using static JaminBooks.Tools.SQL;
+using JaminBooks.Tools;
 
 namespace JaminBooks.Tools
 {
+    /// <summary>
+    /// Manages filtration of profanity from rating comments.
+    /// </summary>
     public class ProfanityFilter
     {
+        /// <summary>
+        /// Replace profane words with asterisks.
+        /// </summary>
+        /// <param name="s">The string to filter</param>
+        /// <returns>The filtered string</returns>
         public static string Filter(string s)
         {
             string[] words = s.Split(" ");
@@ -32,6 +41,11 @@ namespace JaminBooks.Tools
             return String.Join(" ", words);
         }
 
+        /// <summary>
+        /// Determine whether the given word is profane
+        /// </summary>
+        /// <param name="s">The word to check</param>
+        /// <returns>Whether the given word is profane</returns>
         public static bool IsProfane(string s)
         {
             DataTable result = SQL.Execute("uspIsProfane", new Param("Word", s));

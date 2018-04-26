@@ -25,7 +25,7 @@
                             @foreach (string cat in Model.Categories.Values)
                             {
                                 @Html.Raw("<option value='" + @cat + "'" + (Model.Publisher != null && Model.Publisher.Phone.Category == cat ? "selected='selected'" : "") + ">" + @cat + "</option>");
-                                }
+                            }
                         </select>
                     </div>
                 </div>

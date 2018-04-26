@@ -8,8 +8,16 @@ using System.Threading.Tasks;
 
 namespace JaminBooks.Tools
 {
+    /// <summary>
+    /// Provides methods for parsing JSON objects in HTML requests.
+    /// </summary>
     public class AJAX
     {
+        /// <summary>
+        /// Converts a HTML request made by AJAX into a dictionary. All values will be strings.
+        /// </summary>
+        /// <param name="request">An HTML request made by AJAX</param>
+        /// <returns>A dictionary of the fields from the data in the AJAX request. All values will be strings.</returns>
         public static Dictionary<string, string> GetFields(HttpRequest request)
         {
             MemoryStream stream = new MemoryStream();
@@ -32,6 +40,11 @@ namespace JaminBooks.Tools
             throw new Exception("Invalid JSON Object");
         }
 
+        /// <summary>
+        /// Converts a HTML request made by AJAX into a dictionary. Values will be objects.
+        /// </summary>
+        /// <param name="request">An HTML request made by AJAX</param>
+        /// <returns>A dictionary of the fields from the data in the AJAX request. Values will be objects.</returns>
         public static Dictionary<string, object> GetObjectFields(HttpRequest request)
         {
             MemoryStream stream = new MemoryStream();
