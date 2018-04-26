@@ -624,7 +624,7 @@
                     bookcard += 'data-price="' + book.Price.toFixed(2) + '"'
                     bookcard += 'data-description="' + book.Description + '"'
                     bookcard += 'data-authors=\'' + JSON.stringify(book.Authors) + '\''
-                    bookcard += 'data-categories=\'' + JSON.stringify(book.Categories) + '\''
+                    bookcard += 'data-categories=\'' + JSON.stringify(book.Categories).replace("'","&#39;") + '\''
                     bookcard += 'data-rating="' + book.Rating + '"'
                     bookcard += 'data-isbn10="' + book.ISBN10 + '"'
                     bookcard += 'data-isbn13="' + book.ISBN13 + '"'
