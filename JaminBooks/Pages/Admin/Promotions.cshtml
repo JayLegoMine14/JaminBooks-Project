@@ -5,7 +5,7 @@
     Layout = "~/Pages/Admin/_AdminLayout.cshtml";
 }
 
-<div class="container body-content" style="min-height:90vh">
+<div class="container body-content" style="min-height:95vh">
     <div>
         <div class="row">
             <div class="col-12">
@@ -28,7 +28,7 @@
                                             <input type="number" step=".01" class="form-control total" placeholder="Total" value="@p.Total.Value.ToString("0.00")">
                                         </div>
                                         <div class="input-group col-2 mr-3">
-                                            <input type="number" step="1" min="0" max="100" class="form-control precent" placeholder="Dicount" value="@p.PercentDiscount">
+                                            <input type="number" step="1" min="0" max="100" class="form-control percent" placeholder="Dicount" value="@p.PercentDiscount">
                                             <div class="input-group-append">
                                                 <div class="input-group-text">%</div>
                                             </div>
@@ -161,6 +161,7 @@
             savePromotion($(".promotion[data-id='-1']"));
             AddListeners();
         });
+        AddListeners();
     })
 
     function AddListeners() {
@@ -171,7 +172,7 @@
         });
 
         $(".total, .percent").keypress(function (event) {
-            if (event.which != 8 && event.which != 0 && (event.which < 48 || event.which > 57)) {
+            if (event.which != 8 && event.which != 0 && event.which != 46 && (event.which < 48 || event.which > 57)) {
                 return false;
             }
         });
@@ -209,7 +210,9 @@
                     if (response != '') {
                         promo.data("id", response);
                         if (Date.parse(startdate.val()) <= new Date() && Date.parse(enddate.val()) >= new Date()) {
-                            promo.parents(".row").first().append('<div class="row"><span class="badge badge-primary mt-2 ml-3">Active</span></div>');
+                            promo.append('<div class="row"><span class="badge badge-primary mt-2 ml-3">Active</span></div>');
+                        } else {
+                            promo.find(".badge").parent().remove();
                         }
                     } else {
                         location.href = "\Error"

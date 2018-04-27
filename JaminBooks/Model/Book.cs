@@ -116,7 +116,7 @@ namespace JaminBooks.Model
         {
             get
             {
-                if (BookImage.Count() < 10) return "/images/missing.png";
+                if (BookImage == null || BookImage.Count() < 10) return "/images/missing.png";
                 using (MemoryStream ms = new MemoryStream(BookImage))
                 {
                     var filename = Authentication.Hash(Convert.ToBase64String(BookImage)) + ".png";

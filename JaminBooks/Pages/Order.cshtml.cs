@@ -43,7 +43,7 @@ namespace JaminBooks.Pages
             Order = new Order(id);
 
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
-            if (CurrentUser == null || !CurrentUser.IsAdmin)
+            if (CurrentUser == null || Order.Card.User.UserID != CurrentUser.UserID || !CurrentUser.IsAdmin)
             {
                 Response.Redirect("Index");
             }

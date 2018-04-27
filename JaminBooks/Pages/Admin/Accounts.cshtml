@@ -341,11 +341,14 @@
                     $("#Items").append(row);
                 });
 
-                var image = new Image();
                 $(".userIcon").each(function () {
-                    image.src = $(this).attr("src");
-                    $(this).removeAttr("style");
-                    $(this).css(image.width > image.height ? "height" : "width", "50px");
+                    var image = new Image();
+                    var userIcon = $(this);
+                    userIcon.removeAttr("style");
+                    image.onload = function () {
+                        userIcon.css(image.width > image.height ? "height" : "width", "50px");
+                    }
+                    image.src = userIcon.attr("src");
                 })
 
                 if (response[1] < count)

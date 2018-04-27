@@ -121,10 +121,10 @@
                     <div class="row mb-2">
                         <div class="col-12">
                             <select id="Country" class="form-control">
-                                <option value="CA">Canada</option>
-                                <option value="DE">Germany</option>
-                                <option value="MX">Mexico</option>
-                                <option value="GB">United Kingdom</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Mexico">Mexico</option>
+                                <option value="UK">United Kingdom</option>
                                 <option selected value="US">United States</option>
                             </select>
                         </div>
@@ -152,6 +152,8 @@
     $(function () {
         $("#State option[value='@Model.Publisher.Address.State']").prop('selected', true);
         $("#Country option[value='@Model.Publisher.Address.Country']").prop('selected', true);
+        if ($("#Country").val() != "US")
+            $("#State").parent().hide();
     });
     </script>
 }
@@ -167,6 +169,12 @@
                 $("#Phone").removeClass("valid")
                 $("#Phone").removeAttr("style");
             }
+        });
+
+        $("#Country").change(function () {
+            if ($("#Country").val() != "US")
+                $("#State").parent().hide();
+            else $("#State").parent().show();
         });
 
         $("#Phone").trigger('input');

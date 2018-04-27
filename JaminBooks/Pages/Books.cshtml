@@ -481,7 +481,7 @@
             loadBooks(true);
         });
 
-        $("#Search").focusout(function () {
+        $("#Search").focusout(function (e) {
             if ($(e.target).hasClass("item")) return;
             $("#AutoComplete").hide();
         });
@@ -619,10 +619,10 @@
 
                     bookcard += '<div class="card text-white book" onclick="showBookView(this)" style="width: 200px" '
                     bookcard += 'data-id="' + book.BookID + '"'
-                    bookcard += 'data-title="' + book.Title + '"'
+                    bookcard += 'data-title=\'' + book.Title.replace("'", "&#39;").replace('"', "&quot;") + '\''
                     bookcard += 'data-quantity="' + book.Quantity + '"'
                     bookcard += 'data-price="' + book.Price.toFixed(2) + '"'
-                    bookcard += 'data-description="' + book.Description + '"'
+                    bookcard += 'data-description=\'' + book.Description.replace("'", "&#39;").replace('"', "&quot;") + '\''
                     bookcard += 'data-authors=\'' + JSON.stringify(book.Authors) + '\''
                     bookcard += 'data-categories=\'' + JSON.stringify(book.Categories).replace("'","&#39;") + '\''
                     bookcard += 'data-rating="' + book.Rating + '"'

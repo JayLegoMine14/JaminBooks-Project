@@ -912,6 +912,8 @@ namespace JaminBooks.Pages
 
             DataTable bookresults = SQL.Execute(searchProcedure, new Param("@Search", search));
             List<Book> books = Book.GetBooks(bookresults);
+            books = books.Where(b => !b.IsDeleted).ToList();
+
 
             //This needs to get all books that have at least one cat in the cat list
             if (categories.Count() > 0)
@@ -1062,17 +1064,6 @@ namespace JaminBooks.Pages
             return new JsonResult("");
         }
 
-
-
-
-
-
-
-
-
-
-
-
         [Route("Model/CreatePublisher")]
         public IActionResult CreatePublisher()
         {
@@ -1099,13 +1090,8 @@ namespace JaminBooks.Pages
                 ad.Save();
 
                 p.Save();
-
-
-
             }
-
                 return new JsonResult(publisher.PublisherID);
-            }
-          
+            }      
         }
     }

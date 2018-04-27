@@ -129,11 +129,14 @@
                     createRating(rating);
                 });
 
-                var image = new Image();
                 $(".userIcon").each(function () {
-                    image.src = $(this).attr("src");
-                    $(this).removeAttr("style");
-                    $(this).css(image.width > image.height ? "height" : "width", "50px");
+                    var image = new Image();
+                    var userIcon = $(this);
+                    userIcon.removeAttr("style");
+                    image.onload = function () {
+                        userIcon.css(image.width > image.height ? "height" : "width", "50px");
+                    }
+                    image.src = userIcon.attr("src");
                 })
             },
             failure: function (response) {
@@ -242,7 +245,7 @@
         ratingmessage += '<div class="rating card"'
         ratingmessage += 'data-id="' + rating.RatingID + '"'
         ratingmessage += 'data-rating="' + rating.RatingValue + '"'
-        ratingmessage += 'data-comment="' + rating.Comment + '"'
+        ratingmessage += 'data-comment=\'' + rating.Comment.replace("'", "&#39;").replace('"', "&quot;") + '\''
         ratingmessage += '> '
         ratingmessage += '<div>'
         ratingmessage += '<div class="icon-div">'
@@ -257,7 +260,7 @@
                 ratingmessage += '<button class="btn btn-success btn-sm" onclick="editRating(this)"><i class="fas fa-edit"></i></button>'
         }
         if ($("#UserID").text() != "-1" && $("#UserIsAdmin").text() == "False" && rating.Comment != "" && rating.FlagUsers.indexOf(parseInt($("#UserID").text())) == -1) {
-            ratingmessage += '<button class="btn btn-warning btn-sm" onclick="flagRating(this)"><i class="fas fa-flag"></i></button>'
+            ratingmessage += '<button class="btn btn-warning btn-sm ml-2" onclick="flagRating(this)"><i class="fas fa-flag"></i></button>'
         }
         ratingmessage += '</div>'
 
