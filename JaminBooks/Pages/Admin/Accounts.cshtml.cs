@@ -1,21 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using JaminBooks.Model;
+﻿using JaminBooks.Model;
 using JaminBooks.Tools;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Collections.Generic;
 
 namespace JaminBooks.Pages.Admin
 {
+    /// <summary>
+    /// Displays an interface for searching user accounts.
+    /// </summary>
     public class AccountsModel : PageModel
     {
-
+        /// <summary>
+        /// The user currently logged in.
+        /// </summary>
         public User CurrentUser;
+
+        /// <summary>
+        /// The columns to display in the results table and the order by options.
+        /// </summary>
         public List<string> DisplayColumns = new List<string>();
+
+        /// <summary>
+        /// The columns to display in the advanced search options.
+        /// </summary>
         public Dictionary<string, string> SearchColumns = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Load the page on a get request.
+        /// </summary>
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);

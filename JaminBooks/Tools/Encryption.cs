@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Text;
-using System.Security.Cryptography;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace JaminBooks.Tools
 {
     //Encryption class courtesy of CraigTP on StackOverflow:
     //https://stackoverflow.com/questions/10168240/encrypting-decrypting-a-string-in-c-sharp?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 
+    /// <summary>
+    /// Handles encryption and decryption of card numbers.
+    /// </summary>
     public class Encryption
     {
         private const int Keysize = 128;

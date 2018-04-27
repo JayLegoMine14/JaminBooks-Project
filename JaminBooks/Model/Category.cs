@@ -1,11 +1,8 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
-using System.Data.SqlTypes;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace JaminBooks.Model
 {
@@ -18,10 +15,12 @@ namespace JaminBooks.Model
         /// a unique id number identifying this category. -1 represents an uncreated category.
         /// </summary>
         public int CategoryID { private set; get; } = -1;
+
         /// <summary>
         /// The name of the category.
         /// </summary>
         public string CategoryName;
+
         /// <summary>
         /// Whether or not the category has been deleted.
         /// </summary>
@@ -80,6 +79,10 @@ namespace JaminBooks.Model
                 CategoryID = (int)dt.Rows[0]["CategoryID"];
         }
 
+        /// <summary>
+        /// Delete category from given book.
+        /// </summary>
+        /// <param name="BookID">The book id</param>
         public void DeleteCategoryFromBook(int BookID)
         {
             DataTable dt = SQL.Execute("uspDeleteCategoryFromBook",
@@ -87,7 +90,6 @@ namespace JaminBooks.Model
                 new Param("CategoryID", CategoryID)
                 );
         }
-
 
         /// <summary>
         /// Delete the categories not linked to a book from the database.
@@ -134,8 +136,6 @@ namespace JaminBooks.Model
                     (bool)dr["IsDeleted"]
                     ));
             return categories;
-
-
         }
 
         /// <summary>

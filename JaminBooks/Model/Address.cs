@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
-using System.Linq;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -19,26 +16,32 @@ namespace JaminBooks.Model
         /// A unique number representing this address. -1 represents an uncreated address.
         /// </summary>
         public int AddressID { private set; get; } = -1;
+
         /// <summary>
         /// The first line of the street address.
         /// </summary>
         public string Line1;
+
         /// <summary>
         /// The second line of the street address.
         /// </summary>
         public string Line2;
+
         /// <summary>
         /// The city of the address.
         /// </summary>
         public string City;
+
         /// <summary>
         /// The state of the address. This will be a two letter code.
         /// </summary>
         public string State;
+
         /// <summary>
         /// The country of the address. This will be a two letter code.
         /// </summary>
         public string Country;
+
         /// <summary>
         /// The ZIP code of the address.
         /// </summary>
@@ -103,6 +106,9 @@ namespace JaminBooks.Model
             AddressID = -1;
         }
 
+        /// <summary>
+        /// Save changes to the address.
+        /// </summary>
         public void Save()
         {
             DataTable dt = SQL.Execute("uspSaveAddress",

@@ -1,12 +1,9 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -19,30 +16,37 @@ namespace JaminBooks.Model
         /// the unique id number that identifies this order. -1 represents an unsaved Order.
         /// </summary>
         public int OrderID { private set; get; } = -1;
+
         /// <summary>
         /// The date on which the order was made.
         /// </summary>
         public DateTime OrderDate { private set; get; }
+
         /// <summary>
         /// The date on which the order was refunded.
         /// </summary>
         public DateTime? RefundDate = null;
+
         /// <summary>
         /// The date on which the order was fulfilled.
         /// </summary>
         public DateTime? FulfilledDate = null;
+
         /// <summary>
         /// The percent discount on the order.
         /// </summary>
         public int PercentDiscount;
+
         /// <summary>
         /// The card used to pay for the order.
         /// </summary>
         public Card Card;
+
         /// <summary>
         /// The shipping address of the order.
         /// </summary>
         public Address Address;
+
         /// <summary>
         /// The parent id of a reshipped order.
         /// </summary>

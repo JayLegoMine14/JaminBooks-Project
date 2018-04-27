@@ -1,28 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using JaminBooks.Model;
+﻿using JaminBooks.Model;
 using JaminBooks.Tools;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
-using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
+using System.Collections.Generic;
 
 namespace JaminBooks.Pages
 {
+    /// <summary>
+    /// The site's home page which displays banners and lists of books on sale, best sellers, and most popular.
+    /// </summary>
     public class IndexModel : PageModel
     {
+        /// <summary>
+        /// The user currently logged in.
+        /// </summary>
         public User CurrentUser;
+
+        /// <summary>
+        /// The banners to display on the home page.
+        /// </summary>
         public List<Banner> Banners;
+
+        /// <summary>
+        /// Most popular books based on ratings and comments.
+        /// </summary>
         public List<Book> MostPopular;
+
+        /// <summary>
+        /// Best sellers based on number of sales.
+        /// </summary>
         public List<Book> BestSellers;
+
+        /// <summary>
+        /// Books that are currently on sale.
+        /// </summary>
         public List<Book> OnSale;
 
+        /// <summary>
+        /// Load the page on a get request.
+        /// </summary>
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);

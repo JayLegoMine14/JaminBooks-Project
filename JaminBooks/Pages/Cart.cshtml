@@ -166,6 +166,7 @@
         getTotal();
 
         $(".quantity").on("input", function () {
+            this.value = this.value.replace(/\D/g, '');
             getTotal();
         });
 
@@ -354,4 +355,3 @@
     </script>
 
 }
-

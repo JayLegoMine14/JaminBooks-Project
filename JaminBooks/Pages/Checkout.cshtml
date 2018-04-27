@@ -154,7 +154,6 @@
                     </div>
 
                     @await Html.PartialAsync("_CheckoutAddress")
-
                 </div>
                 <div class=" col-lg-4 offset-lg-0 col-md-4 offset-md-0 offset-1 col-10 mt-5">
                     <div class="card w-100 p-2">
@@ -211,13 +210,11 @@
                     <div class="row"><h5 class="col-8 offset-2">Payment</h5></div>
                     <div class="row">
                         <div id="ReviewCard" class="col-8 offset-2 d-flex">
-
                         </div>
                     </div>
                     <div class="row"><h5 class="col-8 offset-2">Shipping Address</h5></div>
                     <div class="row">
                         <div id="ReviewAddress" class="col-8 offset-2 d-flex">
-
                         </div>
                     </div>
                     <div class="row"><h5 class="col-8 offset-2">Total Billing</h5></div>
@@ -270,161 +267,159 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-            $('#Cards, #Addresses').owlCarousel({
-                center: true,
-                items: 2,
-                loop: true,
-                dots: false,
-                nav: true,
-                navText: ["<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-left'></i></div>", "<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-right'></i></div>"],
-                margin: 5,
-                onInitialized: function () {
-                    $("#CardCreate").unbind("click");
-                    $("#CardCreate").click(function () {
-                        $("#CardModal").modal("show");
-                    });
-                    $("#AddressCreate").unbind("click");
-                    $("#AddressCreate").click(function () {
-                        $("#AddressModal").modal("show");
-                    });
+    $(document).ready(function () {
+        $('#Cards, #Addresses').owlCarousel({
+            center: true,
+            items: 2,
+            loop: true,
+            dots: false,
+            nav: true,
+            navText: ["<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-left'></i></div>", "<div class='btn btn-dark-red text-white'><i class='fas fa-chevron-right'></i></div>"],
+            margin: 5,
+            onInitialized: function () {
+                $("#CardCreate").unbind("click");
+                $("#CardCreate").click(function () {
+                    $("#CardModal").modal("show");
+                });
+                $("#AddressCreate").unbind("click");
+                $("#AddressCreate").click(function () {
+                    $("#AddressModal").modal("show");
+                });
+            },
+            responsive: {
+                0: {
+                    margin: 10
                 },
-                responsive : {
-                    0 : {
-                        margin: 10
-                    },
-                    480 : {
-                        margin: 20
-                    }
+                480: {
+                    margin: 20
                 }
-            });
-            $('#Cards, #Addresses').prepend('<div class="fade-in"></div><div class="fade-out" ></div>')
+            }
+        });
+        $('#Cards, #Addresses').prepend('<div class="fade-in"></div><div class="fade-out" ></div>')
 
-            $("#PlaceOrder").click(function () {
-                var cardID = $("#Cards .center").find(".dc-card").data("id");
-                var addressID = $("#Addresses .center").find(".address").data("id");
-                if (cardID == undefined) {
-                    $.alert({
-                        title: 'Select Payment',
-                        content: 'Please select a payment method.',
-                        type: 'red'
-                    });
-                } else if (addressID == undefined) {
-                    $.alert({
-                        title: 'Select Shipping Address',
-                        content: 'Please select a shipping address.',
-                        type: 'red'
-                    });
-                } else {
-                    $("#ReviewCard").html($("#Cards .center .dc-card").clone())
-                    $("#ReviewAddress").html($("#Addresses .center .address").clone())
-                    $("#ReviewModal").modal("show");
-                    initPopup();
+        $("#PlaceOrder").click(function () {
+            var cardID = $("#Cards .center").find(".dc-card").data("id");
+            var addressID = $("#Addresses .center").find(".address").data("id");
+            if (cardID == undefined) {
+                $.alert({
+                    title: 'Select Payment',
+                    content: 'Please select a payment method.',
+                    type: 'red'
+                });
+            } else if (addressID == undefined) {
+                $.alert({
+                    title: 'Select Shipping Address',
+                    content: 'Please select a shipping address.',
+                    type: 'red'
+                });
+            } else {
+                $("#ReviewCard").html($("#Cards .center .dc-card").clone())
+                $("#ReviewAddress").html($("#Addresses .center .address").clone())
+                $("#ReviewModal").modal("show");
+                initPopup();
+            }
+        });
+
+        $("#ConfirmPlaceOrder").click(function () {
+            $("#ReviewCVC").removeAttr("style");
+            var CVC = $("#ReviewCVC").val();
+            if (CVC == "") {
+                $("#ReviewCVC").css("border-color", "red");
+            } else {
+                var data = {
+                    CVC: CVC,
+                    CardID: $("#ReviewCard .dc-card").data("id"),
+                    AddressID: $("#ReviewAddress .address").data("id")
                 }
-            });
 
-            $("#ConfirmPlaceOrder").click(function () {
-                $("#ReviewCVC").removeAttr("style");
-                var CVC = $("#ReviewCVC").val();
-                if (CVC == "") {
-                    $("#ReviewCVC").css("border-color", "red");
-                } else {
-                    var data = {
-                        CVC: CVC,
-                        CardID: $("#ReviewCard .dc-card").data("id"),
-                        AddressID: $("#ReviewAddress .address").data("id")
-                    }
-
-                    $.ajax({
-                        type: "POST",
-                        url: "Model/CreateOrder",
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("XSRF-TOKEN",
-                                $('input:hidden[name="__RequestVerificationToken"]').val());
-                        },
-                        data: JSON.stringify(data),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (orderid) {
-                            if (orderid == "") {
-                                $.alert({
-                                    title: 'Invalid CVC',
-                                    content: 'Please re-enter your CVC.',
-                                    type: 'red'
-                                });
-                            } else {
-                                var form = $('<form></form>');
-
-                                form.attr("method", "post");
-                                form.attr("action", "\Order");
-
-                                var field = $('<input></input>');
-                                field.attr("type", "hidden");
-                                field.attr("name", "id");
-                                field.attr("value", orderid);
-
-                                form.append(field);
-
-                                var thanks = $('<input></input>');
-                                thanks.attr("type", "hidden");
-                                thanks.attr("name", "thanks");
-                                thanks.attr("value", "true");
-
-                                form.append(thanks);
-
-                                var af = $('@Html.AntiForgeryToken()');
-                                form.append(af);
-
-                                $(document.body).append(form);
-                                form.submit();
-                            }
-                        },
-                        failure: function (response) {
-                            location.href = "\Error"
-                        }
-                    });
-                }
-            })
-
-
-            $(window).unload(function () {
                 $.ajax({
                     type: "POST",
-                    async: false,
-                    url: "Model/ClearReservations",
+                    url: "Model/CreateOrder",
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("XSRF-TOKEN",
                             $('input:hidden[name="__RequestVerificationToken"]').val());
                     },
+                    data: JSON.stringify(data),
                     contentType: "application/json; charset=utf-8",
-                    dataType: "json"
+                    dataType: "json",
+                    success: function (orderid) {
+                        if (orderid == "") {
+                            $.alert({
+                                title: 'Invalid CVC',
+                                content: 'Please re-enter your CVC.',
+                                type: 'red'
+                            });
+                        } else {
+                            var form = $('<form></form>');
+
+                            form.attr("method", "post");
+                            form.attr("action", "\Order");
+
+                            var field = $('<input></input>');
+                            field.attr("type", "hidden");
+                            field.attr("name", "id");
+                            field.attr("value", orderid);
+
+                            form.append(field);
+
+                            var thanks = $('<input></input>');
+                            thanks.attr("type", "hidden");
+                            thanks.attr("name", "thanks");
+                            thanks.attr("value", "true");
+
+                            form.append(thanks);
+
+                            var af = $('@Html.AntiForgeryToken()');
+                            form.append(af);
+
+                            $(document.body).append(form);
+                            form.submit();
+                        }
+                    },
+                    failure: function (response) {
+                        location.href = "\Error"
+                    }
                 });
+            }
+        })
+
+        $(window).unload(function () {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "Model/ClearReservations",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
             });
         });
+    });
 
-        function initPopup() {
-            $('.popup').tooltipster({
-                contentCloning: true,
-                contentAsHTML: true,
-                theme: 'tooltipster-light',
-                functionBefore: function (instance, helper) {
-                    var data = "";
+    function initPopup() {
+        $('.popup').tooltipster({
+            contentCloning: true,
+            contentAsHTML: true,
+            theme: 'tooltipster-light',
+            functionBefore: function (instance, helper) {
+                var data = "";
 
-                    var card = $(helper.origin).parents(".dc-card");
-                    data += '<div>'
-                    data += '<h6 class="card-title">' + card.data("line1") + '</h6>'
-                    if (card.data("line2") != "")
-                        data += '<h6 class="card-title text-muted">' + card.data("line2") + '</h6>'
-                    data += '<h6 class="card-title text-muted">' + card.data("city") + ', ' +
-                        (card.data("country") != "US" ? card.data("country") : card.data("state"))
-                        + ' ' + card.data("zip") + '</h6>'
-                    data += '</div>'
+                var card = $(helper.origin).parents(".dc-card");
+                data += '<div>'
+                data += '<h6 class="card-title">' + card.data("line1") + '</h6>'
+                if (card.data("line2") != "")
+                    data += '<h6 class="card-title text-muted">' + card.data("line2") + '</h6>'
+                data += '<h6 class="card-title text-muted">' + card.data("city") + ', ' +
+                    (card.data("country") != "US" ? card.data("country") : card.data("state"))
+                    + ' ' + card.data("zip") + '</h6>'
+                data += '</div>'
 
-                    instance.content(data);
-                }
-            });
+                instance.content(data);
+            }
+        });
 
-        }
+    }
     </script>
 }
-

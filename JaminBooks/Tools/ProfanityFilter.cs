@@ -1,12 +1,7 @@
-﻿using JaminBooks.Model;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Tools
 {

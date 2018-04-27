@@ -1,11 +1,8 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
-using System.Data.SqlTypes;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace JaminBooks.Model
 {
@@ -18,14 +15,17 @@ namespace JaminBooks.Model
         /// The unique id number that identifies this author. -1 represents an uncreated author.
         /// </summary>
         public int AuthorID { private set; get; } = -1;
+
         /// <summary>
         /// The authors first name.
         /// </summary>
         public string FirstName;
+
         /// <summary>
         /// The authors last name.
         /// </summary>
         public string LastName;
+
         /// <summary>
         /// Whether or not the author has been deleted.
         /// </summary>
@@ -99,7 +99,10 @@ namespace JaminBooks.Model
                 AuthorID = (int)dt.Rows[0]["AuthorID"];
         }
 
-        //delete an author relationship from a book
+        /// <summary>
+        /// Delete author from the given book.
+        /// </summary>
+        /// <param name="BookID">The book id</param>
         public void DeleteAuthorFromBook(int BookID)
         {
             DataTable dt = SQL.Execute("uspDeleteAuthorFromBook",

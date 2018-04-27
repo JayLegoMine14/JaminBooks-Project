@@ -207,7 +207,7 @@
                                             $('input:hidden[name="__RequestVerificationToken"]').val());
                                     },
                                     data: JSON.stringify({
-                                        ID: @Model.Book.BookID
+                                        ID: "@Model.Book.BookID"
                                     }),
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
@@ -244,7 +244,7 @@
                                             $('input:hidden[name="__RequestVerificationToken"]').val());
                                     },
                                     data: JSON.stringify({
-                                        ID: @Model.Book.BookID
+                                        ID: "@Model.Book.BookID"
                                     }),
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
@@ -283,7 +283,7 @@
                                             $('input:hidden[name="__RequestVerificationToken"]').val());
                                     },
                                     data: JSON.stringify({
-                                        ID: @Model.Book.BookID
+                                        ID: "@Model.Book.BookID"
                                     }),
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
@@ -385,24 +385,24 @@
                                                 <input id="Cost" type="text" readonly class="form-control-plaintext" value="$@Model.Book.Cost.ToString("0.00")">
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-1">
                                             <label class="col-12 col-form-label font-weight-bold">Publisher Address:</label>
                                         </div>
-                                        <div class="form-group row ml-3">
-                                            <h6>@Model.Book.Publisher.Address.Line1</h6>
+                                        <div class="form-group ml-3">
+                                            <div>@Model.Book.Publisher.Address.Line1</div>
 
                                             @if (Model.Book.Publisher.Address.Line2 != null)
                                             {
-                                                <h6>@Model.Book.Publisher.Address.Line2</h6>
+                                                <div>@Model.Book.Publisher.Address.Line2</div>
                                             }
 
                                             @if (Model.Book.Publisher.Address.State != null)
                                             {
-                                                <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.State @Model.Book.Publisher.Address.ZIP</h6>
+                                                <div>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.State @Model.Book.Publisher.Address.ZIP</div>
                                             }
                                             else
                                             {
-                                                <h6>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.Country @Model.Book.Publisher.Address.ZIP</h6>
+                                                <div>@Model.Book.Publisher.Address.City, @Model.Book.Publisher.Address.Country @Model.Book.Publisher.Address.ZIP</div>
                                             }
                                         </div>
                                     }
@@ -417,7 +417,7 @@
                                     <div class="form-group row">
                                         <label class="col-4 col-form-label font-weight-bold">Publisher:</label>
                                         <div class="col-8">
-                                            <input id="Publisher" type="text" readonly class="form-control-plaintext" value="@Model.Book.Publisher.PublisherName">
+                                            <div id="Publisher">@Model.Book.Publisher.PublisherName</div>
                                         </div>
                                     </div>
                                     @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
@@ -623,6 +623,3 @@
     });
 </script>
 @await Html.PartialAsync("_Authentication")
-
-
-

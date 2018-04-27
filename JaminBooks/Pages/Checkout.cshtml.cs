@@ -1,22 +1,42 @@
-﻿using System;
+﻿using JaminBooks.Model;
+using JaminBooks.Tools;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using JaminBooks.Model;
-using JaminBooks.Tools;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace JaminBooks.Pages
 {
+    /// <summary>
+    /// Allows the user to select a means of payment and a shipping address and place an order.
+    /// </summary>
     public class CheckoutModel : PageModel
     {
+        /// <summary>
+        /// The user currently logged in.
+        /// </summary>
         public User CurrentUser;
+
+        /// <summary>
+        /// The total price of the books.
+        /// </summary>
         public string BookTotal;
+
+        /// <summary>
+        /// The discount on the order.
+        /// </summary>
         public string PercentDiscount;
+
+        /// <summary>
+        /// The order total.
+        /// </summary>
         public string OrderTotal;
 
+        /// <summary>
+        /// Load the page on a get request.
+        /// </summary>
+        /// <param name="code">The discount code to be applied to the order</param>
         public void OnGet(string code)
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);

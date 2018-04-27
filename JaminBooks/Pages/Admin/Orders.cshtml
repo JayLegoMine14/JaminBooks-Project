@@ -143,7 +143,6 @@
             </div>
         </div>
     </div>
-
 </div>
 <div class="row">
     <div class="col-12">
@@ -166,7 +165,6 @@
                 </div>
             </div>
             <div id="Items" class="col-10 offset-1 mt-2">
-
             </div>
             <div class="col-12">
                 <div id="LoadIcon" class="row text-center mt-5 mb-5">
@@ -207,14 +205,14 @@
             var items = query.split(" ");
             for (var i = 0; i < items.length; i += 4) {
                 if (items[i] == "(") {
-                    if ($(".where").length == 0) $("#ASModal").prepend("<hr data-group='top'/>")
-                    else $(".where").last().after("<hr data-group='top'/>");
+                    if ($(".where").length == 0) $("#ASModal").prepend("<hr data-group='top' />")
+                    else $(".where").last().after("<hr data-group='top' />");
                     i++;
                 }
 
                 if (items[i + 3] == ")") {
                     addNewWhere(items[i], items[i + 1], items[i + 2].split('$sp').join(' '), items[i + 4]);
-                    $(".where").last().after("<hr data-group='bottom'/>");
+                    $(".where").last().after("<hr data-group='bottom' />");
                     i++;
                 } else {
                     addNewWhere(items[i], items[i + 1], items[i + 2].split('$sp').join(' '), items[i + 3]);
@@ -416,10 +414,10 @@
                 if (startWhere == undefined) startWhere = $(this);
                 else endWhere = $(this);
             } else if (startWhere != undefined) {
-                startWhere.before("<hr data-group='top'/>");
+                startWhere.before("<hr data-group='top' />");
 
-                if (endWhere != undefined) endWhere.after("<hr data-group='bottom'/>");
-                else startWhere.after("<hr data-group='bottom'/>");
+                if (endWhere != undefined) endWhere.after("<hr data-group='bottom' />");
+                else startWhere.after("<hr data-group='bottom' />");
 
                 startWhere = undefined;
                 endWhere = undefined;
@@ -427,9 +425,9 @@
         });
 
         if (startWhere != undefined) {
-            startWhere.before("<hr data-group='top'/>");
-            if (endWhere != undefined) endWhere.after("<hr data-group='bottom'/>");
-            else startWhere.after("<hr data-group='bottom'/>");
+            startWhere.before("<hr data-group='top' />");
+            if (endWhere != undefined) endWhere.after("<hr data-group='bottom' />");
+            else startWhere.after("<hr data-group='bottom' />");
         }
 
         $(".sleek-checkbox").attr('checked', false);
@@ -475,7 +473,7 @@
         var where = '<div class="row where m-2">';
         where += '<div class="form-inline">'
         where += '<div class="col-1" style="min-width:80px">'
-        where += '<input id="CheckBox_' + IDCounter + '" type="checkbox" class="form-control sleek-checkbox"/>'
+        where += '<input id="CheckBox_' + IDCounter + '" type="checkbox" class="form-control sleek-checkbox" />'
         where += '<label for="CheckBox_' + IDCounter + '"></label>'
         where += '</div>'
         where += '<select id="Column_' + IDCounter + '" class="form-control col-3 column" onchange="$(this).siblings(\'.value\').val(\'\'); updateValueBox(this); search();">'
@@ -554,4 +552,3 @@
 </script>
 
 @await Html.PartialAsync("_BackToTop")
-

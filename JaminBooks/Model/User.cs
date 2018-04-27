@@ -5,9 +5,7 @@ using System.Data;
 using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -20,42 +18,52 @@ namespace JaminBooks.Model
         /// The unique id number that identifies the user. -1 represents an uncreated user.
         /// </summary>
         public int UserID { private set; get; } = -1;
+
         /// <summary>
         /// The creation date of the user.
         /// </summary>
         public DateTime CreationDate { private set; get; }
+
         /// <summary>
         /// The first name of the user.
         /// </summary>
         public string FirstName;
+
         /// <summary>
         /// The last name of the user.
         /// </summary>
         public string LastName;
+
         /// <summary>
         /// The email address of the user.
         /// </summary>
         public string Email;
+
         /// <summary>
         /// Whether or not the user is deleted.
         /// </summary>
         public bool IsDeleted = false;
+
         /// <summary>
         /// Whether or not the user is an administrator.
         /// </summary>
         public bool IsAdmin = false;
+
         /// <summary>
         /// Whether or not the user's email is confirmed.
         /// </summary>
         public bool IsConfirmed = false;
+
         /// <summary>
         /// The confirmation code of the given user.
         /// </summary>
         public string ConfirmationCode;
+
         /// <summary>
         /// The password of the user.
         /// </summary>
         public string Password;
+
         /// <summary>
         /// The icon of the user.
         /// </summary>
@@ -95,7 +103,7 @@ namespace JaminBooks.Model
         }
 
         /// <summary>
-        /// Cache this user's image if the image has not yet been cached. If the image has been cached, return the path to the image. 
+        /// Cache this user's image if the image has not yet been cached. If the image has been cached, return the path to the image.
         /// </summary>
         public string LoadImage
         {
@@ -347,7 +355,7 @@ namespace JaminBooks.Model
         /// </summary>
         /// <param name="BookID">the book's id</param>
         /// <returns>Whether or not the user has bought the given book</returns>
-        public bool hasBought(int BookID)
+        public bool HasBought(int BookID)
         {
             return SQL.Execute("uspUserHasBoughtBook", new Param("UserID", UserID), new Param("BookID", BookID)).Rows.Count > 0;
         }
@@ -435,7 +443,7 @@ namespace JaminBooks.Model
         /// </summary>
         /// <param name="dt">A DataTable containing users</param>
         /// <returns>A list of all users</returns>
-        public static List<User> getUsers(DataTable dt)
+        public static List<User> GetUsers(DataTable dt)
         {
             List<User> users = new List<User>();
             foreach (DataRow dr in dt.Rows)

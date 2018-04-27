@@ -1,19 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using JaminBooks.Model;
+﻿using JaminBooks.Model;
 using JaminBooks.Tools;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Collections.Generic;
 
 namespace JaminBooks.Pages.Admin
 {
+    /// <summary>
+    /// Displays a list of flagged ratings.
+    /// </summary>
     public class FlaggedRatingsModel : PageModel
     {
+        /// <summary>
+        /// The user currently logged in.
+        /// </summary>
         public User CurrentUser;
+
+        /// <summary>
+        /// Flagged ratings.
+        /// </summary>
         public List<Rating> Ratings;
 
+        /// <summary>
+        /// Load the page on a get request.
+        /// </summary>
         public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);

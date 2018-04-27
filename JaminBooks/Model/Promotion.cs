@@ -1,11 +1,9 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
-using System.Linq;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -18,26 +16,32 @@ namespace JaminBooks.Model
         /// The unique id number that identifies the promotion. -1 represent an uncreated promotion.
         /// </summary>
         public int PromotionID { private set; get; } = -1;
+
         /// <summary>
         /// The start date of the promotion.
         /// </summary>
         public DateTime StartDate;
+
         /// <summary>
         /// The end date of the promotion.
         /// </summary>
         public DateTime EndDate;
+
         /// <summary>
         /// The percent discount of the promotion.
         /// </summary>
         public int PercentDiscount;
+
         /// <summary>
         /// The total order value needed to earn the promotion. (Optional)
         /// </summary>
         public decimal? Total = null;
+
         /// <summary>
         /// The coupon code that acquires the promotion (Optional)
         /// </summary>
         public string Code = null;
+
         /// <summary>
         /// The id of the book with the promotion (Optional)
         /// </summary>
@@ -121,7 +125,6 @@ namespace JaminBooks.Model
             if (dt.Rows.Count > 0)
                 PromotionID = (int)dt.Rows[0]["PromotionID"];
         }
-
 
         /// <summary>
         /// Delete the promotion from the database and set its id to -1.

@@ -1,23 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using JaminBooks.Model;
+﻿using JaminBooks.Model;
 using JaminBooks.Tools;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace JaminBooks.Pages
 {
+    /// <summary>
+    /// Displays a catalog of books in the store. This page is primarily designed for users. Administrators should use
+    /// the books page in the "Admin" directory.
+    /// </summary>
     public class BooksModel : PageModel
     {
-        public string Title { get; set; } = "";
+        /// <summary>
+        /// The user currently logged in.
+        /// </summary>
         public User CurrentUser;
 
-        public void OnGet(string title)
+        /// <summary>
+        /// Load the page on a get request.
+        /// </summary>
+        public void OnGet()
         {
             CurrentUser = Authentication.GetCurrentUser(HttpContext);
-            if (title != null) Title = title;
         }
     }
 }

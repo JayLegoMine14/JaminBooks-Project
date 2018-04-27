@@ -644,7 +644,7 @@ var jconfirm, Jconfirm;
                 that.buttons[key].text = button.text || key;
                 that.buttons[key].btnClass = button.btnClass || 'btn-default';
                 that.buttons[key].action = button.action || function () {
-                    };
+                };
                 that.buttons[key].keys = button.keys || [];
                 that.buttons[key].isHidden = button.isHidden || false;
                 that.buttons[key].isDisabled = button.isDisabled || false;
@@ -835,14 +835,12 @@ var jconfirm, Jconfirm;
             this.$jconfirmBox.addClass('loading');
             if (disableButtons)
                 this.$btnc.find('button').prop('disabled', true);
-
         },
         hideLoading: function (enableButtons) {
             this.loadingSpinner = false;
             this.$jconfirmBox.removeClass('loading');
             if (enableButtons)
                 this.$btnc.find('button').prop('disabled', false);
-
         },
         ajaxResponse: false,
         contentParsed: '',
@@ -1093,7 +1091,6 @@ var jconfirm, Jconfirm;
 
                     if (typeof that.onDestroy === 'function')
                         that.onDestroy();
-
                 }, closeTimer * 0.40);
             }, 50);
 
@@ -1199,36 +1196,36 @@ var jconfirm, Jconfirm;
     jconfirm.lastFocused = false;
     jconfirm.pluginDefaults = {
         template: '' +
-        '<div class="jconfirm">' +
-        '<div class="jconfirm-bg jconfirm-bg-h"></div>' +
-        '<div class="jconfirm-scrollpane">' +
-        '<div class="jconfirm-row">' +
-        '<div class="jconfirm-cell">' +
-        '<div class="jconfirm-holder">' +
-        '<div class="jc-bs3-container">' +
-        '<div class="jc-bs3-row">' +
-        '<div class="jconfirm-box-container jconfirm-animated">' +
-        '<div class="jconfirm-box" role="dialog" aria-labelledby="labelled" tabindex="-1">' +
-        '<div class="jconfirm-closeIcon">&times;</div>' +
-        '<div class="jconfirm-title-c">' +
-        '<span class="jconfirm-icon-c"></span>' +
-        '<span class="jconfirm-title"></span>' +
-        '</div>' +
-        '<div class="jconfirm-content-pane">' +
-        '<div class="jconfirm-content"></div>' +
-        '</div>' +
-        '<div class="jconfirm-buttons">' +
-        '</div>' +
-        '<div class="jconfirm-clear">' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div></div>',
+            '<div class="jconfirm">' +
+            '<div class="jconfirm-bg jconfirm-bg-h"></div>' +
+            '<div class="jconfirm-scrollpane">' +
+            '<div class="jconfirm-row">' +
+            '<div class="jconfirm-cell">' +
+            '<div class="jconfirm-holder">' +
+            '<div class="jc-bs3-container">' +
+            '<div class="jc-bs3-row">' +
+            '<div class="jconfirm-box-container jconfirm-animated">' +
+            '<div class="jconfirm-box" role="dialog" aria-labelledby="labelled" tabindex="-1">' +
+            '<div class="jconfirm-closeIcon">&times;</div>' +
+            '<div class="jconfirm-title-c">' +
+            '<span class="jconfirm-icon-c"></span>' +
+            '<span class="jconfirm-title"></span>' +
+            '</div>' +
+            '<div class="jconfirm-content-pane">' +
+            '<div class="jconfirm-content"></div>' +
+            '</div>' +
+            '<div class="jconfirm-buttons">' +
+            '</div>' +
+            '<div class="jconfirm-clear">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div></div>',
         title: 'Hello',
         titleClass: '',
         type: 'default',
@@ -1287,22 +1284,16 @@ var jconfirm, Jconfirm;
             row: 'row'
         },
         onContentReady: function () {
-
         },
         onOpenBefore: function () {
-
         },
         onOpen: function () {
-
         },
         onClose: function () {
-
         },
         onDestroy: function () {
-
         },
         onAction: function () {
-
         }
     };
 

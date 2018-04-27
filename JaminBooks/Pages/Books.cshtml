@@ -177,7 +177,6 @@
     <div class="col-lg-10 col-md-10 col-12">
         <div class="row">
             <div id="Books" class="col-12">
-
             </div>
             <div class="col-12">
                 <div id="LoadIcon" class="row text-center mt-5 mb-5">
@@ -520,10 +519,6 @@
                 loadBooks(false);
             }
         });
-        var prefix = ("@Model.Title" != "" ? "$" : "");
-        $("#Search").val(prefix + "@Model.Title");
-        if ($("#Search").val() != "")
-            $("#Search").data("auto-open", true);
         loadBooks();
     });
 
@@ -619,12 +614,12 @@
 
                     bookcard += '<div class="card text-white book" onclick="showBookView(this)" style="width: 200px" '
                     bookcard += 'data-id="' + book.BookID + '"'
-                    bookcard += 'data-title=\'' + book.Title.replace("'", "&#39;").replace('"', "&quot;") + '\''
+                    bookcard += 'data-title=\'' + String(book.Title).replace(/'/g, "&#39;").replace(/"/g, "&quot;") + '\''
                     bookcard += 'data-quantity="' + book.Quantity + '"'
                     bookcard += 'data-price="' + book.Price.toFixed(2) + '"'
-                    bookcard += 'data-description=\'' + book.Description.replace("'", "&#39;").replace('"', "&quot;") + '\''
+                    bookcard += 'data-description=\'' + String(book.Description).replace(/'/g, "&#39;").replace(/"/g, "&quot;") + '\''
                     bookcard += 'data-authors=\'' + JSON.stringify(book.Authors) + '\''
-                    bookcard += 'data-categories=\'' + JSON.stringify(book.Categories).replace("'","&#39;") + '\''
+                    bookcard += 'data-categories=\'' + JSON.stringify(book.Categories).replace(/'/g,"&#39;") + '\''
                     bookcard += 'data-rating="' + book.Rating + '"'
                     bookcard += 'data-isbn10="' + book.ISBN10 + '"'
                     bookcard += 'data-isbn13="' + book.ISBN13 + '"'
@@ -702,7 +697,6 @@
         }
 
         $("#BookPrice").text(book.data("price"));
-
 
         $("#Description").text(book.data("description"));
 
@@ -782,7 +776,6 @@
         var viewportBottom = viewportTop + $(window).height();
         return elementBottom > viewportTop && elementTop < viewportBottom;
     };
-
 </script>
 
 @await Html.PartialAsync("_BackToTop")

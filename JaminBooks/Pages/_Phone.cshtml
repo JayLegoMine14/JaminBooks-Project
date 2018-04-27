@@ -107,6 +107,7 @@
         });
 
         $("#SavePhone").click(function () {
+            $("#Phone").trigger("input");
             if ($("#Phone").hasClass("valid")) {
                 $.ajax({
                     type: "POST",
@@ -124,7 +125,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        var phone = $(".phone[data-id='" + response[0] + "']");
+                        var phone = $(".phone[data-id='" + response + "']");
 
                         if (phone.length > 0) {
                             phone.find(".phone-number").text($("#Phone").val());

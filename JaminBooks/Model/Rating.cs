@@ -1,10 +1,9 @@
-﻿using System;
-using System.Data;
-using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
+﻿using JaminBooks.Tools;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
+using static JaminBooks.Tools.SQL;
 
 namespace JaminBooks.Model
 {
@@ -17,30 +16,37 @@ namespace JaminBooks.Model
         /// The unique id number that identifies the rating. -1 represents an uncreated rating.
         /// </summary>
         public int RatingID { get; private set; } = -1;
+
         /// <summary>
         /// The value of the rating. Between 0-5.
         /// </summary>
         public int RatingValue;
+
         /// <summary>
         /// The comment on the rating.
         /// </summary>
         public string Comment;
+
         /// <summary>
         /// The id of the book on which the rating was left.
         /// </summary>
         public int BookID;
+
         /// <summary>
         /// The id of the user who left the rating.
         /// </summary>
         public int UserID;
+
         /// <summary>
         /// Whether or not the rating should be visible.
         /// </summary>
         public bool Hidden;
+
         /// <summary>
         /// The date on which the rating was created.
         /// </summary>
         public DateTime CreationDate { get; private set; } = DateTime.Now;
+
         /// <summary>
         /// A list of the id number of users who have flagged this rating.
         /// </summary>
@@ -114,7 +120,6 @@ namespace JaminBooks.Model
             {
                 throw new Exception("Invalid Rating ID");
             }
-
         }
 
         /// <summary>

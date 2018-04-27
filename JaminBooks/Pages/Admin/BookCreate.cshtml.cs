@@ -1,53 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using JaminBooks.Model;
+﻿using JaminBooks.Model;
 using JaminBooks.Tools;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Collections.Generic;
 
 namespace JaminBooks.Pages.Admin
 {
+    /// <summary>
+    /// Displays an interface for creating or editing a book.
+    /// </summary>
     public class BookCreateModel : PageModel
     {
+        /// <summary>
+        /// The book to display.
+        /// </summary>
         public Book Book;
-        public Author Author;
-        public Publisher Publisher;
+
+        /// <summary>
+        /// A list of all publishers.
+        /// </summary>
         public List<Publisher> Publishers = Publisher.GetPublishers();
+
+        /// <summary>
+        /// A list of all authors.
+        /// </summary>
         public List<Author> Authors = Author.GetAuthors();
+
+        /// <summary>
+        /// A list of all categories.
+        /// </summary>
         public List<Category> Categories = Category.GetCategories();
-        public Dictionary<int, string> PhoneCategories = Phone.GetPhoneCategories();
 
-
-        public DateTime date1 = new DateTime(2000, 1, 1);
-
+        /// <summary>
+        /// Load the page on a get request.
+        /// </summary>
+        /// <param name="id">The id number of the book to load. (optional)</param>
         public void OnGet(int? id)
         {
             User user = Authentication.GetCurrentUser(HttpContext);
             if (user == null || !user.IsAdmin) Response.Redirect("/");
             Book = (id == null ? null : new Book(id.Value));
-        }
-
-        public void OnPost()
-        {
-            int id = Convert.ToInt32(Request.Form["BookID"]);
-            string title = Request.Form["Title"];
-            DateTime PublicationDate = Convert.ToDateTime(Request.Form["PublicationDate"]);
-            int PublisherID = Convert.ToInt32(Request.Form["PublisherID"]);
-            string isbn10 = Request.Form["ISBN10"];
-            string isbn13 = Request.Form["ISBN13"];
-            string desc = Request.Form["Description"];
-            DateTime CopyrightDate = Convert.ToDateTime(Request.Form["CopyrightDate"]);
-            decimal price = Convert.ToDecimal(Request.Form["Price"]);
-            decimal cost = Convert.ToDecimal(Request.Form["Cost"]);
-            int quantity = Convert.ToInt32(Request.Form["Quantity"]);
-            
-
-            Book b = new Book(id);
-            b.Title = title;
-            b.Save();
-            Book = b;
         }
     }
 }

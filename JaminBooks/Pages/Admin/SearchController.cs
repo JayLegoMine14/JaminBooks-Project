@@ -1,20 +1,25 @@
-﻿using System;
+﻿using JaminBooks.Model;
+using JaminBooks.Tools;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using JaminBooks.Model;
-using JaminBooks.Tools;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Pages.Admin
 {
+    /// <summary>
+    /// Handles AJAX requests from the administrator search pages.
+    /// </summary>
     public class SearchController : Controller
     {
+        /// <summary>
+        /// Loads a list of orders that meets the current search.
+        /// </summary>
+        /// <returns>Returns an object array with the AJAX call id at index 0, the number of items being returned at index 1, the
+        /// total number of items that match the search at index 2, and a list of items at index 3</returns>
         [Route("Search/LoadOrders")]
         public IActionResult LoadOrders()
         {
@@ -50,7 +55,6 @@ namespace JaminBooks.Pages.Admin
                     bool? groupLink = null;
                     foreach (JArray group in aSearch.Children<JArray>())
                     {
-
                         List<Order> holder = new List<Order>();
                         List<Order> some = new List<Order>();
                         bool? itemLink = null;
@@ -74,31 +78,37 @@ namespace JaminBooks.Pages.Admin
                                             o.OrderID.ToString() == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.OrderID > value
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.OrderID < value
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.OrderID >= value
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.OrderID <= value
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.OrderID.ToString() != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.OrderID.ToString().Contains(val) || val.Contains(o.OrderID.ToString())
@@ -106,6 +116,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "OrderDate":
                                     DateTime date = new DateTime();
                                     switch (comp)
@@ -115,31 +126,37 @@ namespace JaminBooks.Pages.Admin
                                             !DateTime.TryParse(val, out date) ? false : o.OrderDate.Date == date.Date
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.OrderDate.Date > date.Date
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.OrderDate.Date < date.Date
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.OrderDate.Date >= date.Date
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.OrderDate.Date <= date.Date
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.OrderDate.Date != date.Date
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.OrderDate.Date.ToString().Contains(val) || val.Contains(o.OrderDate.Date.ToString())
@@ -147,6 +164,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "FirstName":
                                     switch (comp)
                                     {
@@ -155,31 +173,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Card.User.FirstName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.FirstName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Card.User.FirstName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.FirstName.CompareTo(val) == 1 || o.Card.User.FirstName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.FirstName.CompareTo(val) == -1 || o.Card.User.FirstName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.FirstName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.FirstName.Contains(val) || val.Contains(o.Card.User.FirstName)
@@ -187,6 +211,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "LastName":
                                     switch (comp)
                                     {
@@ -195,31 +220,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Card.User.LastName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.LastName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Card.User.LastName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.LastName.CompareTo(val) == 1 || o.Card.User.LastName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.LastName.CompareTo(val) == -1 || o.Card.User.LastName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.LastName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Card.User.LastName.Contains(val) || val.Contains(o.Card.User.LastName)
@@ -227,6 +258,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Items":
                                     int itemCount = 0;
                                     switch (comp)
@@ -236,31 +268,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out itemCount) ? false : o.Books.Count == itemCount
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Books.Count > itemCount
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Books.Count < itemCount
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out itemCount) ? false : o.Books.Count >= itemCount
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Books.Count <= itemCount
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Books.Count != itemCount
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Books.Count.ToString().Contains(val) || val.Contains(o.Books.Count.ToString())
@@ -268,6 +306,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Item":
                                     switch (comp)
                                     {
@@ -276,31 +315,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Books.Keys.Any(b => b.ISBN10 == val || b.ISBN13 == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == 1 || b.ISBN13.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == -1 || b.ISBN13.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == 1 || b.ISBN10 == val || b.ISBN13.CompareTo(val) == 1 || b.ISBN13 == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == -1 || b.ISBN10 == val || b.ISBN13.CompareTo(val) == -1 || b.ISBN13 == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Books.Keys.Any(b => b.ISBN10 != val || b.ISBN13 != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Books.Keys.Any(b => b.ISBN10.Contains(val) || val.Contains(b.ISBN10) || b.ISBN13.Contains(val) || val.Contains(b.ISBN13))
@@ -308,6 +353,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Total":
                                     decimal total = 0;
                                     switch (comp)
@@ -317,31 +363,37 @@ namespace JaminBooks.Pages.Admin
                                             !Decimal.TryParse(val, out total) ? false : o.Total == total
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out total) ? false : o.Total > total
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out total) ? false : o.Total < total
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out total) ? false : o.Total >= total
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out total) ? false : o.Total <= total
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out total) ? false : o.Total != total
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Total.ToString().Contains(val) || val.Contains(o.Total.ToString())
@@ -349,6 +401,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "PercentDiscount":
                                     int discount = 0;
                                     switch (comp)
@@ -358,31 +411,37 @@ namespace JaminBooks.Pages.Admin
                                             o.PercentDiscount.ToString() == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount > discount
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount < discount
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount >= discount
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount <= discount
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.PercentDiscount.ToString() != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.PercentDiscount.ToString().Contains(val) || val.Contains(o.PercentDiscount.ToString())
@@ -390,6 +449,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsFulfilled":
                                     bool fullfilled = false;
                                     switch (comp)
@@ -399,31 +459,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled == fullfilled
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out fullfilled) ? false : !o.IsFulfilled
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out fullfilled) ? false : !o.IsFulfilled
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled != fullfilled
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out fullfilled) ? false : o.IsFulfilled == fullfilled
@@ -431,6 +497,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsRefunded":
                                     bool refunded = false;
                                     switch (comp)
@@ -440,31 +507,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded == refunded
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out refunded) ? false : !o.IsRefunded
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out refunded) ? false : !o.IsRefunded
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded != refunded
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out refunded) ? false : o.IsRefunded == refunded
@@ -472,6 +545,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "RefundDate":
                                     DateTime refundDate = new DateTime();
                                     switch (comp)
@@ -481,31 +555,37 @@ namespace JaminBooks.Pages.Admin
                                             !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date == refundDate.Date
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date > refundDate.Date
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date < refundDate.Date
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date >= refundDate.Date
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date <= refundDate.Date
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out refundDate) ? false : o.RefundDate == null ? false : o.RefundDate.Value.Date != refundDate.Date
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o => o.RefundDate != null &&
                                             (o.RefundDate.Value.Date.ToString().Contains(val) || val.Contains(o.RefundDate.Value.Date.ToString()))
@@ -513,6 +593,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "FulfilledDate":
                                     DateTime fulfilledDate = new DateTime();
                                     switch (comp)
@@ -522,31 +603,37 @@ namespace JaminBooks.Pages.Admin
                                             !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date == fulfilledDate.Date
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date > fulfilledDate.Date
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date < fulfilledDate.Date
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date >= fulfilledDate.Date
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date <= fulfilledDate.Date
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out fulfilledDate) ? false : o.FulfilledDate == null ? false : o.FulfilledDate.Value.Date != fulfilledDate.Date
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o => o.FulfilledDate != null &&
                                             (o.FulfilledDate.Value.Date.ToString().Contains(val) || val.Contains(o.FulfilledDate.Value.Date.ToString()))
@@ -554,6 +641,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsReshipping":
                                     bool reshipping = false;
                                     switch (comp)
@@ -563,31 +651,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null) == reshipping
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipping) ? false : !(o.ParentOrderID != null)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null)
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipping) ? false : !(o.ParentOrderID != null)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null) != reshipping
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipping) ? false : (o.ParentOrderID != null) == reshipping
@@ -595,6 +689,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsReshipped":
                                     bool reshipped = false;
                                     switch (comp)
@@ -604,31 +699,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0) == reshipped
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipped) ? false : !(o.Children.Count > 0)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0)
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipped) ? false : !(o.Children.Count > 0)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0) != reshipped
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out reshipped) ? false : (o.Children.Count > 0) == reshipped
@@ -669,50 +770,59 @@ namespace JaminBooks.Pages.Admin
                             case 1:
                                 itemsToSort.Sort((a, b) => a.OrderID.CompareTo(b.OrderID));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.OrderID.CompareTo(a.OrderID));
                                 break;
                         }
                         break;
+
                     case 2:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.OrderDate.CompareTo(b.OrderDate));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.OrderDate.CompareTo(a.OrderDate));
                                 break;
                         }
                         break;
+
                     case 3:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Card.User.LastFirstName.CompareTo(b.Card.User.LastFirstName));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Card.User.LastFirstName.CompareTo(a.Card.User.LastFirstName));
                                 break;
                         }
                         break;
+
                     case 4:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Books.Count.CompareTo(b.Books.Count));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Books.Count.CompareTo(a.Books.Count));
                                 break;
                         }
                         break;
+
                     case 5:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Total.CompareTo(b.Total));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Total.CompareTo(a.Total));
                                 break;
@@ -743,6 +853,11 @@ namespace JaminBooks.Pages.Admin
             return new JsonResult("");
         }
 
+        /// <summary>
+        /// Loads a list of publishers that meets the current search.
+        /// </summary>
+        /// <returns>Returns an object array with the AJAX call id at index 0, the number of items being returned at index 1, the
+        /// total number of items that match the search at index 2, and a list of items at index 3</returns>
         [Route("Search/LoadPublishers")]
         public IActionResult LoadPublishers()
         {
@@ -778,7 +893,6 @@ namespace JaminBooks.Pages.Admin
                     bool? groupLink = null;
                     foreach (JArray group in aSearch.Children<JArray>())
                     {
-
                         List<Publisher> holder = new List<Publisher>();
                         List<Publisher> some = new List<Publisher>();
                         bool? itemLink = null;
@@ -802,31 +916,37 @@ namespace JaminBooks.Pages.Admin
                                             o.PublisherID.ToString() == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.PublisherID > value
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.PublisherID < value
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.PublisherID >= value
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.PublisherID <= value
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.PublisherID.ToString() != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.PublisherID.ToString().Contains(val) || val.Contains(o.PublisherID.ToString())
@@ -834,6 +954,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "PublisherName":
                                     switch (comp)
                                     {
@@ -842,31 +963,37 @@ namespace JaminBooks.Pages.Admin
                                             o.PublisherName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.PublisherName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.PublisherName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.PublisherName.CompareTo(val) == 1 || o.PublisherName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.PublisherName.CompareTo(val) == -1 || o.PublisherName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.PublisherName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.PublisherName.Contains(val) || val.Contains(o.PublisherName)
@@ -874,6 +1001,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "FirstName":
                                     switch (comp)
                                     {
@@ -882,31 +1010,37 @@ namespace JaminBooks.Pages.Admin
                                             o.ContactFirstName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.ContactFirstName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.ContactFirstName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.ContactFirstName.CompareTo(val) == 1 || o.ContactFirstName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.ContactFirstName.CompareTo(val) == -1 || o.ContactFirstName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.ContactFirstName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.ContactFirstName.Contains(val) || val.Contains(o.ContactFirstName)
@@ -914,6 +1048,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "ContactLastName":
                                     switch (comp)
                                     {
@@ -922,31 +1057,37 @@ namespace JaminBooks.Pages.Admin
                                             o.ContactLastName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.ContactLastName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.ContactLastName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.ContactLastName.CompareTo(val) == 1 || o.ContactLastName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.ContactLastName.CompareTo(val) == -1 || o.ContactLastName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.ContactLastName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.ContactLastName.Contains(val) || val.Contains(o.ContactLastName)
@@ -954,6 +1095,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "PhoneNumber":
                                     switch (comp)
                                     {
@@ -962,31 +1104,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Phone.Number == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Phone.Number.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Phone.Number.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Phone.Number.CompareTo(val) == 1 || o.Phone.Number.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Phone.Number.CompareTo(val) == -1 || o.Phone.Number.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Phone.Number != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Phone.Number.Contains(val) || val.Contains(o.Phone.Number)
@@ -994,6 +1142,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "City":
                                     switch (comp)
                                     {
@@ -1002,31 +1151,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Address.City == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Address.City.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Address.City.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Address.City.CompareTo(val) == 1 || o.Address.City.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Address.City.CompareTo(val) == -1 || o.Address.City.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Address.City != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Address.City.Contains(val) || val.Contains(o.Address.City)
@@ -1034,6 +1189,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "State":
                                     switch (comp)
                                     {
@@ -1042,31 +1198,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Address.State == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Address.State.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Address.State.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Address.State.CompareTo(val) == 1 || o.Address.State.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Address.State.CompareTo(val) == -1 || o.Address.State.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Address.State != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Address.State.Contains(val) || val.Contains(o.Address.State)
@@ -1074,6 +1236,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Country":
                                     switch (comp)
                                     {
@@ -1082,31 +1245,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Address.Country == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Address.Country.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Address.Country.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Address.Country.CompareTo(val) == 1 || o.Address.Country.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Address.Country.CompareTo(val) == -1 || o.Address.Country.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Address.Country != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Address.Country.Contains(val) || val.Contains(o.Address.Country)
@@ -1114,6 +1283,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "ZIP":
                                     switch (comp)
                                     {
@@ -1122,31 +1292,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Address.ZIP == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Address.ZIP.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Address.ZIP.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Address.ZIP.CompareTo(val) == 1 || o.Address.ZIP.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Address.ZIP.CompareTo(val) == -1 || o.Address.ZIP.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Address.ZIP != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Address.ZIP.Contains(val) || val.Contains(o.Address.ZIP)
@@ -1154,6 +1330,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsDeleted":
                                     bool deleted = false;
                                     switch (comp)
@@ -1163,31 +1340,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted != deleted
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
@@ -1195,6 +1378,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Sales":
                                     int sales = 0;
                                     switch (comp)
@@ -1204,31 +1388,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out sales) ? false : o.GetSales() == sales
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.GetSales() > sales
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.GetSales() < sales
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out sales) ? false : o.GetSales() >= sales
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.GetSales() <= sales
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.GetSales() != sales
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.GetSales().ToString().Contains(val) || val.Contains(o.GetSales().ToString())
@@ -1236,6 +1426,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Books":
                                     int books = 0;
                                     switch (comp)
@@ -1245,31 +1436,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out books) ? false : o.GetBooks() == books
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out books) ? false : o.GetBooks() > books
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out books) ? false : o.GetBooks() < books
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out books) ? false : o.GetBooks() >= books
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out books) ? false : o.GetBooks() <= books
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out books) ? false : o.GetBooks() != books
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.GetBooks().ToString().Contains(val) || val.Contains(o.GetBooks().ToString())
@@ -1310,61 +1507,72 @@ namespace JaminBooks.Pages.Admin
                             case 1:
                                 itemsToSort.Sort((a, b) => a.PublisherID.CompareTo(b.PublisherID));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.PublisherID.CompareTo(a.PublisherID));
                                 break;
                         }
                         break;
+
                     case 2:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.PublisherName.CompareTo(b.PublisherName));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.PublisherName.CompareTo(a.PublisherName));
                                 break;
                         }
                         break;
+
                     case 3:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.FullName.CompareTo(b.FullName));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.FullName.CompareTo(a.FullName));
                                 break;
                         }
                         break;
+
                     case 4:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Phone.Number.CompareTo(b.Phone.Number));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Phone.Number.CompareTo(a.Phone.Number));
                                 break;
                         }
                         break;
+
                     case 5:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Address.City.CompareTo(b.Address.City));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Address.City.CompareTo(a.Address.City));
                                 break;
                         }
                         break;
+
                     case 6:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.IsDeleted.CompareTo(b.IsDeleted));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.IsDeleted.CompareTo(a.IsDeleted));
                                 break;
@@ -1383,10 +1591,10 @@ namespace JaminBooks.Pages.Admin
                     items.Add(new
                     {
                         ID = pub.PublisherID,
-                        PublisherName = pub.PublisherName,
+                        pub.PublisherName,
                         ContactName = pub.FullName,
                         PhoneNumber = pub.Phone.Number,
-                        City = pub.Address.City,
+                        pub.Address.City,
                         Deleted = pub.IsDeleted
                     });
                 }
@@ -1396,6 +1604,11 @@ namespace JaminBooks.Pages.Admin
             return new JsonResult("");
         }
 
+        /// <summary>
+        /// Loads a list of accounts that meets the current search.
+        /// </summary>
+        /// <returns>Returns an object array with the AJAX call id at index 0, the number of items being returned at index 1, the
+        /// total number of items that match the search at index 2, and a list of items at index 3</returns>
         [Route("Search/LoadAccounts")]
         public IActionResult LoadAccounts()
         {
@@ -1422,7 +1635,7 @@ namespace JaminBooks.Pages.Admin
                 List<User> itemsToSort = new List<User>();
                 if (!advanced)
                 {
-                    itemsToSort = Model.User.getUsers(SQL.Execute("uspSearchUserByAll", new Param("Search", search)));
+                    itemsToSort = Model.User.GetUsers(SQL.Execute("uspSearchUserByAll", new Param("Search", search)));
                 }
                 else
                 {
@@ -1431,7 +1644,6 @@ namespace JaminBooks.Pages.Admin
                     bool? groupLink = null;
                     foreach (JArray group in aSearch.Children<JArray>())
                     {
-
                         List<User> holder = new List<User>();
                         List<User> some = new List<User>();
                         bool? itemLink = null;
@@ -1455,31 +1667,37 @@ namespace JaminBooks.Pages.Admin
                                             o.UserID.ToString() == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.UserID > value
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.UserID < value
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.UserID >= value
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.UserID <= value
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.UserID.ToString() != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.UserID.ToString().Contains(val) || val.Contains(o.UserID.ToString())
@@ -1487,6 +1705,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Email":
                                     switch (comp)
                                     {
@@ -1495,31 +1714,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Email == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Email.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Email.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Email.CompareTo(val) == 1 || o.Email.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Email.CompareTo(val) == -1 || o.Email.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Email != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Email.Contains(val) || val.Contains(o.Email)
@@ -1527,6 +1752,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "FirstName":
                                     switch (comp)
                                     {
@@ -1535,31 +1761,37 @@ namespace JaminBooks.Pages.Admin
                                             o.FirstName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.FirstName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.FirstName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.FirstName.CompareTo(val) == 1 || o.FirstName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.FirstName.CompareTo(val) == -1 || o.FirstName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.FirstName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.FirstName.Contains(val) || val.Contains(o.FirstName)
@@ -1567,6 +1799,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "LastName":
                                     switch (comp)
                                     {
@@ -1575,31 +1808,37 @@ namespace JaminBooks.Pages.Admin
                                             o.LastName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.LastName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.LastName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.LastName.CompareTo(val) == 1 || o.LastName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.LastName.CompareTo(val) == -1 || o.LastName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.LastName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.LastName.Contains(val) || val.Contains(o.LastName)
@@ -1607,6 +1846,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Orders":
                                     int itemCount = 0;
                                     switch (comp)
@@ -1616,31 +1856,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count == itemCount
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count > itemCount
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count < itemCount
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count >= itemCount
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count <= itemCount
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out itemCount) ? false : o.Orders.Count != itemCount
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Orders.Count.ToString().Contains(val) || val.Contains(o.Orders.Count.ToString())
@@ -1648,6 +1894,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Book":
                                     switch (comp)
                                     {
@@ -1656,31 +1903,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Orders.Any(t => t.Books.Keys.Any(b => b.ISBN10 == val || b.ISBN13 == val)
                                             )).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Orders.Any(t => t.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == 1 || b.ISBN13.CompareTo(val) == 1)
                                             )).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Orders.Any(t => t.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == -1 || b.ISBN13.CompareTo(val) == -1)
                                             )).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Orders.Any(t => t.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == 1 || b.ISBN10 == val || b.ISBN13.CompareTo(val) == 1 || b.ISBN13 == val)
                                             )).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Orders.Any(t => t.Books.Keys.Any(b => b.ISBN10.CompareTo(val) == -1 || b.ISBN10 == val || b.ISBN13.CompareTo(val) == -1 || b.ISBN13 == val)
                                             )).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Orders.Any(t => t.Books.Keys.Any(b => b.ISBN10 != val || b.ISBN13 != val)
                                             )).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Orders.Any(t => t.Books.Keys.Any(b => b.ISBN10.Contains(val) || val.Contains(b.ISBN10) || b.ISBN13.Contains(val) || val.Contains(b.ISBN13))
@@ -1688,6 +1941,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Card":
                                     switch (comp)
                                     {
@@ -1696,31 +1950,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Cards.Any(b => b.LastFourDigits == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Cards.Any(b => b.LastFourDigits.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Cards.Any(b => b.LastFourDigits.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Cards.Any(b => b.LastFourDigits.CompareTo(val) == 1 || b.LastFourDigits == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Cards.Any(b => b.LastFourDigits.CompareTo(val) == -1 || b.LastFourDigits == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Cards.Any(b => b.LastFourDigits != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Cards.Any(b => b.LastFourDigits.Contains(val) || val.Contains(b.LastFourDigits))
@@ -1728,6 +1988,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Phone":
                                     switch (comp)
                                     {
@@ -1736,31 +1997,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty) == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty).CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty).CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty).CompareTo(val) == 1 || Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty) == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty).CompareTo(val) == -1 || Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty) == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty) != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty).Contains(val) || val.Contains(Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty)))
@@ -1768,6 +2035,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "City":
                                     switch (comp)
                                     {
@@ -1776,31 +2044,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Addresses.Any(b => b.City == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.City.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Addresses.Any(b => b.City.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.City.CompareTo(val) == 1 || b.City == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.City.CompareTo(val) == -1 || b.City == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.City != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.City.Contains(val) || val.Contains(b.City))
@@ -1808,6 +2082,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "State":
                                     switch (comp)
                                     {
@@ -1816,31 +2091,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Addresses.Any(b => b.State == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.State.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Addresses.Any(b => b.State.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.State.CompareTo(val) == 1 || b.State == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.State.CompareTo(val) == -1 || b.State == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.State != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.State.Contains(val) || val.Contains(b.State))
@@ -1848,6 +2129,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Country":
                                     switch (comp)
                                     {
@@ -1856,31 +2138,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Addresses.Any(b => b.Country == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.Country.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Addresses.Any(b => b.Country.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.Country.CompareTo(val) == 1 || b.Country == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.Country.CompareTo(val) == -1 || b.Country == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.Country != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.Country.Contains(val) || val.Contains(b.Country))
@@ -1888,6 +2176,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "ZIP":
                                     switch (comp)
                                     {
@@ -1896,31 +2185,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Addresses.Any(b => b.ZIP == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.ZIP.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Addresses.Any(b => b.ZIP.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.ZIP.CompareTo(val) == 1 || b.ZIP == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.ZIP.CompareTo(val) == -1 || b.ZIP == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.ZIP != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Addresses.Any(b => b.ZIP.Contains(val) || val.Contains(b.ZIP))
@@ -1928,6 +2223,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsEnabled":
                                     bool enabled = false;
                                     switch (comp)
@@ -1937,31 +2233,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out enabled) ? false : !o.IsDeleted == enabled
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out enabled) ? false : !o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out enabled) ? false : !o.IsDeleted
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted == enabled
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out enabled) ? false : o.IsDeleted != enabled
@@ -1969,6 +2271,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsConfirmed":
                                     bool confirmed = false;
                                     switch (comp)
@@ -1978,31 +2281,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out confirmed) ? false : o.IsConfirmed == confirmed
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out confirmed) ? false : o.IsConfirmed
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out confirmed) ? false : !o.IsConfirmed
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out confirmed) ? false : o.IsConfirmed
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out confirmed) ? false : !o.IsConfirmed
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out confirmed) ? false : o.IsConfirmed != confirmed
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out confirmed) ? false : o.IsConfirmed == confirmed
@@ -2010,6 +2319,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsAdmin":
                                     bool admin = false;
                                     switch (comp)
@@ -2019,31 +2329,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out admin) ? false : o.IsAdmin == admin
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out admin) ? false : o.IsAdmin
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out admin) ? false : !o.IsAdmin
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out admin) ? false : o.IsAdmin
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out admin) ? false : !o.IsAdmin
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out admin) ? false : o.IsAdmin != admin
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out admin) ? false : o.IsAdmin == admin
@@ -2051,6 +2367,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "CreationDate":
                                     DateTime date = new DateTime();
                                     switch (comp)
@@ -2060,31 +2377,37 @@ namespace JaminBooks.Pages.Admin
                                             !DateTime.TryParse(val, out date) ? false : o.CreationDate.Date == date.Date
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.CreationDate.Date > date.Date
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.CreationDate.Date < date.Date
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.CreationDate.Date >= date.Date
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.CreationDate.Date <= date.Date
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.CreationDate.Date != date.Date
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.CreationDate.Date.ToString().Contains(val) || val.Contains(o.CreationDate.Date.ToString())
@@ -2125,61 +2448,72 @@ namespace JaminBooks.Pages.Admin
                             case 1:
                                 itemsToSort.Sort((a, b) => a.UserID.CompareTo(b.UserID));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.UserID.CompareTo(a.UserID));
                                 break;
                         }
                         break;
+
                     case 2:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.HasIcon ? 0 : -1);
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.HasIcon ? 0 : -1);
                                 break;
                         }
                         break;
+
                     case 3:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Email.CompareTo(b.Email));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Email.CompareTo(a.Email));
                                 break;
                         }
                         break;
+
                     case 4:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.FullName.CompareTo(b.FullName));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.FullName.CompareTo(a.FullName));
                                 break;
                         }
                         break;
+
                     case 5:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.CreationDate.CompareTo(b.CreationDate));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.CreationDate.CompareTo(a.CreationDate));
                                 break;
                         }
                         break;
+
                     case 6:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.IsDeleted.CompareTo(b.IsDeleted));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.IsDeleted.CompareTo(a.IsDeleted));
                                 break;
@@ -2213,6 +2547,11 @@ namespace JaminBooks.Pages.Admin
             return new JsonResult("");
         }
 
+        /// <summary>
+        /// Loads a list of books that meets the current search.
+        /// </summary>
+        /// <returns>Returns an object array with the AJAX call id at index 0, the number of items being returned at index 1, the
+        /// total number of items that match the search at index 2, and a list of items at index 3</returns>
         [Route("Search/LoadBooks")]
         public IActionResult LoadBooks()
         {
@@ -2248,7 +2587,6 @@ namespace JaminBooks.Pages.Admin
                     bool? groupLink = null;
                     foreach (JArray group in aSearch.Children<JArray>())
                     {
-
                         List<Book> holder = new List<Book>();
                         List<Book> some = new List<Book>();
                         bool? itemLink = null;
@@ -2272,31 +2610,37 @@ namespace JaminBooks.Pages.Admin
                                             o.BookID.ToString() == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.BookID > value
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.BookID < value
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.BookID >= value
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out value) ? false : o.BookID <= value
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.BookID.ToString() != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.BookID.ToString().Contains(val) || val.Contains(o.BookID.ToString())
@@ -2304,6 +2648,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Title":
                                     switch (comp)
                                     {
@@ -2312,31 +2657,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Title == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Title.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Title.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Title.CompareTo(val) == 1 || o.Title.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Title.CompareTo(val) == -1 || o.Title.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Title != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Title.Contains(val) || val.Contains(o.Title)
@@ -2344,6 +2695,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "ISBN13":
                                     switch (comp)
                                     {
@@ -2352,31 +2704,37 @@ namespace JaminBooks.Pages.Admin
                                             o.ISBN13 == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.ISBN13.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.ISBN13.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.ISBN13.CompareTo(val) == 1 || o.ISBN13.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.ISBN13.CompareTo(val) == -1 || o.ISBN13.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.ISBN13 != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.ISBN13.Contains(val) || val.Contains(o.ISBN13)
@@ -2384,6 +2742,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "ISBN10":
                                     switch (comp)
                                     {
@@ -2392,31 +2751,37 @@ namespace JaminBooks.Pages.Admin
                                             o.ISBN10 == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.ISBN10.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.ISBN10.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.ISBN10.CompareTo(val) == 1 || o.ISBN10.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.ISBN10.CompareTo(val) == -1 || o.ISBN10.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.ISBN10 != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.ISBN10.Contains(val) || val.Contains(o.ISBN10)
@@ -2424,6 +2789,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Description":
                                     switch (comp)
                                     {
@@ -2432,31 +2798,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Description == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Description.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Description.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Description.CompareTo(val) == 1 || o.Description.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Description.CompareTo(val) == -1 || o.Description.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Description != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Description.Contains(val) || val.Contains(o.Description)
@@ -2464,6 +2836,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Price":
                                     decimal price = 0;
                                     switch (comp)
@@ -2473,31 +2846,37 @@ namespace JaminBooks.Pages.Admin
                                             !Decimal.TryParse(val, out price) ? false : o.Price == price
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out price) ? false : o.Price > price
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out price) ? false : o.Price < price
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out price) ? false : o.Price >= price
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out price) ? false : o.Price <= price
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out price) ? false : o.Price != price
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Price.ToString().Contains(val) || val.Contains(o.Price.ToString())
@@ -2505,6 +2884,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Cost":
                                     decimal cost = 0;
                                     switch (comp)
@@ -2514,31 +2894,37 @@ namespace JaminBooks.Pages.Admin
                                             !Decimal.TryParse(val, out cost) ? false : o.Cost == cost
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out cost) ? false : o.Cost > cost
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out cost) ? false : o.Cost < cost
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out cost) ? false : o.Cost >= cost
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out cost) ? false : o.Cost <= cost
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Decimal.TryParse(val, out cost) ? false : o.Cost != cost
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Cost.ToString().Contains(val) || val.Contains(o.Cost.ToString())
@@ -2546,6 +2932,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Quantity":
                                     int quan = 0;
                                     switch (comp)
@@ -2555,31 +2942,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out quan) ? false : o.Quantity == quan
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out quan) ? false : o.Quantity > quan
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out quan) ? false : o.Quantity < quan
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out quan) ? false : o.Quantity >= quan
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out quan) ? false : o.Quantity <= quan
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out quan) ? false : o.Quantity != quan
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Quantity.ToString().Contains(val) || val.Contains(o.Quantity.ToString())
@@ -2587,6 +2980,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Sales":
                                     int sales = 0;
                                     switch (comp)
@@ -2596,31 +2990,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out sales) ? false : o.Sales == sales
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.Sales > sales
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.Sales < sales
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out sales) ? false : o.Sales >= sales
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.Sales <= sales
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out sales) ? false : o.Sales != sales
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Sales.ToString().Contains(val) || val.Contains(o.Sales.ToString())
@@ -2628,6 +3028,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Rating":
                                     int rating = 0;
                                     switch (comp)
@@ -2637,31 +3038,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out rating) ? false : o.Rating == rating
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out rating) ? false : o.Rating > rating
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out rating) ? false : o.Rating < rating
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out rating) ? false : o.Rating >= rating
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out rating) ? false : o.Rating <= rating
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out rating) ? false : o.Rating != rating
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Rating.ToString().Contains(val) || val.Contains(o.Rating.ToString())
@@ -2669,6 +3076,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Reviews":
                                     int reviewCount = 0;
                                     switch (comp)
@@ -2678,31 +3086,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count == reviewCount
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count > reviewCount
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count < reviewCount
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count >= reviewCount
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count <= reviewCount
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out reviewCount) ? false : Rating.GetRatings(o.BookID).Count != reviewCount
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             Rating.GetRatings(o.BookID).Count.ToString().Contains(val) || val.Contains(Rating.GetRatings(o.BookID).Count.ToString())
@@ -2710,6 +3124,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Author":
                                     switch (comp)
                                     {
@@ -2718,31 +3133,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Authors.Any(b => b.FullName == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Authors.Any(b => b.FullName.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Authors.Any(b => b.FullName.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Authors.Any(b => b.FullName.CompareTo(val) == 1 || b.FullName == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Authors.Any(b => b.FullName.CompareTo(val) == -1 || b.FullName == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Authors.Any(b => b.FullName != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Authors.Any(b => b.FullName.Contains(val) || val.Contains(b.FullName))
@@ -2750,6 +3171,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "Category":
                                     switch (comp)
                                     {
@@ -2758,31 +3180,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Categories.Any(b => b.CategoryName == val)
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Categories.Any(b => b.CategoryName.CompareTo(val) == 1)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Categories.Any(b => b.CategoryName.CompareTo(val) == -1)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Categories.Any(b => b.CategoryName.CompareTo(val) == 1 || b.CategoryName == val)
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Categories.Any(b => b.CategoryName.CompareTo(val) == -1 || b.CategoryName == val)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Categories.Any(b => b.CategoryName != val)
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Categories.Any(b => b.CategoryName.Contains(val) || val.Contains(b.CategoryName))
@@ -2790,6 +3218,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "PublicationDate":
                                     DateTime date = new DateTime();
                                     switch (comp)
@@ -2799,31 +3228,37 @@ namespace JaminBooks.Pages.Admin
                                             !DateTime.TryParse(val, out date) ? false : o.PublicationDate.Date == date.Date
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.PublicationDate.Date > date.Date
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.PublicationDate.Date < date.Date
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.PublicationDate.Date >= date.Date
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.PublicationDate.Date <= date.Date
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date) ? false : o.PublicationDate.Date != date.Date
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.PublicationDate.Date.ToString().Contains(val) || val.Contains(o.PublicationDate.Date.ToString())
@@ -2831,6 +3266,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "CopyrightDate":
                                     DateTime date2 = new DateTime();
                                     switch (comp)
@@ -2840,31 +3276,37 @@ namespace JaminBooks.Pages.Admin
                                             !DateTime.TryParse(val, out date2) ? false : o.CopyrightDate.Date == date2.Date
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date2) ? false : o.CopyrightDate.Date > date2.Date
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date2) ? false : o.CopyrightDate.Date < date2.Date
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date2) ? false : o.CopyrightDate.Date >= date2.Date
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date2) ? false : o.CopyrightDate.Date <= date2.Date
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !DateTime.TryParse(val, out date2) ? false : o.CopyrightDate.Date != date2.Date
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.CopyrightDate.Date.ToString().Contains(val) || val.Contains(o.CopyrightDate.Date.ToString())
@@ -2872,6 +3314,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "PublisherName":
                                     switch (comp)
                                     {
@@ -2880,31 +3323,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Publisher.PublisherName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.PublisherName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Publisher.PublisherName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.PublisherName.CompareTo(val) == 1 || o.Publisher.PublisherName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.PublisherName.CompareTo(val) == -1 || o.Publisher.PublisherName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.PublisherName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.PublisherName.Contains(val) || val.Contains(o.Publisher.PublisherName)
@@ -2912,6 +3361,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "PublisherContact":
                                     switch (comp)
                                     {
@@ -2920,31 +3370,37 @@ namespace JaminBooks.Pages.Admin
                                             o.Publisher.FullName == val
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.FullName.CompareTo(val) == 1
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                                 o.Publisher.FullName.CompareTo(val) == -1
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.FullName.CompareTo(val) == 1 || o.Publisher.FullName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.FullName.CompareTo(val) == -1 || o.Publisher.FullName.CompareTo(val) == 0
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.FullName != val
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.Publisher.FullName.Contains(val) || val.Contains(o.Publisher.FullName)
@@ -2952,6 +3408,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsDeleted":
                                     bool deleted = false;
                                     switch (comp)
@@ -2961,31 +3418,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : !o.IsDeleted
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted != deleted
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out deleted) ? false : o.IsDeleted == deleted
@@ -2993,6 +3456,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "IsOnSale":
                                     bool onsale = false;
                                     switch (comp)
@@ -3002,31 +3466,37 @@ namespace JaminBooks.Pages.Admin
                                             !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0) == onsale
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0)
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out onsale) ? false : !(o.PercentDiscount > 0)
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0)
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out onsale) ? false : !(o.PercentDiscount > 0)
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0) != onsale
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             !Boolean.TryParse(val, out onsale) ? false : (o.PercentDiscount > 0) == onsale
@@ -3034,6 +3504,7 @@ namespace JaminBooks.Pages.Admin
                                             break;
                                     }
                                     break;
+
                                 case "PercentDiscount":
                                     int discount = 0;
                                     switch (comp)
@@ -3043,31 +3514,37 @@ namespace JaminBooks.Pages.Admin
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount == discount
                                             ).ToList();
                                             break;
+
                                         case "gt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount > discount
                                             ).ToList();
                                             break;
+
                                         case "lt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount < discount
                                             ).ToList();
                                             break;
+
                                         case "ge":
                                             holder = searchItems.Where(o =>
                                            !Int32.TryParse(val, out discount) ? false : o.PercentDiscount >= discount
                                            ).ToList();
                                             break;
+
                                         case "le":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount <= discount
                                             ).ToList();
                                             break;
+
                                         case "nt":
                                             holder = searchItems.Where(o =>
                                             !Int32.TryParse(val, out discount) ? false : o.PercentDiscount != discount
                                             ).ToList();
                                             break;
+
                                         case "lk":
                                             holder = searchItems.Where(o =>
                                             o.PercentDiscount.ToString().Contains(val) || val.Contains(o.PercentDiscount.ToString())
@@ -3108,94 +3585,111 @@ namespace JaminBooks.Pages.Admin
                             case 1:
                                 itemsToSort.Sort((a, b) => a.BookID.CompareTo(b.BookID));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.BookID.CompareTo(a.BookID));
                                 break;
                         }
                         break;
+
                     case 2:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.HasIcon ? 0 : -1);
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.HasIcon ? 0 : -1);
                                 break;
                         }
                         break;
+
                     case 3:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Title.CompareTo(b.Title));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Title.CompareTo(a.Title));
                                 break;
                         }
                         break;
+
                     case 4:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => string.Join(", ", a.Authors.Select(c => c.FullName)).CompareTo(string.Join(", ", b.Authors.Select(c => c.FullName))));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => string.Join(", ", b.Authors.Select(c => c.FullName)).CompareTo(string.Join(", ", a.Authors.Select(c => c.FullName))));
                                 break;
                         }
                         break;
+
                     case 5:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.ISBN13.CompareTo(b.ISBN13));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.ISBN13.CompareTo(a.ISBN13));
                                 break;
                         }
                         break;
+
                     case 6:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Price.CompareTo(b.Price));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Price.CompareTo(a.Price));
                                 break;
                         }
                         break;
+
                     case 7:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Cost.CompareTo(b.Cost));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Cost.CompareTo(a.Cost));
                                 break;
                         }
                         break;
+
                     case 8:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.Quantity.CompareTo(b.Quantity));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.Quantity.CompareTo(a.Quantity));
                                 break;
                         }
                         break;
+
                     case 9:
                         switch (sortOrder)
                         {
                             case 1:
                                 itemsToSort.Sort((a, b) => a.IsDeleted.CompareTo(b.IsDeleted));
                                 break;
+
                             case -1:
                                 itemsToSort.Sort((a, b) => b.IsDeleted.CompareTo(a.IsDeleted));
                                 break;

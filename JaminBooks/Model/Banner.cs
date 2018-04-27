@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -20,21 +17,24 @@ namespace JaminBooks.Model
         /// The unique number that identifies this banner.
         /// </summary>
         public int BannerID { private set; get; } = -1;
+
         /// <summary>
         /// The url to which this banner's button links.
         /// </summary>
         public string URL;
+
         /// <summary>
         /// An integer reflecting the position of this banner.
         /// </summary>
         public int Order;
+
         /// <summary>
         /// A byte representation of this banner's image.
         /// </summary>
         public byte[] Image { set; private get; }
 
         /// <summary>
-        /// Cache this banner's image if the image has not yet been cached. If the image has been cached, return the path to the image. 
+        /// Cache this banner's image if the image has not yet been cached. If the image has been cached, return the path to the image.
         /// </summary>
         public string LoadImage
         {

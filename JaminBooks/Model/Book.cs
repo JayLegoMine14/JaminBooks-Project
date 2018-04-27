@@ -1,14 +1,11 @@
-﻿using System;
-using System.Data;
-using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
-using System.Data.SqlTypes;
+﻿using JaminBooks.Tools;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlTypes;
 using System.IO;
-using System.Drawing;
-using JaminBooks.Tools;
+using System.Linq;
+using static JaminBooks.Tools.SQL;
 
 namespace JaminBooks.Model
 {
@@ -26,58 +23,72 @@ namespace JaminBooks.Model
         /// The title of the book.
         /// </summary>
         public string Title;
+
         /// <summary>
         /// The id number of this book's publisher.
         /// </summary>
         public int PublisherID = -1;
+
         /// <summary>
         /// The date of publication.
         /// </summary>
         public DateTime PublicationDate;
+
         /// <summary>
         /// This book's ISBN 10 number.
         /// </summary>
         public string ISBN10;
+
         /// <summary>
         /// This book's ISBN 13 number.
         /// </summary>
         public string ISBN13;
+
         /// <summary>
         /// This book's description.
         /// </summary>
         public string Description;
+
         /// <summary>
         /// The copyright date.
         /// </summary>
         public DateTime CopyrightDate;
+
         /// <summary>
         /// This book's original price.
         /// </summary>
         public decimal _Price;
+
         /// <summary>
         /// The cost of this book.
         /// </summary>
         public decimal Cost;
+
         /// <summary>
         /// The number of units of this book in stock.
         /// </summary>
         public int Quantity;
+
         /// <summary>
         /// Whether or not this book has been deleted.
         /// </summary>
         public bool IsDeleted = false;
+
         /// <summary>
         /// A byte representation of this book's image.
         /// </summary>
         public byte[] BookImage { set; private get; }
+
         /// <summary>
         /// This books star rating as an integer. Should be between 0 and 5.
         /// </summary>
         public int Rating;
+
         /// <summary>
         /// The best discount currently on this book.
         /// </summary>
         public int PercentDiscount = 0;
+
         /// <summary>
         /// Whether or not to load the full publisher of this book or just the name of the publisher.
         /// </summary>
@@ -110,7 +121,7 @@ namespace JaminBooks.Model
         }
 
         /// <summary>
-        /// Cache this book's image if the image has not yet been cached. If the image has been cached, return the path to the image. 
+        /// Cache this book's image if the image has not yet been cached. If the image has been cached, return the path to the image.
         /// </summary>
         public string LoadImage
         {
@@ -183,8 +194,10 @@ namespace JaminBooks.Model
                     return new Publisher(PublisherID);
                 else
                 {
-                    Publisher p = new Publisher();
-                    p.PublisherName = new Publisher(PublisherID).PublisherName;
+                    Publisher p = new Publisher
+                    {
+                        PublisherName = new Publisher(PublisherID).PublisherName
+                    };
                     return p;
                 }
             }
@@ -297,7 +310,6 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspDeleteBook", new Param("BookID", BookID));
             BookID = -1;
-
         }
 
         /// <summary>

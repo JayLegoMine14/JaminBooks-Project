@@ -1,10 +1,8 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -17,10 +15,12 @@ namespace JaminBooks.Model
         /// The unique id number identifying this phone. -1 represents an uncreated phone.
         /// </summary>
         public int PhoneID { private set; get; } = -1;
+
         /// <summary>
         /// The number of this phone.
         /// </summary>
         public string Number;
+
         /// <summary>
         /// The category of phone.
         /// </summary>
@@ -139,6 +139,5 @@ namespace JaminBooks.Model
                 cats.Add((int)dr["PhoneCategoryID"], (String)dr["PhoneCategory"]);
             return cats;
         }
-
     }
 }

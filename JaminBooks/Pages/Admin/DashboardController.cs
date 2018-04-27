@@ -1,18 +1,21 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using JaminBooks.Model;
-using JaminBooks.Tools;
-using Microsoft.AspNetCore.Mvc;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Pages.Admin
 {
+    /// <summary>
+    /// Handles AJAX requests for the dashboard page.
+    /// </summary>
     public class DashboardController : Controller
     {
+        /// <summary>
+        /// Load the sales by category data
+        /// </summary>
+        /// <returns>A list of object arrays with the name of the category at index 0 and the number of sales at index 1</returns>
         [Route("Dashboard/LoadSalesByCategory")]
         public IActionResult LoadSalesByCategory()
         {
@@ -22,7 +25,6 @@ namespace JaminBooks.Pages.Admin
                 new Param("EndDate", DateTime.Parse(fields["end"]).Date));
 
             List<object[]> columns = new List<object[]>();
-            int index = 0;
             foreach (DataRow dr in result.Rows)
             {
                 columns.Add(new object[] { dr["CategoryName"], (int)dr["Quantity"] });
@@ -30,6 +32,10 @@ namespace JaminBooks.Pages.Admin
             return new JsonResult(columns);
         }
 
+        /// <summary>
+        /// Load the amount of revenue per pay over a given period.
+        /// </summary>
+        /// <returns>A list of object arrays with the date at index 0, the revenue at index 1, and the gross profit at index 2</returns>
         [Route("Dashboard/LoadDailyRevenue")]
         public IActionResult LoadDailyRevenue()
         {
@@ -55,6 +61,10 @@ namespace JaminBooks.Pages.Admin
             return new JsonResult(columns);
         }
 
+        /// <summary>
+        /// Load the total revenue on each day over a given period.
+        /// </summary>
+        /// <returns>A list of object arrays with the date at index 0, the revenue at index 1, and the gross profit at index 2</returns>
         [Route("Dashboard/LoadRevenue")]
         public IActionResult LoadRevenue()
         {
@@ -86,6 +96,10 @@ namespace JaminBooks.Pages.Admin
             return new JsonResult(columns);
         }
 
+        /// <summary>
+        /// Load the total number of new users on each day over a given period.
+        /// </summary>
+        /// <returns>A list of object arrays with the date at index 0 and the number of users at index 1</returns>
         [Route("Dashboard/LoadNewUsers")]
         public IActionResult LoadNewUsers()
         {

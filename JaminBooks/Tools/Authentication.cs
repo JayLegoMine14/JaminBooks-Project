@@ -1,10 +1,7 @@
 ﻿using JaminBooks.Model;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -24,18 +21,21 @@ namespace JaminBooks.Tools
         /// The email address of the web server.
         /// </summary>
         public static string Email;
+
         /// <summary>
         /// The password to the web servers email account.
         /// </summary>
         public static string Password;
+
         /// <summary>
         /// The name of the web server.
         /// </summary>
         public static string Name;
+
         /// <summary>
         /// A new random generator for creating confirmation codes.
         /// </summary>
-        static Random RANDOM = new Random();
+        private static Random RANDOM = new Random();
 
         /// <summary>
         /// Get the user currently logged in.
@@ -100,8 +100,7 @@ namespace JaminBooks.Tools
         public static bool[] SetCurrentUser(HttpRequest request)
         {
             Dictionary<string, string> user = AJAX.GetFields(request);
-            int? UserID;
-            if (User.Exists(user["Email"], Hash(user["Password"]), out UserID)
+            if (User.Exists(user["Email"], Hash(user["Password"]), out int? UserID)
                 && !new User(UserID.Value).IsDeleted)
             {
                 request.HttpContext.Session.SetInt32("UserID", UserID.Value);
@@ -126,11 +125,13 @@ namespace JaminBooks.Tools
                 {
                     Dictionary<string, string> creds = AJAX.GetFields(request);
 
-                    User user = new User();
-                    user.FirstName = creds["FirstName"];
-                    user.LastName = creds["LastName"];
-                    user.Email = creds["Email"];
-                    user.Password = Hash(creds["Password"]);
+                    User user = new User
+                    {
+                        FirstName = creds["FirstName"],
+                        LastName = creds["LastName"],
+                        Email = creds["Email"],
+                        Password = Hash(creds["Password"])
+                    };
 
                     var phoneNumber = creds["Phone"];
 
@@ -148,9 +149,11 @@ namespace JaminBooks.Tools
                     {
                         user.ConfirmationCode = GenerateConfirmationCode();
 
-                        Phone p = new Phone();
-                        p.Number = phoneNumber;
-                        p.Category = creds["PhoneCat"];
+                        Phone p = new Phone
+                        {
+                            Number = phoneNumber,
+                            Category = creds["PhoneCat"]
+                        };
                         p.Save();
 
                         user.Save();
@@ -167,7 +170,7 @@ namespace JaminBooks.Tools
                     }
                     else return 0;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return 0;
                 }
@@ -189,8 +192,10 @@ namespace JaminBooks.Tools
                 string callbackURL = "http://" + request.Host + @"/Security/Confirm?id=" + u.UserID + "&c=" + u.ConfirmationCode;
                 string subject = "Email Confirmation | Jamin' Books";
 
-                LinkedResource res = new LinkedResource("wwwroot/images/slogo.png");
-                res.ContentId = Guid.NewGuid().ToString();
+                LinkedResource res = new LinkedResource("wwwroot/images/slogo.png")
+                {
+                    ContentId = Guid.NewGuid().ToString()
+                };
 
                 string body = @"
                 <div style = ""background-color:#fff;margin:0 auto 0 auto;padding:30px 0 30px 0;color:#4f565d;font-size:13px;line-height:20px;font-family:""Helvetica Neue"",Arial,sans-serif;text-align:left;"">
@@ -236,11 +241,12 @@ namespace JaminBooks.Tools
                     return true;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
         }
+
         /// <summary>
         /// Generate a new 64 character confirmation code.
         /// </summary>

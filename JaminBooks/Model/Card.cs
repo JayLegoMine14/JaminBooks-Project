@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
 
 namespace JaminBooks.Model
 {
@@ -23,18 +20,22 @@ namespace JaminBooks.Model
         /// The expiration month as a two digits.
         /// </summary>
         public string ExpMonth;
+
         /// <summary>
         /// The expiration year as two digits.
         /// </summary>
         public string ExpYear;
+
         /// <summary>
         /// The full name on the card.
         /// </summary>
         public string Name;
+
         /// <summary>
         /// The address associated with this card.
         /// </summary>
         public Address Address;
+
         /// <summary>
         /// The last four digits of the card number.
         /// </summary>
@@ -89,6 +90,7 @@ namespace JaminBooks.Model
         /// A private copy of the CVC
         /// </summary>
         private string _CVC;
+
         /// <summary>
         /// A private copy of the CVC
         /// </summary>

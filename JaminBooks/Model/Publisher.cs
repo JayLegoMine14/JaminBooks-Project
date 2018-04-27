@@ -1,11 +1,8 @@
-﻿using System;
+﻿using JaminBooks.Tools;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using static JaminBooks.Tools.SQL;
-using JaminBooks.Tools;
-using System.Data.SqlTypes;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace JaminBooks.Model
 {
@@ -18,26 +15,32 @@ namespace JaminBooks.Model
         /// The unique id number that identifies the publisher. -1 represents an uncreated publisher.
         /// </summary>
         public int PublisherID { private set; get; } = -1;
+
         /// <summary>
         /// The name of the publisher.
         /// </summary>
         public string PublisherName;
+
         /// <summary>
         /// The address of the publisher.
         /// </summary>
         public Address Address;
+
         /// <summary>
         /// The phone of the publisher's contact.
         /// </summary>
         public Phone Phone;
+
         /// <summary>
         /// The first name of the publisher's contact.
         /// </summary>
         public string ContactFirstName;
+
         /// <summary>
         /// The last name of the publisher's contact.
         /// </summary>
         public string ContactLastName;
+
         /// <summary>
         /// Whether or not the publisher is deleted.
         /// </summary>

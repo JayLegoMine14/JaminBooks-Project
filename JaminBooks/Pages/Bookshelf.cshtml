@@ -80,7 +80,7 @@
                         <div class="card text-white book" style="width: 200px" data-id="@book.BookID" onclick="location.href='\Book?id=@book.BookID'">
                             <img class="card-img" src="@book.LoadImage">
                             <div class="card-img-overlay book-overlay" style="display:none">
-                                @if (Model.DisplayUser.hasBought(book.BookID))
+                                @if (Model.DisplayUser.HasBought(book.BookID))
                                 {
                                     <h6 class="card-title mb-1"><span class="badge badge-info">Purchased</span></h6>
                                 }
@@ -171,4 +171,3 @@
             })
     </script>
 }
-
