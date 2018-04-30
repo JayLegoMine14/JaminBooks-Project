@@ -152,6 +152,7 @@ namespace JaminBooks.Model
                     (String)dr["CategoryName"],
                     (bool)dr["IsDeleted"]
                     ));
+            categories.Sort((a, b) => a.CategoryName.CompareTo(b.CategoryName));
             return categories;
         }
     }

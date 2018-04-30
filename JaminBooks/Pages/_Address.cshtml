@@ -1,4 +1,6 @@
-﻿<div class="modal fade" id="AddressModal" data-id="-1" tabindex="-1" role="dialog">
+﻿<!--ADDRESS-->
+<!--This is a partial page appended to other pages to allow for the creation, editing, and deletion of addresses.-->
+<div class="modal fade" id="AddressModal" data-id="-1" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
@@ -104,7 +106,10 @@
     </div>
 </div>
 <script>
+    //The EditAddress and Deleted Address methods are added to the onlcick
+    //attribute when the address is added wither by the javascript or razor
 
+    //Fires when the edit button on an adress is clicked
     function EditAddress(button) {
         var card = $(button).parents(".address");
         $("#AddressModal").data("id", card.data("id"));
@@ -117,6 +122,7 @@
         $("#AddressModal").modal("show");
     }
 
+    //Fires when the delete button on an address is clicked
     function DeleteAddress(button) {
         var add = $(button).parents(".address");
         $.confirm({
@@ -125,6 +131,7 @@
             type: 'red',
             buttons: {
                 yes: function () {
+                    //Send an AJAX call to the Model Controller to Delete the address
                     $.ajax({
                         type: "POST",
                         url: "Model/DeleteAddress",
@@ -153,16 +160,19 @@
     }
 
     $(document).ready(function () {
+        //Show the modal when the button is clicked.
         $("#AddressCreate").click(function () {
             $("#AddressModal").modal("show");
         });
 
+        //Hide the state section if a non-US country is selected
         $("#ShipCountry").change(function () {
             if ($("#ShipCountry").val() != "US")
                 $("#ShipState").parent().hide();
             else $("#ShipState").parent().show();
         });
 
+        //Fires when the save address button is clicked
         $("#SaveAddress").click(function () {
 
             var data = {
@@ -176,6 +186,7 @@
                 UserID: $("#UserID").text()
             };
 
+            //Verify that all of the required fields are filled
             if (validateShipAddress()) {
                 $.ajax({
                     type: "POST",
@@ -211,6 +222,7 @@
                         card += '<h6 class="card-title">' + data.Line1 + '</h6>'
                         if (data.Line2 != "")
                             card += '<h6 class="card-title text-muted">' + data.Line2 + '</h6>'
+                        //If the country is US, show the states, else show the country name.
                         card += '<h6 class="card-title text-muted">' + data.City + ', ' + (data.Country != "US" ? data.Country : data.State) + ' ' + data.ZIP + '</h6>'
                         card += '</div>'
                         card += '</div>'
@@ -226,6 +238,7 @@
             }
         });
 
+        //Clear the modal fields when it closes.
         $('#AddressModal').on('hidden.bs.modal', function () {
             $("#ShipLine1").val("");
             $("#ShipLine2").val("");
@@ -233,6 +246,7 @@
             $("#ShipZIP").val("");
         })
 
+        //Ensure all required fields have valid values.
         function validateShipAddress() {
             var valid = true;
 

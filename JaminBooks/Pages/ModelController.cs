@@ -193,11 +193,7 @@ namespace JaminBooks.Pages
         [Route("Model/GetBookCategories")]
         public IActionResult GetBookCategories()
         {
-            DataTable dt = SQL.Execute("uspGetCategories");
-            Dictionary<int, string> cats = new Dictionary<int, string>();
-            foreach (DataRow dr in dt.Rows)
-                cats.Add((int)dr["CategoryID"], (string)dr["CategoryName"]);
-            return new JsonResult(JsonConvert.SerializeObject(cats));
+            return new JsonResult(JsonConvert.SerializeObject(Category.GetCategories()));
         }
 
         /// <summary>
@@ -262,8 +258,8 @@ namespace JaminBooks.Pages
             switch (sorttype)
             {
                 case 2:
-                    books.Sort((b1, b2) => b1.Categories.Where(c => categories.Contains(c.CategoryID)).Count().CompareTo(
-                        b2.Categories.Where(c => categories.Contains(c.CategoryID)).Count()));
+                    books.Sort((b1, b2) => b2.Categories.Where(c => categories.Contains(c.CategoryID)).Count().CompareTo(
+                        b1.Categories.Where(c => categories.Contains(c.CategoryID)).Count()));
                     break;
 
                 case 1:
@@ -1296,15 +1292,23 @@ namespace JaminBooks.Pages
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
             if (currentUser.IsAdmin)
             {
-                Author a = new Author
+                Author exists = Author.GetAuthors().FirstOrDefault(a => a.FullName == fields["AFirstName"] + " " + fields["ALastName"]);
+                if (exists != null)
                 {
-                    FirstName = fields["AFirstName"],
-                    LastName = fields["ALastName"]
-                };
+                    return new JsonResult(new object[] { exists.AuthorID, exists.FullName });
+                }
+                else
+                {
+                    Author a = new Author
+                    {
+                        FirstName = fields["AFirstName"],
+                        LastName = fields["ALastName"]
+                    };
 
-                a.Save();
+                    a.Save();
 
-                return new JsonResult(new object[] { a.AuthorID, a.FullName });
+                    return new JsonResult(new object[] { a.AuthorID, a.FullName });
+                }
             }
             return new JsonResult("");
         }
@@ -1322,15 +1326,22 @@ namespace JaminBooks.Pages
             Model.User currentUser = Authentication.GetCurrentUser(HttpContext);
             if (currentUser.IsAdmin)
             {
-                Category c = new Category
+                Category exists = Category.GetCategories().FirstOrDefault(cat => cat.CategoryName == fields["CategoryName"]);
+                if (exists != null)
                 {
-                    CategoryName = fields["CategoryName"],
-                    IsDeleted = false
-                };
+                    return new JsonResult(new object[] { exists.CategoryID, exists.CategoryName });
+                }
+                else
+                {
+                    Category c = new Category
+                    {
+                        CategoryName = fields["CategoryName"],
+                        IsDeleted = false
+                    };
 
-                c.Save();
-
-                return new JsonResult(new object[] { c.CategoryID, c.CategoryName });
+                    c.Save();
+                    return new JsonResult(new object[] { c.CategoryID, c.CategoryName });
+                }
             }
             return new JsonResult("");
         }

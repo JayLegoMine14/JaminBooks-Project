@@ -1,4 +1,7 @@
-﻿@Html.AntiForgeryToken()
+﻿<!--AUTHENTICATION-->
+<!--This is a partial page appended to other pages to allow for user's to login or create an account.-->
+<!--The following is an input with an anti-forgery token used to validate AJAX calls.-->
+@Html.AntiForgeryToken()
 <div id="authenticationModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content" style="width: 600px;transform: translateX(0)">
@@ -116,8 +119,8 @@
 <script>
     $(document).ready(function () {
 
+        //When enter is pressed and the login is visible, click the login button.
         $('body').keypress(function (ev) {
-
             if (ev.which === 13)
                 if ($("#RegistrationDiv").is(":visible") && $("#RegistrationDiv").height() > 0)
                     $('#Register').click();
@@ -125,6 +128,7 @@
                     $('#Login').click();
         });
 
+        //Load the phone categories
         $.ajax({
             type: "POST",
             url: "Model/GetPhoneCategories",
@@ -140,6 +144,7 @@
             }
         });
 
+        //When the register button is clicked open the register view
         $("#RegisterView").click(function () {
             if (!$("#RegistrationDiv").is(":visible") || !$("#RegistrationDiv").height() > 0) {
                 $("#loginErrorMsg").hide();
@@ -154,15 +159,17 @@
             }
         });
 
+        //Clear the fields of the authentication modal when it closes
         $('#authenticationModal').on('hidden.bs.modal', function () {
-                $("#loginErrorMsg").hide();
-                $("#Email").removeAttr("style");
-                $("#Password").removeAttr("style");
-                $("#Email").val("");
-                $("#Password").val("");
-                showLogin();
+            $("#loginErrorMsg").hide();
+            $("#Email").removeAttr("style");
+            $("#Password").removeAttr("style");
+            $("#Email").val("");
+            $("#Password").val("");
+            showLogin();
         })
 
+        //When the back button on the register view is clicked, go back to the login view
         $(".back-btn").click(function () {
             $("#loginErrorMsg").hide();
             $("#Email").removeAttr("style");
@@ -170,6 +177,7 @@
             showLogin();
         });
 
+        //When the login button is clicked, send and AJAX call
         $("#Login").click(function () {
             $("#loginErrorMsg").hide();
             $("#Email").removeAttr("style");
@@ -207,6 +215,7 @@
             });
         });
 
+        //When a password is entered make sure is matches the requirements
         $("#RegPassword").on('input', function () {
             var password = $("#RegPassword").val();
 
@@ -238,7 +247,9 @@
             confirmMatch();
         });
 
+        //Send an AJAX call when the register button is clicked
         $("#Register").click(function () {
+            //Make sure all the required fields are filled
             if (validateReg()) {
                 $.ajax({
                     type: "POST",
@@ -297,7 +308,7 @@
                                 buttons: {
                                     Login: {
                                         btnClass: 'btn-blue',
-                                        action: function() {
+                                        action: function () {
                                             showLogin();
                                         }
                                     },
@@ -314,10 +325,12 @@
             }
         });
 
+        //When the password confirm changes, be sure that the passwords match
         $("#RegPasswordConfirm").on('input', function () {
             confirmMatch();
         });
 
+        //Confirm that the passwords match
         function confirmMatch() {
             var password = $("#RegPasswordConfirm").val();
 
@@ -334,6 +347,7 @@
             }
         }
 
+        //Make sure the email is formatted like an email
         $("#RegEmail").on('input', function () {
             var regex = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if ($("#RegEmail").val().match(regex) && $("#RegEmail").val().length < 100) {
@@ -345,6 +359,7 @@
             }
         });
 
+        //Make sure the phone number is formatted like a phone number
         $("#RegPhone").on('input', function () {
             var regex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
             if ($("#RegPhone").val().match(regex)) {
@@ -356,6 +371,7 @@
             }
         });
 
+        //Show the login view
         function showLogin() {
             $("#RegistrationDiv").animate({ marginLeft: '200%', marginRight: '-200%' }, 350);
             $("#RegistrationDiv").css("height", "0");
@@ -365,6 +381,7 @@
             $("#RegistrationDiv").css("height", "");
         }
 
+        //Make sure all the registration fields are filled
         function validateReg() {
             var valid = true;
 

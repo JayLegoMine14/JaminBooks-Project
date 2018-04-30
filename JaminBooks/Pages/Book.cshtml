@@ -327,7 +327,7 @@
                             }
                         </div>
                         <h2 id="BookTitle" style="margin-right:80px">@Model.Book.Title</h2>
-                        <h4 id="BookAuthor">@(string.Join(",", Model.Book.Authors.Select(a => string.Format("{0} {1}", a.FirstName, a.LastName))))</h4>
+                        <h4 id="BookAuthor">@(string.Join(", ", Model.Book.Authors.Select(a => string.Format("{0} {1}", a.FirstName, a.LastName))))</h4>
                         <h3 class="@(Model.Book.PercentDiscount > 0 ? "text-success" : "")">
                             $<span id="BookPrice">@Model.Book.Price.ToString("0.00")</span>
                             @if (Model.Book.PercentDiscount > 0)

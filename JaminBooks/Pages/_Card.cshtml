@@ -1,4 +1,6 @@
-﻿<div class="modal fade" id="CardModal" data-id="-1" tabindex="-1" role="dialog">
+﻿<!--CARD-->
+<!--This is a partial page appended to other pages to allow for the creation, editing, and deletion of credit/debit cards.-->
+<div class="modal fade" id="CardModal" data-id="-1" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content do-not-scale">
             <div class="modal-body">
@@ -149,6 +151,7 @@
 </div>
 
 <script>
+    //The Javascript for this modal is very similar to the Javascript for Address. View _Address Javascript for more details.
 
     function EditCard(button) {
         var card = $(button).parents(".dc-card");

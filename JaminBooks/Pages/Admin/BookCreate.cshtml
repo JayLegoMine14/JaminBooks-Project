@@ -28,8 +28,8 @@
     <div class="row">
         <div class="col-10 offset-1">
             <div class="row">
-                <div class="col-12">
-                    <h2 class="text-center">Create a Book</h2>
+                <div class="col-12 mt-3">
+                    <h2 class="text-center">@(Model.Book == null ? "Create" : "Edit") Book</h2>
                 </div>
             </div>
             <div class="row mb-3 mt-3">
@@ -83,7 +83,7 @@
                             </select>
                         </div>
                         <div class="col-4">
-                            <input id="SaveAuthor" type="button" onclick="unhide(this, 'author'); " value="Add New" class="btn btn-block btn-dark">
+                            <input id="SaveAuthor" type="button" onclick="unhide(this, 'author'); " value="Add Author" class="btn btn-block btn-dark">
                         </div>
                     </div>
                     <div id="author" class="hidden">
@@ -102,7 +102,7 @@
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label"></label>
                             <div class="col-9">
-                                <button id="CreateAuthor" class="btn btn-block btn-red">Save New Author</button>
+                                <button id="CreateAuthor" class="btn btn-block btn-red">Save Author</button>
                             </div>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                             </select>
                         </div>
                         <div class="col-4">
-                            <input id="SaveCategory" type="button" onclick="unhide(this, 'category'); " value="Add New" class="btn btn-block btn-dark">
+                            <input id="SaveCategory" type="button" onclick="unhide(this, 'category'); " value="Add Category" class="btn btn-block btn-dark">
                         </div>
                     </div>
 
@@ -136,7 +136,7 @@
                         <div class="form-group row offset-1">
                             <label class="col-3 col-form-label"></label>
                             <div class="col-9">
-                                <button id="CreateCategory" class="btn btn-block btn-red">Save New Category</button>
+                                <button id="CreateCategory" class="btn btn-block btn-red">Save Category</button>
                             </div>
                         </div>
                     </div>

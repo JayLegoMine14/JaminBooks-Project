@@ -156,7 +156,7 @@
                                                                 type: 'red'
                                                             });
                                                         }
-                                                        else if (response[0] == 1) {
+                                                        else if (response[0] == 2) {
                                                             location.href = "\Order?id=" + response[1]
                                                         } else {
 
@@ -377,7 +377,7 @@
                                         <img class="book-icon" src="@book.Key.LoadImage">
                                     </div>
                                     <div class="col-5 mt-4 truncate-ellipsis">
-                                        <h4 class="title">@book.Key.Title</h4>
+                                        <h4 class="title pb-3">@book.Key.Title</h4>
                                     </div>
                                     <div class="col-3 mt-4">
                                         <h5 class="price">$@(((decimal)new RouteValueDictionary(book.Value)["Price"]).ToString("0.##"))</h5>

@@ -1,11 +1,18 @@
 ﻿@page
 @model IndexModel
 @{
+    //Every user page will follow this baisc model of header
+
+    //Set the page title
     ViewData["Title"] = "Home page";
+    //Set whether or not the user is logged in. This will instruct the Layout page how to render
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    //Set the full name of the user logged in
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    //Set a count of the number of items in the user's cart
     ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
 
+    //If an admin is logged in, use the Admin layout
     if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
     {
         Layout = "~/Pages/Admin/_AdminLayout.cshtml";

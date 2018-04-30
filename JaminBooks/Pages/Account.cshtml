@@ -399,6 +399,40 @@
                     $("#Image").css(image.width > image.height ? "height" : "width", "200px");
                 }
 
+                $('#IsAdmin').change(function () {
+                    if ($('#IsAdmin').is(":checked")) {
+                        $.confirm({
+                            title: 'Elevate Account',
+                            content: 'Are you sure you want to elevate this account with administratorprivileges?',
+                            type: 'orange',
+                            buttons: {
+                                elevate: {
+                                    text: 'Elevate',
+                                    btnClass: 'btn-orange'
+                                },
+                                Cancel: function () {
+                                    $('#IsAdmin').removeAttr("checked");
+                                }
+                            }
+                        });
+                    } else {
+                        $.confirm({
+                            title: 'Revoke Admin Account',
+                            content: 'Are you sure you want to revoke this account\'s administrator privileges?',
+                            type: 'orange',
+                            buttons: {
+                                elevate: {
+                                    text: 'Revoke',
+                                    btnClass: 'btn-orange'
+                                },
+                                Cancel: function () {
+                                    $('#IsAdmin').prop("checked", true);
+                                }
+                            }
+                        });
+                    }
+                });
+
                 $("#Password").on('input', function () {
                     var password = $("#Password").val();
 
@@ -521,7 +555,7 @@
                                             ID: $("#UserID").text()
                                             @if (Model.CurrentUser.IsAdmin)
                                             {
-                                                @Html.Raw(",IsAdmin: $('#IsAdmin').val()");
+                                                @Html.Raw(",IsAdmin: $('#IsAdmin').is(':checked')");
                                             }
                                         }),
                                         contentType: "application/json; charset=utf-8",

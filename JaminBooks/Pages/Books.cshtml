@@ -352,7 +352,7 @@
             success: function (response) {
                 response = JSON.parse(response);
                 $.each(response, function (key, value) {
-                    $("#BookCat").append("<option value=" + key + ">" + value + "</option>")
+                    $("#BookCat").append("<option value=" + value.CategoryID + ">" + value.CategoryName + "</option>")
                 });
             }
         });
@@ -480,9 +480,11 @@
             loadBooks(true);
         });
 
-        $("#Search").focusout(function (e) {
-            if ($(e.target).hasClass("item")) return;
-            $("#AutoComplete").hide();
+        $("body").mousedown(function (e) {
+            if ($(e.target).parents(".item").length == 0 && $(e.target).attr("id") != "Search") {
+                $("#AutoComplete").hide();
+            }
+            return true;
         });
 
         $("#Search").focusin(function () {
@@ -648,7 +650,7 @@
                     bookcard += '</div>'
                     bookcard += '</div>'
 
-                    $("#Books").append(bookcard);
+                    $("#Books").append(bookcard).children(':last').hide().fadeIn(1000);
                 });
 
                 $(".book").hover(function () {

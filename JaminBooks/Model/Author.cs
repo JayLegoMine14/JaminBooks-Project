@@ -156,6 +156,7 @@ namespace JaminBooks.Model
                     (String)dr["LastName"],
                     (bool)dr["IsDeleted"]
                     ));
+            authors.Sort((a, b) => a.FullName.CompareTo(b.FullName));
             return authors;
         }
 
@@ -174,6 +175,7 @@ namespace JaminBooks.Model
                     (String)dr["LastName"],
                     (bool)dr["IsDeleted"]
                     ));
+            authors.Sort((a, b) => a.FullName.CompareTo(b.FullName));
             return authors;
         }
     }
