@@ -499,7 +499,7 @@ namespace JaminBooks.Pages
 
                     if (currentUser.IsAdmin)
                         if (fields.ContainsKey("IsAdmin"))
-                            user.IsAdmin = (fields["IsAdmin"] == "on");
+                            user.IsAdmin = Convert.ToBoolean(fields["IsAdmin"]);
 
                     user.Save();
                 }
