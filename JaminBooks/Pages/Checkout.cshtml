@@ -329,7 +329,8 @@
                 var data = {
                     CVC: CVC,
                     CardID: $("#ReviewCard .dc-card").data("id"),
-                    AddressID: $("#ReviewAddress .address").data("id")
+                    AddressID: $("#ReviewAddress .address").data("id"),
+                    Code: "@Model.Code"
                 }
 
                 $.ajax({
