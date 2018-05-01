@@ -88,6 +88,10 @@
                                 {
                                     <h4><span class="badge badge-info">Processing...</span></h4>
                                 }
+                                else if (o.IsRefunded)
+                                {
+                                    <h4><span class="badge badge-danger">Refunded</span></h4>
+                                }
                                 else
                                 {
                                     @if (o.Children.Count > 0)
