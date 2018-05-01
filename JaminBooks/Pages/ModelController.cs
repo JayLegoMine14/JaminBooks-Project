@@ -1078,7 +1078,12 @@ namespace JaminBooks.Pages
                 BookTotal += item.Key.Price * item.Value;
             }
 
-            if (BookTotal > 75.00m) Discount = 10;
+            if (!String.IsNullOrEmpty(fields["Code"]))
+                Discount = Promotions.GetDiscount(fields["Code"]);
+
+            var totalDiscount = Promotions.GetDiscount(BookTotal);
+            if (totalDiscount > Discount) Discount = totalDiscount;
+
             order.PercentDiscount = Discount;
 
             order.Save();

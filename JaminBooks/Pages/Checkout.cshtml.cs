@@ -29,6 +29,11 @@ namespace JaminBooks.Pages
         public string PercentDiscount;
 
         /// <summary>
+        /// The discount code applied.
+        /// </summary>
+        public string Code;
+
+        /// <summary>
         /// The order total.
         /// </summary>
         public string OrderTotal;
@@ -57,6 +62,7 @@ namespace JaminBooks.Pages
                     BookTotal += item.Key.Price * item.Value;
                 }
 
+                Code = code;
                 if (!String.IsNullOrEmpty(code))
                     Discount = Promotions.GetDiscount(code);
 
