@@ -493,8 +493,8 @@ namespace JaminBooks.Pages
                 {
                     if (!user.IsConfirmed)
                     {
-                        Authentication.SendConfirmationEmail(Request, user);
                         user.ConfirmationCode = Authentication.GenerateConfirmationCode();
+                        Authentication.SendConfirmationEmail(Request, user);
                     }
 
                     if (currentUser.IsAdmin)
