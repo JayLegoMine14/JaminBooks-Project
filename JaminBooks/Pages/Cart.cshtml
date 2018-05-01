@@ -5,7 +5,7 @@
     ViewData["IsLoggedIn"] = Model.CurrentUser != null;
     ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
     ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
-    var Cart = Model.DisplayUser.GetCart();
+    var Cart = Model.DisplayUser != null ? Model.DisplayUser.GetCart() : null;
 
     if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
     {
@@ -95,7 +95,7 @@
                                         }
                                         else
                                         {
-                                            <input type="number" value="@Cart[book]" class="quantity form-control input-sm" min=1 max=@book.Quantity onkeydown="javascript: return event.keyCode == 69 ? false : true">
+                                            <input type="number" value="@(Cart[book] == 0 ? 1 : Cart[book])" class="quantity form-control input-sm" min=1 max=@book.Quantity onkeydown="javascript: return event.keyCode == 69 ? false : true">
                                         }
                                     </div>
                                     <div class="col-2 mt-4">
@@ -167,7 +167,11 @@
 
         $(".quantity").on("input", function () {
             this.value = this.value.replace(/\D/g, '');
-            getTotal();
+            if (this.value == "") {
+                $(".quantity").css("border-color", "red");
+            } else {
+                getTotal();
+            }
         });
 
         $("#Code").on("input", function () {
@@ -175,6 +179,16 @@
         });
 
         $("#Checkout").click(function () {
+
+            var valid = true;
+            $(".quantity").each(function () {
+                if ($(this).val() == "" || $(this).val() <= 0) {
+                    valid = false;
+                    $(this).css("border-color", "red");
+                }
+            });
+
+            if (!valid) return;
 
             var books = [];
             $(".book").each(function () {
