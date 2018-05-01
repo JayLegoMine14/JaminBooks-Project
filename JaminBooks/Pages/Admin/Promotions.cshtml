@@ -210,7 +210,8 @@
                     if (response != '') {
                         promo.data("id", response);
                         if (Date.parse(startdate.val()) <= new Date() && Date.parse(enddate.val()) >= new Date()) {
-                            promo.append('<div class="row"><span class="badge badge-primary mt-2 ml-3">Active</span></div>');
+                            if (promo.find(".badge").length == 0)
+                                promo.append('<div class="row"><span class="badge badge-primary mt-2 ml-3">Active</span></div>');
                         } else {
                             promo.find(".badge").parent().remove();
                         }
