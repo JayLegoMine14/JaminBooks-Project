@@ -133,7 +133,7 @@
                             @if (Model.CurrentUser.IsAdmin)
                             {
                                 <div class="row mt-2">
-                                    <div class="col-6 offset-3">
+                                    <div class="col-lg-6 offset-lg-3 col-md-6 offset-md-3 col-12">
                                         <a href="\Bookshelf@(Model.CurrentUser.UserID != Model.DisplayUser.UserID ? "?id=" + Model.DisplayUser.UserID : "")" class="btn btn-info text-white btn-block"> View Bookshelf</a>
                                     </div>
                                 </div>

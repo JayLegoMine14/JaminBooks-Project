@@ -88,7 +88,7 @@ namespace JaminBooks.Pages
         /// <summary>
         /// Confirms the email address of the user with the given confirmation code.
         /// </summary>
-        /// <param name="id">The confirmation code</param>
+        /// <param name="id">ID Number</param>
         [Route("Security/Confirm")]
         public void Confirm(int id)
         {
