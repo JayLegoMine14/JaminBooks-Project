@@ -494,7 +494,7 @@ namespace JaminBooks.Pages
                     if (!user.IsConfirmed)
                     {
                         user.ConfirmationCode = Authentication.GenerateConfirmationCode();
-                        Authentication.SendConfirmationEmail(Request, user);
+                        Task.Run(() => Authentication.SendConfirmationEmail(Request, user));
                     }
 
                     if (currentUser.IsAdmin)
