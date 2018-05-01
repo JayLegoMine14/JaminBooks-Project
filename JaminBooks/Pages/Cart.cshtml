@@ -168,8 +168,9 @@
         $(".quantity").on("input", function () {
             this.value = this.value.replace(/\D/g, '');
             if (this.value == "") {
-                $(".quantity").css("border-color", "red");
+                $(this).css("border-color", "red");
             } else {
+                $(this).removeAttr("style");
                 getTotal();
             }
         });
@@ -182,6 +183,7 @@
 
             var valid = true;
             $(".quantity").each(function () {
+                $(this).removeAttr("style");
                 if ($(this).val() == "" || $(this).val() <= 0) {
                     valid = false;
                     $(this).css("border-color", "red");
