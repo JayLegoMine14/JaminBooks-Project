@@ -203,56 +203,38 @@
                         location.href = "\Checkout" + (code == "" ? "" : "?code=" + code);
                     } else {
                         var books = reply[1];
+
+                        var bookLow = 0;
                         var content = 'The available quantity of the following books has reduced. Your cart will be updated to reflect the change.<ul>';
                         books.forEach(function (bookdata) {
                             var book = $(".book[data-id='" + bookdata[0] + "']");
                             if (book.find(".quantity").val() > bookdata[1] && bookdata[1] != 0) {
                                 content += "<li>" + book.find(".title").text() + "</li>"
+                                bookLow++;
                             }
                         });
                         content += "</ul>"
 
-                        $.confirm({
-                            title: 'Book Quantity Not Available',
-                            content: content,
-                            type: 'red',
-                            buttons: {
-                                ok: function () {
-
-                                    books.forEach(function (bookdata) {
-                                        var book = $(".book[data-id='" + bookdata[0] + "']");
-                                        book.find(".quantity").val(bookdata[1]);
-                                    });
-
-                                    var booksOutOfStock = 0;
-                                    content = 'The following books are out of stock. Would you like to remove them from your cart to checkout?<ul>';
-                                    books.forEach(function (bookdata) {
-                                        var book = $(".book[data-id='" + bookdata[0] + "']");
-                                        if (bookdata[1] == 0) {
-                                            content += "<li>" + book.find(".title").text() + "</li>";
-                                            booksOutOfStock++;
-                                        }
-                                    });
-                                    content += "</ul>"
-
-                                    if (booksOutOfStock > 0) {
-                                        $.confirm({
-                                            title: 'Book Out Of Stock',
-                                            content: content,
-                                            type: 'red',
-                                            buttons: {
-                                                yes: function () {
-                                                    $(".book[data-out='True']").each(function () { removeBook($(this)) });
-                                                },
-                                                no: function () { }
-                                            }
+                        if (bookLow > 0) {
+                            $.confirm({
+                                title: 'Book Quantity Not Available',
+                                content: content,
+                                type: 'red',
+                                buttons: {
+                                    ok: function () {
+                                        books.forEach(function (bookdata) {
+                                            var book = $(".book[data-id='" + bookdata[0] + "']");
+                                            book.find(".quantity").val(bookdata[1]);
                                         });
-                                    } else {
                                         getTotal();
+                                        AskAboutOutOfStock(books);
                                     }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            AskAboutOutOfStock(books);
+                        }
+                        getTotal();
                     }
                 },
                 failure: function (response) {
@@ -260,6 +242,34 @@
                 }
             });
         });
+
+        function AskAboutOutOfStock(books) {
+            var booksOutOfStock = 0;
+            var content = 'The following books are out of stock. Would you like to remove them from your cart to checkout?<ul>';
+            books.forEach(function (bookdata) {
+                var book = $(".book[data-id='" + bookdata[0] + "']");
+                if (bookdata[1] == 0) {
+                    content += "<li>" + book.find(".title").text() + "</li>";
+                    booksOutOfStock++;
+                }
+            });
+            content += "</ul>"
+
+            if (booksOutOfStock > 0) {
+                $.confirm({
+                    title: 'Book Out Of Stock',
+                    content: content,
+                    type: 'red',
+                    buttons: {
+                        yes: function () {
+                            $(".book[data-out='True']").each(function () { removeBook($(this)) });
+                            getTotal();
+                        },
+                        no: function () { }
+                    }
+                });
+            }
+        }
 
         $(".remove-book").click(function () {
             var book = $(this).parents(".book");
