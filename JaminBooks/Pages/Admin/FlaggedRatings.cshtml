@@ -14,14 +14,11 @@
                         <h2>Flagged Book Reviews</h2>
                     </div>
                 </div>
-                @if (Model.Ratings.Count == 0)
-                {
-                    <div class="row">
-                        <div class="col-12 text-center mt-5">
-                            <h4>Nothing here right now.</h4>
-                        </div>
+                <div id="EmptyDiv" class="row" @(Model.Ratings.Count != 0 ? "style=display:none" : "")>
+                    <div class="col-12 text-center mt-5">
+                        <h4>Nothing here right now.</h4>
                     </div>
-                }
+                </div>
                 @foreach (Model.Rating rating in Model.Ratings)
                 {
                     Model.User user = new Model.User(rating.UserID);
@@ -138,7 +135,10 @@
                             var rating = $(".rating[data-id='" + data.ID + "']");
                             rating.fadeOut(function () {
                                 rating.remove();
+                                if ($(".rating").length == 0)
+                                    $("#EmptyDiv").fadeIn();
                             });
+                            $("#RatingModal").modal("hide");
                         },
                         failure: function (response) {
                             location.href = "\Error"

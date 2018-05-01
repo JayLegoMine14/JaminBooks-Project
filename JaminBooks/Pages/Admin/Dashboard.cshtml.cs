@@ -87,17 +87,17 @@ namespace JaminBooks.Pages.Admin
         {
             FlaggedRatings = Rating.GetFlagged().Count;
             ReshippedOrders = SQL.Execute("uspGetReshippedOrderCount",
-                new Param("BeginDate", Start.Date), new Param("EndDate", End.AddDays(1).Date)).Rows.Count;
+                new Param("BeginDate", Start.Date), new Param("EndDate", End.Date)).Rows.Count;
 
-            DataTable fields = SQL.Execute("uspGetDashboard", new Param("BeginDate", Start.Date), new Param("EndDate", End.AddDays(1).Date));
+            DataTable fields = SQL.Execute("uspGetDashboard", new Param("BeginDate", Start.Date), new Param("EndDate", End.Date));
             Fields = fields.Rows[0].Table.Columns
               .Cast<DataColumn>()
               .ToDictionary(c => c.ColumnName, c => fields.Rows[0][c]);
 
-            DataTable best = SQL.Execute("uspGetBestSellers", new Param("BeginDate", Start.Date), new Param("EndDate", End.AddDays(1).Date));
+            DataTable best = SQL.Execute("uspGetBestSellers", new Param("BeginDate", Start.Date), new Param("EndDate", End.Date));
             foreach (DataRow dr in best.Rows) BestSellers.Add(new Book((int)dr["BookID"]), (int)dr["Sales"]);
 
-            DataTable worst = SQL.Execute("uspGetWorstSellers", new Param("BeginDate", Start.Date), new Param("EndDate", End.AddDays(1).Date));
+            DataTable worst = SQL.Execute("uspGetWorstSellers", new Param("BeginDate", Start.Date), new Param("EndDate", End.Date));
             foreach (DataRow dr in worst.Rows) WorstSellers.Add(new Book((int)dr["BookID"]), (int)dr["Sales"]);
         }
     }
