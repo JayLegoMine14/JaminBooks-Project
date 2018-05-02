@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 using static JaminBooks.Tools.SQL;
 
 namespace JaminBooks.Model
@@ -16,10 +17,39 @@ namespace JaminBooks.Model
         /// </summary>
         public int PhoneID { private set; get; } = -1;
 
+        private string _Number;
+
         /// <summary>
         /// The number of this phone.
         /// </summary>
-        public string Number;
+        public string Number {
+            get
+            {
+                if(_Number.Length == 10)
+                {
+                    return Convert.ToInt64(_Number).ToString("(###) ###-####");
+                }
+                else if (_Number.Length == 11)
+                {
+                    return Convert.ToInt64(_Number).ToString("+# (###) ###-####");
+                }
+                else if (_Number.Length == 12)
+                {
+                    return Convert.ToInt64(_Number).ToString("+## (###) ###-####");
+                }
+                else if (_Number.Length == 13)
+                {
+                    return Convert.ToInt64(_Number).ToString("+### (###) ###-####");
+                }
+                else
+                {
+                    return _Number;
+                }
+            }
+            set {
+                _Number = Regex.Replace(value, "[(+) .-]", string.Empty);
+            }
+        }
 
         /// <summary>
         /// The category of phone.
@@ -42,7 +72,7 @@ namespace JaminBooks.Model
             if (dt.Rows.Count > 0)
             {
                 this.PhoneID = PhoneID;
-                this.Number = (String)dt.Rows[0]["PhoneNumber"];
+                this._Number = (String)dt.Rows[0]["PhoneNumber"];
                 this.Category = (String)dt.Rows[0]["PhoneCategory"];
             }
             else
@@ -60,7 +90,7 @@ namespace JaminBooks.Model
         private Phone(int PhoneID, string Number, string Category)
         {
             this.PhoneID = PhoneID;
-            this.Number = Number;
+            this._Number = Number;
             this.Category = Category;
         }
 
@@ -71,7 +101,7 @@ namespace JaminBooks.Model
         {
             DataTable dt = SQL.Execute("uspSavePhone",
                new Param("PhoneID", PhoneID),
-               new Param("PhoneNumber", Number),
+               new Param("PhoneNumber", _Number),
                new Param("PhoneCategory", Category));
 
             if (dt.Rows.Count > 0)

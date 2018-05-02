@@ -367,7 +367,7 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (logout) {
-                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onclick="deletePublisher(event, this)"><i class="fas fa-trash"></i></button>');
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onmouseup="deletePublisher(event, this)"><i class="fas fa-trash"></i></button>');
                             },
                             failure: function (response) {
                                 location.href = "\Error"
@@ -406,7 +406,7 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (logout) {
-                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-warning undelete-btn" onclick="undeletePublisher(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-warning undelete-btn" onmouseup="undeletePublisher(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
                             },
                             failure: function (response) {
                                 location.href = "\Error"

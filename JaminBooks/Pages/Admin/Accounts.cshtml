@@ -385,7 +385,7 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (logout) {
-                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onclick="deleteUser(event, this)"><i class="fas fa-times"></i></button>');
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-danger delete-btn" onmouseup="deleteUser(event, this)"><i class="fas fa-times"></i></button>');
                             },
                             failure: function (response) {
                                 location.href = "\Error"
@@ -425,7 +425,7 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (logout) {
-                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-warning undelete-btn" onclick="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
+                                $(button).parents(".row").first().find(".col-2").last().html('<button class="btn btn-warning undelete-btn" onmouseup="undeleteUser(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
                             },
                             failure: function (response) {
                                 location.href = "\Error"

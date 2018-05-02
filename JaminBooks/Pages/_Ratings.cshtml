@@ -271,6 +271,8 @@
         ratingmessage += '</div>'
 
         ratingmessage += '</div>'
+        if (rating.NameAndImage[2])
+            ratingmessage += '<h6><span class="badge badge-success"><i class="fas fa-check"></i> Verified Purchase</span></h6>'
         ratingmessage += '<h5>' + ratingstars + '</h5>'
         ratingmessage += '<h6 class="comment">' + rating.Comment + '</h6>'
         ratingmessage += '</div>'

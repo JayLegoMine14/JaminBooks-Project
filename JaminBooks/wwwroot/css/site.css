@@ -322,12 +322,25 @@ input[type=checkbox].sleek-checkbox {
     .brand-name{
         max-width: 300px;
     }
+    #authenticationModal .modal-content {
+        width: 400px !important;
+    }
+}
+
+@media screen and (max-width: 515px) {
+    .brand-name {
+        width: 200px;
+        height: auto;
+    }
 }
 
 @media screen and (max-width: 467px) {
     .brand-name {
-        width: 200px;
+        width: 150px;
         height: auto;
+    }
+    #authenticationModal .modal-content {
+        width: 400px !important;
     }
 }
 
@@ -336,11 +349,17 @@ input[type=checkbox].sleek-checkbox {
         width: 150px;
         height: auto;
     }
+    #authenticationModal .modal-content {
+        width: 400px !important;
+    }
 }
 
 @media screen and (max-width: 335px) {
     .brand-name {
         display:none;
+    }
+    #authenticationModal .modal-content {
+        width: 400px !important;
     }
 }
 

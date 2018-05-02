@@ -2024,13 +2024,13 @@ namespace JaminBooks.Pages.Admin
 
                                         case "nt":
                                             holder = searchItems.Where(o =>
-                                            o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty) != val)
+                                            o.Phones.Any(b => Regex.Replace(b.Number, "[(+) -]", string.Empty) != val)
                                             ).ToList();
                                             break;
 
                                         case "lk":
                                             holder = searchItems.Where(o =>
-                                            o.Phones.Any(b => Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty).Contains(val) || val.Contains(Regex.Replace(b.Number, "[(,+,),-, ]", string.Empty)))
+                                            o.Phones.Any(b => Regex.Replace(b.Number, "[(+) -]", string.Empty).Contains(val) || val.Contains(Regex.Replace(b.Number, "[(+) -]", string.Empty)))
                                             ).ToList();
                                             break;
                                     }

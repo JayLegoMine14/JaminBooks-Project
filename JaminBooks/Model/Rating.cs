@@ -77,13 +77,13 @@ namespace JaminBooks.Model
         /// <summary>
         /// Get the name and image of the user who left this rating.
         /// </summary>
-        public string[] NameAndImage
+        public object[] NameAndImage
         {
             get
             {
                 User u = new User(UserID);
                 var username = u.FirstName + " " + u.LastName;
-                return new string[] { username, u.LoadImage };
+                return new object[] { username, u.LoadImage, u.HasBought(BookID) };
             }
         }
 

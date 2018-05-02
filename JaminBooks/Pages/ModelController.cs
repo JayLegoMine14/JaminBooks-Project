@@ -153,7 +153,6 @@ namespace JaminBooks.Pages
             if (currentUser.IsAdmin)
             {
                 book.IsDeleted = true;
-                book.Quantity = 0;
                 book.Save();
             }
             return new JsonResult("");
@@ -175,7 +174,6 @@ namespace JaminBooks.Pages
                 if (!book.Publisher.IsDeleted)
                 {
                     book.IsDeleted = false;
-                    book.Quantity = 0;
                     book.Save();
                 }
                 else
@@ -183,7 +181,7 @@ namespace JaminBooks.Pages
                     return new JsonResult(0);
                 }
             }
-            return new JsonResult("");
+            return new JsonResult(1);
         }
 
         /// <summary>

@@ -408,6 +408,15 @@
                 valid = false;
             }
 
+            if (new Number($("#ExpYear").val()) < new Number(new String(new Date().getFullYear()).slice(-2))
+                || (new Number($("#ExpMonth").val()) <= (new Date().getMonth() + 1)
+                && parseInt($("#ExpYear").val()) == parseInt(new String(new Date().getFullYear()).slice(-2)))) {
+                $("#ExpYear").css("border-color", "red");
+                $("#ExpMonth").css("border-color", "red");
+
+                valid = false;
+            }
+
             return valid;
         }
     });

@@ -387,7 +387,7 @@
                                         type: 'red'
                                     });
                                 } else {
-                                    $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-danger delete-btn" onclick="deleteBook(event, this)"><i class="fas fa-trash"></i></button>');
+                                    $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-danger delete-btn" onmouseup="deleteBook(event, this)"><i class="fas fa-trash"></i></button>');
                                 }
                             },
                             failure: function (response) {
@@ -407,7 +407,7 @@
         $.confirm({
             title: 'Delete Book',
             icon: 'fas fa-exclamation',
-            content: 'Are you sure you want to delete this book? This will set the quantity in stock equal to zero.',
+            content: 'Are you sure you want to delete this book?',
             type: 'red',
             buttons: {
                 delete: {
@@ -427,7 +427,7 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (logout) {
-                                $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-warning undelete-btn" onclick="undeleteBook(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
+                                $(button).parents(".row").first().find(".col-1").last().html('<button class="btn btn-warning undelete-btn" onmouseup="undeleteBook(event, this)"><i class="fas fa-sign-in-alt"></i></button>');
                             },
                             failure: function (response) {
                                 location.href = "\Error"
