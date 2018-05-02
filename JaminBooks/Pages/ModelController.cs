@@ -153,6 +153,7 @@ namespace JaminBooks.Pages
             if (currentUser.IsAdmin)
             {
                 book.IsDeleted = true;
+                book.Quantity = 0;
                 book.Save();
             }
             return new JsonResult("");
