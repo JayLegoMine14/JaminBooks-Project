@@ -315,7 +315,7 @@
                         <div style="margin-top: 320px">
                             @{ var count = Model.Book.Quantity; }
                             <h5 class="w-75 ml-4 text-center"><span id="BookQuantity" class="@(count <= 5 ? "text-danger" : "")">@(@Model.Book.IsDeleted ? "Removed From Stock" : count == 0 ? "Out Of Stock" : (count <= 5 ? "Only " : "") + count + " In Stock")</span></h5>
-                            <button id="AddToCart" class="btn btn-dark-red text-white btn-lg ml-4 mb-2 mt-2 w-75" @(count == 0 ? "disabled" : "")>Add to Cart</button>
+                            <button id="AddToCart" style="white-space: normal;" class="btn btn-dark-red text-white btn-block ml-2 mb-2 mt-2" @(count == 0 ? "disabled" : "")>Add to Cart</button>
                         </div>
                     </div>
                     <div class="col-lg-8 col-md-8 col-12">
