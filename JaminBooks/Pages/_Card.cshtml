@@ -396,7 +396,7 @@
                 valid = false;
             }
 
-            if ($("#ExpMonth").val().length < 2) {
+            if ($("#ExpMonth").val().length < 2 || new Number($("#ExpMonth").val()) > 12 || new Number($("#ExpMonth").val()) < 1) {
                 $("#ExpMonth").css("border-color", "red");
 
                 valid = false;
