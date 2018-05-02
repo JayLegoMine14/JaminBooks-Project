@@ -210,7 +210,7 @@
                     <h3>$<span id="BookPrice">0.00</span> <span class="ml-3 oldprice text-muted">$<span id="BookOldPrice">0.00</span></span></h3>
                     <div id="Rating">
                         <span>
-                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
                             <i class="far fa-star"></i>
                             <i class="far fa-star"></i>
                             <i class="far fa-star"></i>
@@ -733,7 +733,7 @@
         });
 
         $("#Comment").val("");
-        $("#RatingStars svg").attr("data-prefix", "far");
+        $("#RatingStars svg:not(:first)").attr("data-prefix", "far");
 
         var authors = book.data("authors");
         var authorstring = "";
