@@ -120,7 +120,7 @@
                                                     <img class="book-icon" src="@book.Key.LoadImage">
                                                 </div>
                                                 <div class="col-5 mt-4 truncate-ellipsis">
-                                                    <h4 class="title">@book.Key.Title</h4>
+                                                    <h4 class="title pb-1 popup" title="@book.Key.Title">@book.Key.Title</h4>
                                                 </div>
                                                 <div class="col-3 mt-4">
                                                     <h4 class="price">$@(((decimal)new RouteValueDictionary(book.Value)["Price"]).ToString("0.##"))</h4>
@@ -140,4 +140,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $('.popup').tooltipster({
+            theme: 'tooltipster-light'
+        });
+    </script>
 }
