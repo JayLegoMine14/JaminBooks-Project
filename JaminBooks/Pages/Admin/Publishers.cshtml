@@ -337,6 +337,9 @@
                 index += response[1];
                 loading = false;
                 $("#LoadIcon").hide();
+                if ($("#Items .item").last().isInViewport()) {
+                    loadItems(false);
+                }
             },
             failure: function (response) {
                 location.href = "\Error"
