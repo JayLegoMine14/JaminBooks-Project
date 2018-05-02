@@ -289,7 +289,12 @@
                     type: 'red',
                     buttons: {
                         yes: function () {
-                            $(".book[data-out='True']").each(function () { removeBook($(this)) });
+                            books.forEach(function (bookdata) {
+                                var book = $(".book[data-id='" + bookdata[0] + "']");
+                                if (bookdata[1] == 0) {
+                                    removeBook(book);
+                                }
+                            });
                             getTotal();
                         },
                         no: function () { }

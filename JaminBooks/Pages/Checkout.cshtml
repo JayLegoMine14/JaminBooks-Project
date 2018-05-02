@@ -286,6 +286,16 @@
                     $("#AddressModal").modal("show");
                 });
             },
+            OnDragged: function () {
+                $("#CardCreate").unbind("click");
+                $("#CardCreate").click(function () {
+                    $("#CardModal").modal("show");
+                });
+                $("#AddressCreate").unbind("click");
+                $("#AddressCreate").click(function () {
+                    $("#AddressModal").modal("show");
+                });
+            },
             responsive: {
                 0: {
                     margin: 10
