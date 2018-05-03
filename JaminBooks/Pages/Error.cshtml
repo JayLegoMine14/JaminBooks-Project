@@ -2,6 +2,22 @@
 @model ErrorModel
 @{
     ViewData["Title"] = "Error";
+    //Set whether or not the user is logged in. This will instruct the Layout page how to render
+    ViewData["IsLoggedIn"] = Model.CurrentUser != null;
+    //Set the full name of the user logged in
+    ViewData["Name"] = Model.CurrentUser == null ? "" : Model.CurrentUser.FirstName + " " + Model.CurrentUser.LastName;
+    //Set a count of the number of items in the user's cart
+    ViewData["CartCount"] = Model.CurrentUser == null ? 0 : Model.CurrentUser.GetCart().Count;
+
+    //If an admin is logged in, use the Admin layout
+    if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+    {
+        Layout = "~/Pages/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/_Layout.cshtml";
+    }
 }
 
 <div class="container text-center" style="margin-top: 5vh">
@@ -14,3 +30,5 @@
         </div>
     </div>
 </div>
+
+@await Html.PartialAsync("_Authentication")
