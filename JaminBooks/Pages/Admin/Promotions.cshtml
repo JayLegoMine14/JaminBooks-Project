@@ -128,7 +128,9 @@
             promo += '       </div>';
 
             $("#TotalPromotions").append(promo);
-            savePromotion($(".promotion[data-id='-1']"));
+            savePromotion($(".promotion").filter(function () {
+                return $(this).data("id") == -1
+            }));
             AddListeners();
         });
 
@@ -158,7 +160,9 @@
             promo += '       </div>';
 
             $("#CodePromotions").append(promo);
-            savePromotion($(".promotion[data-id='-1']"));
+            savePromotion($(".promotion").filter(function () {
+                return $(this).data("id") == -1
+            }));
             AddListeners();
         });
         AddListeners();
