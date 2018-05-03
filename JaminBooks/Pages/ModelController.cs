@@ -480,6 +480,7 @@ namespace JaminBooks.Pages
             {
                 user.FirstName = fields["FirstName"];
                 user.LastName = fields["LastName"];
+                var oldEmail = user.Email;
                 user.Email = fields["Email"];
 
                 if (user.FirstName != "" &&
@@ -490,7 +491,7 @@ namespace JaminBooks.Pages
                     new Regex("^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")
                     .IsMatch(user.Email))
                 {
-                    if (!user.IsConfirmed)
+                    if (!user.IsConfirmed && oldEmail != user.Email)
                     {
                         user.ConfirmationCode = Authentication.GenerateConfirmationCode();
                         Task.Run(() => Authentication.SendConfirmationEmail(Request, user));
