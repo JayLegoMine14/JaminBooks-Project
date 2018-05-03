@@ -247,7 +247,7 @@
         ratingmessage += '<div class="rating card"'
         ratingmessage += 'data-id="' + rating.RatingID + '"'
         ratingmessage += 'data-rating="' + rating.RatingValue + '"'
-        ratingmessage += 'data-comment=\'' + rating.Comment.replace("'", "&#39;").replace('"', "&quot;") + '\''
+        ratingmessage += 'data-comment=\'' + rating.Comment.replace(/'/g, "&#39;").replace(/"/g, "&quot;") + '\''
         ratingmessage += '> '
         ratingmessage += '<div>'
         ratingmessage += '<div class="icon-div">'
